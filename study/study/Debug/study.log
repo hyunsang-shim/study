@@ -1,27 +1,28 @@
 ﻿  study.cpp
-k:\work\git\study\study\study.cpp(369): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(411): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\study\study\study.cpp(443): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(834): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\study\study\study.cpp(863): warning C4244: '=': 'time_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\study\study\study.cpp(870): warning C4244: '=': 'time_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\study\study\study.cpp(900): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(977): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(984): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(995): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(1012): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\study\study\study.cpp(1126): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\study\study\study.cpp(1153): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\study\study\study.cpp(1353): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\study\study\study.cpp(1356): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(1422): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(1424): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(1530): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(1637): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(1643): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\study\study\study.cpp(1634): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+k:\work\git\study\study\study.cpp(370): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(412): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\study\study\study.cpp(444): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(835): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\study\study\study.cpp(864): warning C4244: '=': 'time_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\study\study\study.cpp(871): warning C4244: '=': 'time_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\study\study\study.cpp(901): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(978): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(985): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(996): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(1013): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\study\study\study.cpp(1127): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\study\study\study.cpp(1154): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\study\study\study.cpp(1354): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\study\study\study.cpp(1357): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(1423): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(1425): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(1531): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(1626): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\study\study\study.cpp(1691): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(1697): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study\study\study.cpp(1688): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: 'sprintf' 선언을 참조하십시오.
-k:\work\git\study\study\study.cpp(2201): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\study\study\study.cpp(1057): warning C4715: 'onTheSameLine': 모든 제어 경로에서 값을 반환하지는 않습니다.
-k:\work\git\study\study\study.cpp(1065): warning C4715: 'onTheLineSegment': 모든 제어 경로에서 값을 반환하지는 않습니다.
+k:\work\git\study\study\study.cpp(2255): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\study\study\study.cpp(1058): warning C4715: 'onTheSameLine': 모든 제어 경로에서 값을 반환하지는 않습니다.
+k:\work\git\study\study\study.cpp(1066): warning C4715: 'onTheLineSegment': 모든 제어 경로에서 값을 반환하지는 않습니다.
   study.vcxproj -> K:\WORK\git\study\Debug\study.exe
