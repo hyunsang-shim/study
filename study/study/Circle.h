@@ -3,13 +3,18 @@
 class Circle
 {
 public:	//없으면 자동으로 private이 된다.
-
-	double radius;
-
-	Circle();
-	~Circle();
+	Circle();	
 	Circle(double);
+	double getArea(); 
+	double getRadius();
+	void setRadius(double);
+	static int getNumberOfObjects();
+	~Circle();
 
-	double getArea();
+	
+
+private:
+	double radius;
+	static int numberOfObjects;
 };
 #endif
