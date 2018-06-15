@@ -10,9 +10,7 @@ public:	//없으면 자동으로 private이 된다.
 	void setRadius(double);
 	static int getNumberOfObjects();
 	~Circle();
-
 	
-
 private:
 	double radius;
 	static int numberOfObjects;
