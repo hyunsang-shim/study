@@ -11,6 +11,7 @@ Circle::Circle()
 
 Circle::~Circle()
 {
+	numberOfObjects--;
 }
 
 Circle::Circle(double newRadius)
