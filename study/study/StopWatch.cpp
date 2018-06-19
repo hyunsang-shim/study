@@ -1,7 +1,9 @@
+#pragma once
+
 #include "stdafx.h"
 #include "StopWatch.h"
 #include <ctime>
-
+#pragma 
 
 StopWatch::StopWatch()
 {	
