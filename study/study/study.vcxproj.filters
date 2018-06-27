@@ -36,9 +36,6 @@
     <ClInclude Include="StopWatch.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="StackOfIntegers.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Course.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -52,6 +49,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Member.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Stack.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Student.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLinkedList.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,9 +83,6 @@
     <ClCompile Include="StopWatch.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="StackOfIntegers.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Course.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -93,6 +96,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="LinkedList.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Student.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLinkedList.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
