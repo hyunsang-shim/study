@@ -38,6 +38,54 @@ void Circle::setRadius(double newRadius)
 	radius = (newRadius >=0)? newRadius : 0;
 }
 
+bool Circle::operator<(Circle & secondCircle) const
+{
+	if (this->radius < secondCircle.getRadius())
+		return true;
+	else
+		return false;
+}
+
+bool Circle::operator<=(Circle & secondCircle) const
+{
+	if (this->radius <= secondCircle.getRadius())
+		return true;
+	else
+		return false;
+}
+
+bool Circle::operator>(Circle & secondCircle) const
+{
+	if (this->radius > secondCircle.getRadius())
+		return true;
+	else
+		return false;
+}
+
+bool Circle::operator>=(Circle & secondCircle) const
+{
+	if (this->radius >= secondCircle.getRadius())
+		return true;
+	else
+		return false;
+}
+
+bool Circle::operator==(Circle & secondCircle) const
+{
+	if (this->radius == secondCircle.getRadius())
+		return true;
+	else
+		return false;
+}
+
+bool Circle::operator!=(Circle & secondCircle) const
+{
+	if (this->radius != secondCircle.getRadius())
+		return true;
+	else
+		return false;
+}
+
 int Circle::getNumberOfObjects()
 {
 	return numberOfObjects;

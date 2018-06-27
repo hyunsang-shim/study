@@ -43,5 +43,8 @@ void Print(const MY_LIST *list);
 
 void Terminate(MY_LIST *list);
 
+static void SetNode(MY_NODE *n, const MY_NODE_DATA *x, MY_NODE *next, MY_NODE *prev);
+
+
 
 

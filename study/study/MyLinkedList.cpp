@@ -8,6 +8,14 @@ void Init(MY_LIST * list)
 	list->cur = NULL;
 }
 
+
+static MY_NODE *Alloc(void)
+{
+	return (MY_NODE*)calloc(1, sizeof(MY_NODE));
+}
+
+
+
 void InsertFront(MY_LIST * list, const MY_NODE_DATA * x)
 {
 	MY_NODE *ptr = list->head;
@@ -138,10 +146,6 @@ void Terminate(MY_LIST * list)
 	Clear(list);
 }
 
-static MY_NODE *Alloc(void)
-{
-	return (MY_NODE*)calloc(1, sizeof(MY_NODE));
-}
 
 static void SetNode(MY_NODE *n, const MY_NODE_DATA *x, MY_NODE *next, MY_NODE *prev)
 {

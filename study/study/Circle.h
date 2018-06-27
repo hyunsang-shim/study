@@ -8,6 +8,13 @@ public:	//없으면 자동으로 private이 된다.
 	double getArea(); 
 	double getRadius();
 	void setRadius(double);
+
+	bool operator<(Circle& secondCircle) const;
+	bool operator<=(Circle& secondCircle) const;
+	bool operator>(Circle& secondCircle) const;
+	bool operator>=(Circle& secondCircle) const;
+	bool operator==(Circle& secondCircle) const;
+	bool operator!=(Circle& secondCircle) const;
 	static int getNumberOfObjects();
 	~Circle();
 	
