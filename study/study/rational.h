@@ -9,6 +9,7 @@ class Rational
 public:
 	Rational();
 	Rational(int numerator, int denominator);
+	Rational(double input);
 	int getNumerator() const;
 	int getDenominator() const;
 	Rational add(const Rational& secondRational) const;

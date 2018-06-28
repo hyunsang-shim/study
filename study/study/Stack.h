@@ -11,6 +11,7 @@ public:
 	void push(T value);
 	T pop();
 	int getSize() const;
+	T operator[](const int idx) const;	
 	~Stack();
 
 private:
@@ -19,6 +20,16 @@ private:
 	int capacity;
 	void ensureCapacity();
 };
+
+
+template<typename T>
+T Stack<T>::operator[](const int idx) const
+{
+	if (idx < size && idx >= 0)
+		return elements[idx];
+	else
+		return 0;
+}
 
 template<typename T>
 Stack<T>::Stack(): size(0), capacity(16)
@@ -72,6 +83,8 @@ int Stack<T>::getSize() const
 {
 	return size;
 }
+
+
 
 template<typename T>
 Stack<T>::~Stack<T>()

@@ -24,18 +24,27 @@ Circle::Circle(double newRadius)
 
 double Circle::getArea()
 {
-	return radius * radius * 3.14159;
+	return radius * radius * PI;
 }
 
 double Circle::getRadius()
 {
 	return radius;
-
 }
 
 void Circle::setRadius(double newRadius)
 {
 	radius = (newRadius >=0)? newRadius : 0;
+}
+
+double Circle::getPerimeter() const
+{
+	return 2 * radius * PI;
+}
+
+double Circle::getDiameter() const
+{
+	return 2 * PI;
 }
 
 bool Circle::operator<(Circle & secondCircle) const
@@ -89,4 +98,9 @@ bool Circle::operator!=(Circle & secondCircle) const
 int Circle::getNumberOfObjects()
 {
 	return numberOfObjects;
+}
+
+string Circle::toString()
+{
+	return "Circle Object";
 }

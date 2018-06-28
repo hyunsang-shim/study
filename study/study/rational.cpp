@@ -2,6 +2,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <iostream>
+#include <cmath>
 using namespace std;
 
 Rational::Rational()	// 문제 14.2 풀이 적용됨
@@ -15,8 +16,28 @@ Rational::Rational(int numerator, int denominator)	// 문제 14.2 풀이 적용됨
 	int factor = gcd(numerator, denominator);
 	this->r[0] = ((denominator > 0) ? 1 : -1) * numerator / factor;
 	this->r[1] = abs(denominator) / factor;
+}
 
+Rational::Rational(double input)
+{
+	int divider = 1;
+	int tmp = (int)input;
 
+	//소수를 완전히 정수로 만든다 (소수 밑을 소수점 왼쪽으로 옮긴다)
+	while (1)
+	{
+		divider *= 10;
+
+		tmp = input * divider;
+
+		if ((tmp % 10 == 0))
+			break;
+	}
+
+	//정수 계산하듯 기약분수 만든다.
+	int factor = gcd(tmp, divider);
+	this->r[0] = ((divider > 0) ? 1 : -1) * tmp / factor;
+	this->r[1] = abs(divider) / factor;
 }
 
 int Rational::getNumerator() const	// 문제 14.2 풀이 적용됨
