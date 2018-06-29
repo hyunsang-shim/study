@@ -21,6 +21,15 @@ Circle::Circle(double newRadius)
 	numberOfObjects++;
 }
 
+Circle::Circle(double radius, const string & color, bool filled)
+{
+	setRadius(radius);
+	setColor(color);
+	setFilled(filled);
+
+	numberOfObjects++;
+}
+
 
 double Circle::getArea()
 {

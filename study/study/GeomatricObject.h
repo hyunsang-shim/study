@@ -1,5 +1,5 @@
 #pragma once
-#ifndef GEOMETRICOBJECT_H;
+#ifndef GEOMETRICOBJECT_H
 
 #include <string>
 using namespace std;
@@ -14,7 +14,7 @@ public :
 	bool isFilled();	
 
 	void setFilled(bool filled);	
-	string toString() const;
+	virtual string toString() const;
 
 
 private:

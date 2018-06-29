@@ -7,6 +7,7 @@ class Circle : public GeometricObject
 public:	//없으면 자동으로 private이 된다.
 	Circle();	
 	Circle(double);
+	Circle(double radius, const string& color, bool filled);
 	double getArea();
 	double getRadius();
 
