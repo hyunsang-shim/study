@@ -1,0 +1,40 @@
+#pragma once
+
+#ifndef __MYLIST_H
+#define __MYLIST_H
+
+#include "Member.h"
+
+typedef struct __node {
+	Member data;
+	struct __node *next;
+} Node;
+
+typedef struct {
+	Node *head;
+	Node *crnt;
+} List;
+
+void Initialize(List *list);
+
+void InsertFront(List *list, const Member *x);
+
+void InsertRear(List *list, const Member *x);
+
+void RemoveFront(List *list);
+
+void RemoveRear(List *list);
+
+void RemoveCurrent(List *list);
+
+void Clear(List *list);
+
+void PrintCurrent(const List *list);
+void PrintLnCurrent(const List *list);
+
+
+void Print(const List *list);
+
+void Terminate(List *list);
+
+#endif

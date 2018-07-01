@@ -12,7 +12,7 @@ static Node *AllocNode(void)
 	return (Node*)calloc(1, sizeof(Node));	//앞에 (Node*) 추가
 }
 
-static void SetNode(Node *n, const Member *x, Node *next)	// 책의 const Node *next를 Noce *next로 바꿨음.
+static void SetNode(Node *n, const Member *x, Node *next)	// 책의 const Node *next를 Node *next로 바꿨음.
 {
 	n->data = *x;
 	n->next = next;

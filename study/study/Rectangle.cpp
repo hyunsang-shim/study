@@ -13,6 +13,14 @@ cRectangle::cRectangle(double newWidth, double newHeight)
 	height = newHeight;
 }
 
+cRectangle::cRectangle(double width, double height, const string& color, bool filled)
+{
+	setWidth(width);
+	setHeight(height);
+	setColor(color);
+	setFilled(filled);
+}
+
 cRectangle::~cRectangle()
 {
 }
@@ -22,7 +30,7 @@ void cRectangle::setWidth(double newWidth)
 {
 	width = newWidth;
 }
-double cRectangle::getWidth()
+double cRectangle::getWidth() const
 {
 	return width;
 }
@@ -42,4 +50,9 @@ double cRectangle::getArea()
 double cRectangle::getPerimeter()
 {
 	return 2 * (width + height);
+}
+
+string cRectangle::toString()
+{
+	return "Rectangle Object";
 }

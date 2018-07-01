@@ -150,28 +150,35 @@
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Circle2D.h" />
     <ClInclude Include="Course.h" />
+    <ClInclude Include="GeomatricObject.h" />
+    <ClInclude Include="MyLinkedList.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="Loan.h" />
     <ClInclude Include="Member.h" />
     <ClInclude Include="MyPoint.h" />
+    <ClInclude Include="rational.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Rectangle2D.h" />
-    <ClInclude Include="StackOfIntegers.h" />
+    <ClInclude Include="Stack.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StopWatch.h" />
+    <ClInclude Include="Student.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Circle2D.cpp" />
     <ClCompile Include="Course.cpp" />
+    <ClCompile Include="GeomatricObject.cpp" />
     <ClCompile Include="LinkedList.cpp" />
     <ClCompile Include="Loan.cpp" />
     <ClCompile Include="Member.cpp" />
+    <ClCompile Include="MyLinkedList.cpp" />
     <ClCompile Include="MyPoint.cpp" />
+    <ClCompile Include="rational.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Rectangle2D.cpp" />
-    <ClCompile Include="StackOfIntegers.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -179,7 +186,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="StopWatch.cpp" />
+    <ClCompile Include="Student.cpp" />
     <ClCompile Include="study.cpp" />
+    <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
