@@ -1,0 +1,4 @@
+﻿  stdafx.cpp
+  AttributeParser.cpp
+d:\work\study\hackerrank_c++\attributeparser\attributeparser\attributeparser.cpp(43): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  AttributeParser.vcxproj -> D:\WORK\study\hackerRank_C++\AttributeParser\Debug\AttributeParser.exe
