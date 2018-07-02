@@ -1,4 +1,10 @@
-﻿  stdafx.cpp
-  AttributeParser.cpp
-d:\work\study\hackerrank_c++\attributeparser\attributeparser\attributeparser.cpp(43): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-  AttributeParser.vcxproj -> D:\WORK\study\hackerRank_C++\AttributeParser\Debug\AttributeParser.exe
+﻿  AttributeParser.cpp
+d:\work\study\hackerrank_c++\attributeparser\attributeparser\attributeparser.cpp(59): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\hackerrank_c++\attributeparser\attributeparser\attributeparser.cpp(77): error C2228: '.tag' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+  d:\work\study\hackerrank_c++\attributeparser\attributeparser\attributeparser.cpp(77): note: 'TAGS *' 형식입니다.
+  d:\work\study\hackerrank_c++\attributeparser\attributeparser\attributeparser.cpp(77): note: 대신 '->'을(를) 사용하려고 했습니까?
+d:\work\study\hackerrank_c++\attributeparser\attributeparser\attributeparser.cpp(77): error C2228: '.append' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+d:\work\study\hackerrank_c++\attributeparser\attributeparser\attributeparser.cpp(90): error C2228: '.attr' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+  d:\work\study\hackerrank_c++\attributeparser\attributeparser\attributeparser.cpp(90): note: 'TAGS *' 형식입니다.
+  d:\work\study\hackerrank_c++\attributeparser\attributeparser\attributeparser.cpp(90): note: 대신 '->'을(를) 사용하려고 했습니까?
+d:\work\study\hackerrank_c++\attributeparser\attributeparser\attributeparser.cpp(90): error C2228: '.push_back' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
