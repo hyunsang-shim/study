@@ -1,0 +1,4 @@
+﻿  study_2.cpp
+k:\work\git\study_2\study_2\study_2.cpp(80): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\study_2\study_2\study_2.cpp(110): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  study_2.vcxproj -> K:\WORK\git\study_2\Debug\study_2.exe
