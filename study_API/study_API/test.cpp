@@ -104,9 +104,9 @@ void DrawCircles(HDC hdc, int angle_term)
 		double b = (CENTER_Y + sin((i + angle_term) * PI / 180) * Radius) - (CENTER_Y + sin(i*PI / 180) * Radius);
 
 		if (newRadius * 2 < pow((pow(a, 2.0) + pow(b, 2.0)), 0.5))
-			diff = (pow((pow(a, 2.0) + pow(b, 2.0)), 0.5) - newRadius);
+			diff = (pow((pow(a, 2.0) + pow(b, 2.0)), 0.5)/2 + newRadius);
 		else if (newRadius * 2 > pow((pow(a, 2.0) + pow(b, 2.0)), 0.5))
-			diff = (newRadius - pow((pow(a, 2.0) + pow(b, 2.0)), 0.5));
+			diff = (newRadius - pow((pow(a, 2.0) + pow(b, 2.0)), 0.5)/2);
 		else
 			diff = 0;
 	
