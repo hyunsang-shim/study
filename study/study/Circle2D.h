@@ -1,11 +1,11 @@
-#ifndef CIRCLE2D_H
-#define CIRCLE2D_H
+#ifndef CIRCLE_H
+#define CIRCLE_H
 
-class Circle2D
+class Circle
 {
 public:
-	Circle2D();
-	Circle2D(double x, double y, double radius);
+	Circle();
+	Circle(double x, double y, double radius);
 
 	double getPosX();
 	void setPosX(double X);
@@ -18,10 +18,10 @@ public:
 	double getPerimeter();
 
 	bool contains(double x, double y);
-	bool contains(const Circle2D& circle);
-	bool overlaps(const Circle2D& circle);	
+	bool contains(const Circle& circle);
+	bool overlaps(const Circle& circle);	
 
-	~Circle2D();
+	~Circle();
 
 private:
 	double PosX;
