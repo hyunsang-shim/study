@@ -1,5 +1,6 @@
 #ifndef CIRCLE_H
 #define CIRCLE_H
+#include <Windows.h>
 
 class Circle
 {
@@ -11,9 +12,9 @@ public:
 	void setPosX(double X);
 	double getPosY();	
 	void setPosY(double Y);
-	void overlaps(Circle& circle);
+	void overlaps(Circle& circle, const RECT &rectView);
 	void setValid(bool isValid);
-	void move(long left, long top, long bottom, long right);
+	void move(const RECT &rectView);
 	void setDir(int dir);
 	double getRadius();
 	void setRadius(int radius);

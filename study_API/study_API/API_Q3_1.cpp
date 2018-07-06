@@ -82,6 +82,8 @@ LRESULT CALLBACK WindProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	SYSTEMTIME st;
 	static RECT rectView;
 	static int last_cnt = 0;
+	static int tmp = 0;
+	static int del_count = 0;
 
 
 	switch (iMsg)
@@ -100,7 +102,7 @@ LRESULT CALLBACK WindProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		for (int i = 0; i < vCircles.size(); i++)
 		{
 			if (vCircles[i].checkValid())
-				vCircles[i].move(rectView.left, rectView.top, rectView.right, rectView.bottom);
+				vCircles[i].move(rectView);
 		}
 		for (int i = 0; i < vCircles.size()-1; i++)
 		{
@@ -110,12 +112,38 @@ LRESULT CALLBACK WindProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 					if (vCircles[j].checkValid())
 					{
 						if (vCircles[i].checkValid() && vCircles[j].checkValid())
-							vCircles[i].overlaps(vCircles[j]);
+							vCircles[i].overlaps(vCircles[j], rectView);
 					}
-				}
-			
+				}			
 		}
 		InvalidateRgn(hwnd, NULL, TRUE);
+
+		//그린 후에는 비활성 된 애들 자리에 활성된 애들을 땡겨 넣는다.
+		for (int i = 0; i < vCircles.size(); i++)
+		{
+			if (!vCircles[i].checkValid())
+			{
+				tmp = i;
+				for (int j = i; j < vCircles.size() - 1; j++)
+				{
+					if (vCircles[j].checkValid())
+					{
+						tmp = j;
+						break;
+					}
+				}
+
+				if (tmp != i)
+				{
+					vCircles[i] = vCircles[tmp];
+					last_cnt = tmp = i;
+
+				}
+			}
+		}
+		if(last_cnt+1 <= vCircles.size())
+			vCircles.resize(last_cnt);
+
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
@@ -133,7 +161,6 @@ LRESULT CALLBACK WindProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			TextOut(hdc, rectView.left + 10, rectView.top + 10, tmp, lstrlen(tmp));
 		}
 		EndPaint(hwnd, &ps);
-
 		break; 
 	case WM_DESTROY:
 		KillTimer(hwnd, 1);
