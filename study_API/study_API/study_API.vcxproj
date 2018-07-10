@@ -117,9 +117,6 @@
   <ItemGroup>
     <ClCompile Include="API_Q3_1.cpp" />
     <ClCompile Include="Circle.cpp" />
-    <ClCompile Include="Empty_Window.cpp" />
-    <ClCompile Include="ex_3_5.cpp" />
-    <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Circle.h" />

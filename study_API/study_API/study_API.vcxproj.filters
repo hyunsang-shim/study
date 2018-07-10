@@ -15,15 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Empty_Window.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ex_3_5.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="API_Q3_1.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>

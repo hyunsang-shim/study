@@ -4,6 +4,7 @@
 #include <windows.h>
 
 
+
 #define PI 3.14
 
 Circle::Circle()
@@ -11,6 +12,7 @@ Circle::Circle()
 	this->PosX = 20;
 	this->PosY = 20;
 	this->radius = 10;
+	this->eatcount = 0;
 }
 
 Circle::Circle(double x, double y, double radius)
@@ -40,34 +42,62 @@ void Circle::setPosY(double Y)
 	this->PosY = Y;
 }
 
-void Circle::overlaps(Circle & circle, const RECT &R)
+void Circle::overlaps(HDC& hdc, Circle & circle, const RECT &R)
 {
 	//계산을 편리하게 하기 위해서
 	double a = circle.PosX - this->getPosX();
 	double b = circle.PosY - this->getPosY();
+
 	//두 중점 사이의 거리
 	double dist_centers = pow((pow(a, 2.0) + pow(b, 2.0)), 0.5);
 	// 대상 원의 일부가 원본의 외각선 안쪽에 있는지 확일을 위한 값  
 	double dist_centers_comp = pow((circle.PosX - this->radius) + pow(circle.PosY - this->radius, 2), 0.5);
 
 	//맞닿거나 조금이라도 겹치면
-	if (dist_centers <= this->radius || dist_centers_comp <= this->radius)
+	if ((dist_centers <= this->getRadius()) || (dist_centers <= circle.getRadius()) || ((dist_centers_comp <= this->getRadius()) || (dist_centers_comp <= circle.getRadius())))
 	{
-		//원본 원의 크기를 키우고
-		this->setRadius(this->getRadius() * 1.2);
+		//큰 놈이 먹는다!
+		if (dist_centers <= this->radius)
+		{
+			this->radius = this->radius * 2 / 3 + circle.radius * 2 / 3;
+			this->setSpeedX(this->getSpeedX() * 2 / 3 + circle.getSpeedX() / 3);
+			circle.setSpeedY(this->getSpeedY() * 2 / 3 + circle.getSpeedY() / 3);
+
+			if (this->getSpeedX() == 0)
+				this->setSpeedX(rand() % 3 + 3 * (rand() % 201 - 100) / 100);
+
+			circle.setValid(false);
+		}
+		else if (dist_centers <= circle.radius)
+		{
+			circle.radius = circle.radius * 2 / 3 + this->radius * 2 / 3;
+			circle.setSpeedX(circle.getSpeedX() * 2 / 3 + this->getSpeedX() / 3);
+			circle.setSpeedY(circle.getSpeedY() * 2 / 3 + this->getSpeedY() / 3);
+			
+			if (circle.getSpeedX() == 0)
+				circle.setSpeedX(rand() % 3 + 3 * (rand() % 201 - 100) / 100);
+
+			if (circle.getSpeedY() == 0)
+				circle.setSpeedY(rand() % 3 + 3 * (rand() % 201 - 100) / 100);
+			this->setValid(false);
+		}
+
 		//대상 원을 비활성화 시킨다.
 		circle.setValid(false);
-	}
+	}	
 
 	// 커진 원이 화면 밖을 나갈 수 있으니 안쪽으로 밀어 넣어 준다.
-	if (getPosX() - getRadius() < R.left || getPosX() + getRadius() > R.right)
+	if (getPosX() - getRadius() <= R.left || getPosX() + getRadius() >= R.right)
 		setPosX(R.left + getRadius() + getSpeedX());
 
-	if (getPosY() - getRadius() < R.top || getPosY() + getRadius() > R.bottom)
+	if (getPosY() - getRadius() <= R.top || getPosY() + getRadius() >= R.bottom)
 		setPosY(R.bottom - getRadius() - getSpeedX());
 
-	// 커지는 순간 위치 보정 필요.
-		
+	//너무 커졌으면 지운다.
+	if (this->getRadius() > 30)
+	{
+		this->setValid(false);
+	}
 }
 
 void Circle::setValid(bool isValid)
@@ -81,16 +111,25 @@ void Circle::move(const RECT &R)
 	setPosY(getPosY() + getSpeedY());
 
 	//벽 충돌 시 팅김
-	if (getPosX()-getRadius() < R.left || getPosX() + getRadius() > R.right)
+	if (getPosX() - getRadius() <= R.left || getPosX() + getRadius() >= R.right)
+	{
+		if (getPosX() - getRadius() <= R.left)
+			setPosX(R.left + getRadius() + 1);
+		else
+			setPosX(R.right - getRadius() - 1);
+
 		setSpeedX(-1 * getSpeedX());
+	}
 
-	if (getPosY()-getRadius() < R.top || getPosY() + getRadius() > R.bottom)
+	if (getPosY() - getRadius() <= R.top || getPosY() + getRadius() >= R.bottom)
+	{
+		if (getPosY() - getRadius() <= R.top)
+			setPosY(R.top + getRadius() + 1);
+		else
+			setPosY(R.right - getRadius() - 1);
+
 		setSpeedY(-1 * getSpeedY());
-}
-
-void Circle::setDir(int dir)
-{
-	direction = dir;
+	}
 }
 
 double Circle::getRadius()
