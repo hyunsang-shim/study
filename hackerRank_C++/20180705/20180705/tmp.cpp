@@ -74,3 +74,71 @@
 //	}
 //
 //}
+
+//#include <sstream>
+//#include <vector>
+//#include <iostream>
+//using namespace std;
+//
+//vector<int> parseInts(string str) {
+//	// Complete this function
+//	stringstream tmp(str);
+//	string tmp2;
+//	vector<int> vTemp;
+//
+//	while (getline(tmp, tmp2, ','))
+//	{
+//		vTemp.push_back(stoi(tmp2));
+//		tmp2.clear();
+//	}
+//
+//	return vTemp;
+//}
+//
+//int main() {
+//	string str;
+//	cin >> str;
+//	vector<int> integers = parseInts(str);
+//	for (int i = 0; i < integers.size(); i++) {
+//		cout << integers[i] << "\n";
+//	}
+//
+//	return 0;
+//}
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int next_permutation(int n, char **s)
+{
+	static int tmp_cnt = 0;
+
+	if (tmp_cnt == n)
+		return 0;
+	else
+		return 1;
+
+}
+
+int main()
+{
+	char **s;
+	int n;
+	scanf_s("%d", &n);
+	s = (char**)calloc(n, sizeof(char*));
+	for (int i = 0; i < n; i++)
+	{
+		s[i] = (char*)calloc(11, sizeof(char));
+		scanf_s("%s", s[i], sizeof(char)*11);
+	}
+	do
+	{
+		for (int i = 0; i < n; i++)
+			printf("%s%c", s[i], i == n - 1 ? '\n' : ' ');
+	} while (next_permutation(n, s));
+	for (int i = 0; i < n; i++)
+		free(s[i]);
+	free(s);
+	return 0;
+}

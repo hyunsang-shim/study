@@ -54,10 +54,10 @@ void Circle::overlaps(HDC& hdc, Circle & circle, const RECT &R)
 	double dist_centers_comp = pow((circle.PosX - this->radius) + pow(circle.PosY - this->radius, 2), 0.5);
 
 	//맞닿거나 조금이라도 겹치면
-	if ((dist_centers <= this->getRadius()) || (dist_centers <= circle.getRadius()) || ((dist_centers_comp <= this->getRadius()) || (dist_centers_comp <= circle.getRadius())))
+	if (dist_centers <= this->getRadius()+circle.getRadius())
 	{
 		//큰 놈이 먹는다!
-		if (dist_centers <= this->radius)
+		if (circle.radius <= this->radius)
 		{
 			this->radius = this->radius * 2 / 3 + circle.radius * 2 / 3;
 			this->setSpeedX(this->getSpeedX() * 2 / 3 + circle.getSpeedX() / 3);
@@ -68,7 +68,7 @@ void Circle::overlaps(HDC& hdc, Circle & circle, const RECT &R)
 
 			circle.setValid(false);
 		}
-		else if (dist_centers <= circle.radius)
+		else if (circle.radius > this->radius)
 		{
 			circle.radius = circle.radius * 2 / 3 + this->radius * 2 / 3;
 			circle.setSpeedX(circle.getSpeedX() * 2 / 3 + this->getSpeedX() / 3);
@@ -87,11 +87,15 @@ void Circle::overlaps(HDC& hdc, Circle & circle, const RECT &R)
 	}	
 
 	// 커진 원이 화면 밖을 나갈 수 있으니 안쪽으로 밀어 넣어 준다.
-	if (getPosX() - getRadius() <= R.left || getPosX() + getRadius() >= R.right)
+	if (getPosX() - getRadius() <= R.left)
 		setPosX(R.left + getRadius() + getSpeedX());
+	else if (getPosX() + getRadius() >= R.right)
+		setPosX(R.right - getRadius() - getSpeedX());
 
-	if (getPosY() - getRadius() <= R.top || getPosY() + getRadius() >= R.bottom)
+	if (getPosY() - getRadius() <= R.top)
 		setPosY(R.bottom - getRadius() - getSpeedX());
+	else if (getPosY() + getRadius() >= R.bottom)
+		setPosY(R.top + getRadius() + getSpeedX());
 
 	//너무 커졌으면 지운다.
 	if (this->getRadius() > 30)
@@ -126,7 +130,7 @@ void Circle::move(const RECT &R)
 		if (getPosY() - getRadius() <= R.top)
 			setPosY(R.top + getRadius() + 1);
 		else
-			setPosY(R.right - getRadius() - 1);
+			setPosY(R.bottom - getRadius() - 1);
 
 		setSpeedY(-1 * getSpeedY());
 	}

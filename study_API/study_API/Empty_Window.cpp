@@ -79,8 +79,7 @@
 #define PI 3.14
 
 LRESULT CALLBACK WinProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
-//아래 winMain2를 WinMain으로 바꿔서 사용
-int WINAPI WinMain1(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
 	HWND		hwnd;
 	MSG			msg;
@@ -98,7 +97,7 @@ int WINAPI WinMain1(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdL
 	WndClass.lpszClassName = _T("Window Class Name");	// _T는 유니코드로 변환시켜주는 매크로 앞에 써주는 게 안전하다. _T("str");
 	RegisterClass(&WndClass);
 	hwnd = CreateWindow(_T("Window Class Name"),		// 클래스 이름
-		_T("심현상의 첫번째 윈도우"),						// 타이틀 이름
+		_T("윈도우 창 이름"),						// 타이틀 이름
 		WS_OVERLAPPEDWINDOW,							// 스타일
 		0,											// 좌상단 x 좌표
 		0,											// 좌상단 y 좌표
@@ -128,35 +127,22 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	static int x, y;
 	static RECT rectView;
-	SYSTEMTIME st;
-	TCHAR read_clock[100];
-
-	POINT PolyPoints[10] = { { 100,10 },{ 120, 30 },{ 160, 30 },{ 130, 55 },{ 145,100 },{ 100, 75 },{ 55,100 },{ 70, 55 },{ 40, 30 },{ 80, 30 } };
-
+	
 	switch (iMsg)
 	{
 	case WM_CREATE:		
 		GetClientRect(hwnd, &rectView);
-		x = 20; y = 20;
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		Ellipse(hdc, x - 20, y - 20, x + 20, y + 20);
-		GetLocalTime(&st);
-		wsprintf(read_clock, "%월 %d일(%s) %d시 %d분 %d초", st.wMonth, st.wDay, st.wDayOfWeek, st.wHour, st.wMinute, st.wSecond);
-		TextOut(hdc, rectView.right - 300, rectView.top + 10, read_clock, lstrlen(read_clock));
 		EndPaint(hwnd, &ps);
 		break; 
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
 	case WM_KEYDOWN:
-		if (wParam == VK_RIGHT) SetTimer(hwnd, 1, 70, NULL);
 		break;
 	case WM_TIMER:
-		x += 20;
-		if (x + 20 > rectView.right) x -= 20;
-
 	}
 
 	return DefWindowProc(hwnd, iMsg, wParam, lParam);

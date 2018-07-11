@@ -1,2 +1,3 @@
 ﻿  tmp.cpp
+k:\work\git\hackerrank_c++\20180705\20180705\tmp.cpp(102): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
   20180705.vcxproj -> K:\WORK\git\hackerRank_C++\20180705\Debug\20180705.exe
