@@ -21,6 +21,18 @@ void cGameManager::setID(TCHAR *newid)
 		this->id[i] = newid[i];
 }
 
+RECT cGameManager::getIdLabel()
+{
+	RECT tmp;
+
+	tmp.top = 10;
+	tmp.left = 10;
+	tmp.bottom = tmp.top + 20;
+	tmp.right = tmp.left + ID_MAX_SIZE * FONT_SIZE;
+
+	return tmp;
+}
+
 cGameManager::~cGameManager()
 {
 }
