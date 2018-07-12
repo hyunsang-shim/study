@@ -11,6 +11,8 @@ public:
 	void setHp(int hp);
 	int getHp();
 	void DoDMG(int dmg);
+	void DrawGuard(HDC hdc);
+	void setDead();
 	RECT getmyPos();
 	RECT getmyPos_Label();
 	
@@ -20,5 +22,6 @@ private:
 	int hp;
 	RECT MyPos;
 	RECT MyPos_Label;
+	bool isDead;
 };
 
