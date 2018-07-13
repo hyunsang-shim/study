@@ -21,8 +21,9 @@
 
 //방어 블럭
 #define NUM_OF_GUARDS 15
-#define GUARD_HEIGHT 15
+#define GUARD_HEIGHT 20
 #define DEFAULT_GUARD_HP 5
+#define GUARD_POS_TOP_MODIFIER 160
 
 //포탑 관련
 #define HEAD_MIN_DEGREE 170
@@ -48,8 +49,7 @@ typedef struct __bullet_struct
 
 } stBullet;
 
-//총알을 담아 둘 배열
-std::vector<stBullet> vBullets;
+
 
 //적들의 구조체
 typedef struct __Enemies__
@@ -62,31 +62,69 @@ typedef struct __Enemies__
 	
 } stENEMY;
 
-//적들을 담아 둘 배열
-std::vector<stENEMY> vEnemies;
+typedef struct __Guards__
+{
+	RECT MyPos;
+	int CurHP;
+	int MaxHP;
+	SIZE Label_HP;
+} stGUARD;
+
+
 
 class cGameManager
 {
 public:
 	cGameManager();	
 	~cGameManager();
+	
+	// GET 메서드 모음
 	int getCurrentScene();
-	void SetCurrentScene(int scene);
-	void SetInputLabel(HWND hwnd);
-	void SetInputBox(HWND hwnd);
 	RECT GetInputLabel();
 	RECT GetInputBox();
+	TCHAR* GetPLAYER_ID();
+	int GetPLAYER_SCORE();
+	RECT GetPosDisplayLabel_ID();
+	RECT GetPosDisplayLabel_Score();
+
+	// SET 메서드 모음
+	void SetCurrentScene(int scene);
+	void SetInputArea(HWND hwnd);
+	void SetPLAYER_ID(TCHAR* id);
+	void SetPlayer_Dead();	
+	void SetGuard(HDC hdc, RECT *screen, stGUARD *thisGuard, int id);
+	void SetPosDisplayLabel_ID(RECT *screen);
+	void SetPosDisplayLabel_Score(RECT *screen);
+
+	//점수 관련
+	void AddScore(UINT score);
+
 
 public:
 	static cGameManager* GetInstance()
-	{		
+	{
 		static cGameManager instance;
+
 		return &instance;
 	}
 
 private:
 	int CurrentScene = eSceneTitle;
-	RECT InputLabel;
-	RECT InputBox;
+	TCHAR PLAYER_ID[ID_MAX_SIZE];
+	UINT PLAYER_SCORE = 0;
+	
+
+	//이름 입력용 위치값들
+	RECT posInputLabel;
+	RECT posInputBox;
+
+	//이름 표시용 위치값
+	RECT posDisplayLabel_ID;
+	RECT posDisplayLabel_Score;
+
+	bool isPlayerDead = false;
+
+
+
 };
 
