@@ -1,2 +1,6 @@
-﻿  winmain.cpp
+﻿  API2D.cpp
+  winmain.cpp
+k:\work\git\bitmap\bitmap\winmain.cpp(60): warning C4101: 'memdc2' :참조되지 않은 지역 변수입니다.
+k:\work\git\bitmap\bitmap\winmain.cpp(60): warning C4101: 'memdc1' :참조되지 않은 지역 변수입니다.
+  코드를 생성하고 있습니다...
   bitmap.vcxproj -> K:\WORK\git\bitmap\Debug\bitmap.exe

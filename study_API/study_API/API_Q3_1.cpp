@@ -36,7 +36,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	WndClass.lpszClassName = _T("Window Class Name");	// _T는 유니코드로 변환시켜주는 매크로 앞에 써주는 게 안전하다. _T("str");
 	RegisterClass(&WndClass);
 	hwnd = CreateWindow(_T("Window Class Name"),		// 클래스 이름
-		_T("심현상의 첫번째 윈도우"),						// 타이틀 이름
+		_T("윈도우 타이틀"),						// 타이틀 이름
 		WS_OVERLAPPEDWINDOW,							// 스타일
 		0,											// 좌상단 x 좌표
 		0,											// 좌상단 y 좌표

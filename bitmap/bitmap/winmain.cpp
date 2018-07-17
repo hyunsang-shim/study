@@ -1,20 +1,22 @@
 #include <windows.h>
 #include <TCHAR.H>
 #include <math.h>
-#include "./resource.h"
 
+#include "API2D.h"
+API2D g_API2D;
+
+
+#define MAX_LOADSTRING 100
 #define PI 3.14
 
 LRESULT CALLBACK WinProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
-HINSTANCE hInst;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
 	HWND		hwnd;
 	MSG			msg;
 	WNDCLASS	WndClass;
-	hInst = hInstance;
 
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
 	WndClass.lpfnWndProc = WinProc;
@@ -53,79 +55,48 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 }
 
 
-void TextPrint(HDC hdc, int x, int y, TCHAR t[])
-{
-	int i, j;
-	SetTextColor(hdc, RGB(255, 255, 255));
-	for (i = -1; i <= 1; i++)
-		for (j = -1; j <= 1; j++)
-			TextOut(hdc, x + i, y + j, t, lstrlen(t));
-	SetTextColor(hdc, RGB(0, 0, 0));
-	TextOut(hdc, x, y, t, lstrlen(t));
-}
 LRESULT CALLBACK WinProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc, memdc1, memdc2;
 	PAINTSTRUCT ps;
-	static HBITMAP old_hBit1, old_hBit2, new_hBit1, new_hBit2;
-	static int x=0, y=0;
-	static int posY;
-	TCHAR	Word[] = _T("Succeeding you, Father!");
-	static RECT rectView;
-	static int add = 1;
 
 	switch (iMsg)
 	{
 	case WM_CREATE:
-		new_hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP1));
-		GetClientRect(hwnd, &rectView);
-		SetTimer(hwnd, 1,15, NULL);
-		posY = 0;
+		g_API2D.Init(hwnd);
+		SetTimer(hwnd, 123, 30, NULL);
 		break;
 	case WM_PAINT:
-		GetClientRect(hwnd, &rectView);
 		hdc = BeginPaint(hwnd, &ps);
-		memdc1 = CreateCompatibleDC(hdc);
-		memdc2 = CreateCompatibleDC(memdc1);
-		if (new_hBit1 == NULL)
-			new_hBit1 = CreateCompatibleBitmap(hdc, 697, 504);
-		old_hBit1 = (HBITMAP)SelectObject(memdc1, new_hBit1);
-		old_hBit2 = (HBITMAP)SelectObject(memdc2, new_hBit2);
-		//StretchBlt(hdc, 0, 0, rectView.right, rectView.bottom, memdc2, 0, 0, 697, 504, SRCCOPY); 
-		//StretchBlt(hdc, 0, 0, 697, 504, memdc2, 0, 0, 697, 504, SRCCOPY);
-		BitBlt(memdc1, 0, 0, 697, 504, memdc2, 0, 0,SRCCOPY);
-		SetBkMode(memdc1, TRANSPARENT);
-		TextPrint(memdc1, 200, posY, Word);
-		BitBlt(hdc, 0, 0, 697, 504, memdc1, 0, 0, SRCCOPY);
-		SelectObject(memdc1, old_hBit1);
-		SelectObject(memdc2, old_hBit2);
-		DeleteDC(memdc2);
-		DeleteDC(memdc1);
+		g_API2D.Draw(hdc);
+		g_API2D.PrintText(hdc);
 		EndPaint(hwnd, &ps);
 		return 0;
+	case WM_TIMER:
+		g_API2D.Update();
+		InvalidateRgn(hwnd, 0, false);
+		break;
 	case WM_DESTROY:
-		if (new_hBit1) DeleteObject(new_hBit1);
-		DeleteObject(new_hBit2);
-		KillTimer(hwnd, 1);
 		PostQuitMessage(0);
 		break;
 	case WM_KEYDOWN:
-		break;
-	case WM_TIMER:
-		posY += add;
-
-		if (posY + 10 > 504)
-		{			
-			posY -= 5;
-			add *= -1;			
-		}
-		else if (posY < rectView.top)
+		if (wParam == VK_RIGHT)
 		{
-			posY = 1;
-			add *= -1;
+			g_API2D.setDir(true);
+
+			g_API2D.SetPosX(3);
 		}
-		InvalidateRgn(hwnd, NULL, FALSE);		
-		return 0;
+		else if (wParam == VK_LEFT)
+		{
+			g_API2D.setDir(false);
+			g_API2D.SetPosX(-3);
+		}
+		else
+		{
+			g_API2D.setDir(true);
+			g_API2D.SetPosX(3);
+		}
+
 	}
 
 	return DefWindowProc(hwnd, iMsg, wParam, lParam);
