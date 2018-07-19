@@ -1,10 +1,9 @@
 #pragma once
-#include <vector>
 
 #define SPRITE_WIDTH 25
 #define SPRITE_HEIGHT 30
 #define PLAYER_SPEED_MAX 15
-#define PLAYER_SPEED_MIN 3
+#define PLAYER_SPEED_MIN 4
 
 
 enum PlayerStatus {
@@ -21,7 +20,6 @@ class Manager
 {
 	
 public:
-	std::vector<POINT> DrawingPosXY;
 	Manager();
 	~Manager();
 	void subLife();
@@ -39,7 +37,6 @@ public:
 private:
 	int life;
 	int PLAYER_STATUS = IDLE;
-	int speed = 4;
 	int PLAYER_SPEED = PLAYER_SPEED_MIN;
 	int WidthMax;
 	int HeightMax;

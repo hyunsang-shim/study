@@ -26,14 +26,11 @@ void API2D::Init(HWND hWnd)
 		LR_LOADFROMFILE | LR_CREATEDIBSECTION);
 	GetObject(hBit2, sizeof(BITMAP), &bit2);
 
-	DrawingPosXY.push_back({ 0, 0 });
-
 }
 
 void API2D::Update(HWND hwnd)
 {
 	UpdateText();
-	DrawLine(hwnd);
 	UpdataAnimation();
 	UpdateUI(hwnd);
 }
@@ -69,6 +66,7 @@ void API2D::UpdateUI(HWND hWnd)
 	//남은 생명 이미지를 메모리에 그렸던 DC를 삭제한다.
 	SelectObject(hMemDC2, hLifeBitmap);
 	DeleteDC(hMemDC2);
+	ReleaseDC(hWnd, hdc);
 
 }
 
@@ -88,7 +86,7 @@ void API2D::Draw(HDC hdc)
 	
 	
 	//배경 이미지를 그린다.
-	TransparentBlt(hdc, 1, 1, bx, by, hMemDC, 0, 0, bx,by, RGB(255, 0, 255));
+	TransparentBlt(hdc, 0, 0, bx, by, hMemDC, 0, 0, bx,by, RGB(255, 0, 255));
 	//배경 이미지를 메모리에 그렸던 DC를 삭제한다.
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteDC(hMemDC);
@@ -147,22 +145,7 @@ POINT API2D::GetDrawStart()
 
 void API2D::DrawLine(HWND hWnd)
 {
-	HDC hdc = GetDC(hWnd);
-
-	HDC hMemDC = CreateCompatibleDC(hdc);
-	if ((getPLAYER_STATUS() == DRAWING) && DrawingPosXY.size() > 0)	// 그리기 상태 & 좌표 저장된 것이 1개 이상일 때
-	{
-		MoveToEx(hdc, GetDrawStart().x, GetDrawStart().y, NULL);
-		LineTo(hdc, DrawingPosXY[0].x, DrawingPosXY[0].y);
-
-		for (int i = 1; i < DrawingPosXY.size(); i++)
-		{
-			MoveToEx(hdc, DrawingPosXY[i-1].x, DrawingPosXY[i-1].y, NULL);
-			LineTo(hdc, DrawingPosXY[i].x, DrawingPosXY[i].y);
-		}
-	}
-
-	BitBlt(hdc, 0, 0, getWidthMax(), getHeightMax(), hMemDC, 0, 0, SRCPAINT);
+	
 }
 
 int API2D::GetPosX()
