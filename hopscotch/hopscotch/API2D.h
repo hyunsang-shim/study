@@ -21,38 +21,38 @@ private:
 	HBITMAP hBit2, oldBit2;
 	BITMAP bit2;
 
-	const int IMAGE_SIZE_X = 75;
+	const int IMAGE_SIZE_X = 100;
 	const int IMAGE_SIZE_Y = 120;
-	const int SPRITE_SIZE_X = 25;
-	const int SPRITE_SIZE_Y = 30;
-	SIZE DrawStart = { 0 };
+	POINT DrawStart = { 0,0 };
 	
-	int cur_posX = 50;
-	int cur_posY = 50;
-	int FacingDir = 1;
+	int cur_posX = 0;
+	int cur_posY = 0;
+	int FacingDir = FACING_DOWN;
 
 	int CurFrame = RUN_FRAME_MIN;
 	RECT rectView;
-	int posX, posY;
 	TCHAR *strText;
 
 public:
-	const int RUN_FRAME_MAX = IMAGE_SIZE_X / SPRITE_SIZE_X - 1;
+	const int RUN_FRAME_MAX = IMAGE_SIZE_X / SPRITE_WIDTH - 1;
 	const int RUN_FRAME_MIN = 0;
 	void Init(HWND hwnd);
 	void Update(HWND hwnd);
 	void UpdataAnimation();
+	void UpdateUI(HWND hwnd);
 	void UpdateText();
 	void Draw(HDC hdc);
 	void DrawAnimation(HDC hdc);
 	void PrintText(HDC hdc);
 	void SetPosX(int x);
 	void SetPosY(int y);
-	void SetDrawStart(SIZE StartPos);
-	SIZE GetDrawStart();
+	void SetDrawStart(POINT StartPos);
+	POINT GetDrawStart();
 	int GetPosX();
 	int GetPosY();
 	void AddFrame(int x);
-	void setDir(int FacingDir);
+	void setFacingDir(int FacingDir);
+	int getFacingDir();
+	void DrawLine(HWND hWnd);
 };
 

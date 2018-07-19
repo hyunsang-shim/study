@@ -6,7 +6,6 @@ Manager::Manager()
 {
 }
 
-
 Manager::~Manager()
 {
 }
@@ -47,4 +46,24 @@ int Manager::getPLAYER_SPEED()
 void Manager::setPLAYER_SPEED(int x)
 {
 	this->PLAYER_SPEED = x;
+}
+
+int Manager::getWidthMax()
+{
+	return this->WidthMax;
+}
+
+int Manager::getHeightMax()
+{
+	return this->HeightMax;
+}
+
+void Manager::setWidthMax(int width)
+{
+	this->WidthMax = width;
+}
+
+void Manager::setHeightMax(int height)
+{
+	this->HeightMax = height;
 }

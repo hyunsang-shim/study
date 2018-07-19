@@ -11,6 +11,7 @@ enum PlayerStatus {
 	IDLE = 0,
 	MOVING,
 	DRAWING,
+	DRAWING_DONE,
 	RETURNING,
 	DIEING,
 	GAMEOVER
@@ -20,7 +21,7 @@ class Manager
 {
 	
 public:
-	std::vector<SIZE> DrawingPosXY;
+	std::vector<POINT> DrawingPosXY;
 	Manager();
 	~Manager();
 	void subLife();
@@ -30,12 +31,18 @@ public:
 	void setPLAYER_STATUS(int status);
 	int getPLAYER_SPEED();
 	void setPLAYER_SPEED(int x);
+	int getWidthMax();
+	int getHeightMax();
+	void setWidthMax(int width);
+	void setHeightMax(int height);
 
 private:
 	int life;
 	int PLAYER_STATUS = IDLE;
 	int speed = 4;
 	int PLAYER_SPEED = PLAYER_SPEED_MIN;
+	int WidthMax;
+	int HeightMax;
 
 public:
 	static Manager* GetInstance()
