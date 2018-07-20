@@ -1,4 +1,5 @@
 #pragma once
+#include  "stdafx.h"
 
 #define SPRITE_WIDTH 25
 #define SPRITE_HEIGHT 30
@@ -32,7 +33,14 @@ public:
 	int getWidthMax();
 	int getHeightMax();
 	void setWidthMax(int width);
-	void setHeightMax(int height);
+	void setHeightMax(int height); 
+	std::vector< std::vector<POINT> > Colliders;
+	int cnt_Colliders;
+	POINT *drawPoints;
+	int cnt_drawPoints = 0;
+	std::vector< std::vector<POINT> > FilledArea;
+	int cnt_FilledArea;
+
 
 private:
 	int life;

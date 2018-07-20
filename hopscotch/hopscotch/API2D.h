@@ -54,5 +54,6 @@ public:
 	void setFacingDir(int FacingDir);
 	int getFacingDir();
 	void DrawLine(HWND hWnd);
+	void FillArea(HWND hWnd);
 };
 

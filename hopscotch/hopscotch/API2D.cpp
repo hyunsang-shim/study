@@ -25,7 +25,21 @@ void API2D::Init(HWND hWnd)
 		IMAGE_BITMAP, 0, 0,
 		LR_LOADFROMFILE | LR_CREATEDIBSECTION);
 	GetObject(hBit2, sizeof(BITMAP), &bit2);
-
+	
+	//임시 벡터.
+	std::vector<POINT> tmp;
+	//인덱스를 x=y=idx형식으로 넣자.
+	tmp.push_back({ cnt_Colliders, cnt_Colliders });
+	//인덱스용 POINT를 넣는다. 0번 = 외곽선
+	Colliders.push_back(tmp);
+	cnt_Colliders++;
+	//외곽선 좌표 입력 시작
+	Colliders[cnt_Colliders-1].push_back({ 0,0 });
+	Colliders[cnt_Colliders-1].push_back({getWidthMax(), 0 });
+	Colliders[cnt_Colliders-1].push_back({ getWidthMax(), getHeightMax()});
+	Colliders[cnt_Colliders-1].push_back({0, getHeightMax()});
+	Colliders[cnt_Colliders - 1].push_back({ 0,0 });	//좌표 계산이 쉽도록 위해 마지막에 첫 좌표를 하나 더 넣음
+	
 }
 
 void API2D::Update(HWND hwnd)
@@ -146,6 +160,172 @@ POINT API2D::GetDrawStart()
 void API2D::DrawLine(HWND hWnd)
 {
 	
+}
+
+void API2D::FillArea(HWND hWnd)
+{
+	HDC hdc = GetDC(hWnd);
+	
+	// 시작 좌표로 돌아가면서 꼭지점을 찾아서 리스트에 넣고서 다각형을 그린다.
+	// 가던 방향을 기준으로,위 또는 아래 였으면 X -> Y ->X 순으로
+	// 왼쪽 또는 오른쪽이었으면 Y -> X -> Y 순으로
+	
+	// 마지막 좌표(충돌 난 좌표)가 시작점과 같은지 판단한다.
+	// 아니면 시작점으로 이동하면서 충돌체의 좌표들을 찾는다. (동일 선상에 있는 좌표 중 x y를 비교하여 찾는다.)
+
+	int horizontal;
+	int vertical;
+
+	int lastX = drawPoints[cnt_drawPoints - 1].x;
+	int lastY = drawPoints[cnt_drawPoints - 1].y;
+
+	// 수평 방향 확인
+	if (lastX - drawPoints[0].x > 0)
+		horizontal = 1;
+	else
+		horizontal = -1;
+
+	// 수직 방향 확인
+	if (lastY - drawPoints[0].y > 0)
+		vertical = -1;
+	else
+		vertical = 1;
+
+
+	while ((lastY != drawPoints[0].y) && (lastX != drawPoints[0].x))
+	{
+		// X좌표가 같을 때
+		if (lastX == drawPoints[0].x)
+		{
+			if (lastY == drawPoints[0].y)	//같은 좌표
+				Polygon(hdc, drawPoints, cnt_drawPoints);		// 닫힌 도형 = 그린다!
+			// 같은 선상의 좌표
+			else    
+			{
+				//아래로~
+				if (vertical > 0)
+				{
+					for (int i = 0; i < Colliders.size(); i++)
+					{
+						for (int j = 0; j < Colliders[i].size() - 1; j++)
+						{
+							if (lastX == Colliders[i][j].x)
+							{
+								if (lastY > Colliders[i][j].y)
+								{							
+									// 마지막 좌표와 찾은 좌표 사이에 그리기 시작점이 있는지 확인
+									// 찾은 좌표 대신에 그리기 시작점을 넣고 마지막 좌표값을 시작점으로 업데이트 하여 넣는다. -> 닫힌 도형 완성!
+									// 없으면 찾은 점을 넣는다.
+
+									//계산 편의용
+									
+									int x1 = lastX;
+									int y1 = lastY;
+									int x2 = Colliders[i][j].x;
+									int y2 = Colliders[i][j].y;
+									
+									int a = (y1 - y2);
+									int b = (x2 - x1);
+									int c = x1 * y2 - x2 * y1;
+
+									if (abs(a * drawPoints[0].x + b * drawPoints[0].y + c) / pow((pow(a, 2) + pow(b, 2)), 2) == 0);
+									{
+										drawPoints = (POINT*)realloc(drawPoints, ++cnt_drawPoints);
+										drawPoints[cnt_drawPoints - 1] = drawPoints[0];
+										lastX = drawPoints[0].x;
+										lastY = drawPoints[0].y;
+									}
+									else
+									{
+										drawPoints = (POINT*)realloc(drawPoints, ++cnt_drawPoints);
+										drawPoints[cnt_drawPoints - 1] = Colliders[i][j];
+										lastX = Colliders[i][j].x;
+										lastY = Colliders[i][j].y;
+									}
+									//
+
+
+
+
+
+
+
+
+								}
+							}
+						}
+					}
+				}
+				//위로~~
+				else
+				{
+					for (int i = 0; i < Colliders.size(); i++)
+					{
+						for (int j = 0; j < Colliders[i].size() - 1; j++)
+						{
+							if (lastX == Colliders[i][j].x)
+							{
+								if (lastY < Colliders[i][j].y)
+								{
+									drawPoints = (POINT*)realloc(drawPoints, ++cnt_drawPoints);
+									drawPoints[cnt_drawPoints - 1] = Colliders[i][j];
+									lastX = Colliders[i][j].x;
+									lastY = Colliders[i][j].y;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		// y좌표가 같을 때
+		else if (lastY == drawPoints[0].y)
+		{
+		}
+		// 둘 다 다를 때
+		else
+		{
+			// 수평 방향 확인
+			if (lastX - drawPoints[0].x > 0)
+				horizontal = 1;
+			else
+				horizontal = -1;
+
+			// 수직 방향 확인
+			if (lastY - drawPoints[0].y > 0)
+				vertical = -1;
+			else
+				vertical = 1;
+
+			
+			for (int i = 0; i < Colliders.size(); i++)
+			{
+				for (int j = 0; j < Colliders[i].size() - 1; i++)
+				{
+
+				}
+			}
+
+
+
+
+
+
+		}
+
+	}
+	
+
+	Polygon(hdc, drawPoints, cnt_drawPoints);
+	
+	for (int i = 0; i < cnt_drawPoints; i++)
+	{
+		FilledArea[cnt_FilledArea].push_back(drawPoints[i]);
+	}
+	cnt_FilledArea++;
+	
+	free(drawPoints);
+	ReleaseDC(hWnd, hdc);
 }
 
 int API2D::GetPosX()
