@@ -35,7 +35,7 @@ public:
 	void setWidthMax(int width);
 	void setHeightMax(int height); 
 	std::vector< std::vector<POINT> > Colliders;
-	int cnt_Colliders;
+	int cnt_Colliders = 0;
 	POINT *drawPoints;
 	int cnt_drawPoints = 0;
 	std::vector< std::vector<POINT> > FilledArea;

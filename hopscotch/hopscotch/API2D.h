@@ -32,7 +32,8 @@ private:
 	int CurFrame = RUN_FRAME_MIN;
 	RECT rectView;
 	TCHAR *strText;
-
+	void Make_it_closed(int x, int y);
+	int GetCollider_id(int x, int y);
 public:
 	const int RUN_FRAME_MAX = IMAGE_SIZE_X / SPRITE_WIDTH - 1;
 	const int RUN_FRAME_MIN = 0;
