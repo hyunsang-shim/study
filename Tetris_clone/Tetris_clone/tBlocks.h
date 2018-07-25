@@ -4,27 +4,45 @@
 class tBlocks : public Manager
 {
 
+public:
+	tBlocks();
+	void InitTetrimino(int shape, int rotate, std::vector<RECT> *t);
+	void Rotate(std::vector<RECT> *t);
+	int GetCurX();
+	int GetCurY();
+	void SetCurX(int newX);
+	void SetCurY(int newY);
+	void MoveRight(std::vector<RECT> *t);
+	void MoveLeft(std::vector<RECT> *t);
+	void Down(std::vector<RECT> *t);
+	bool CheckRight(std::vector<RECT> *t);
+	bool CheckLeft(std::vector<RECT> *t);
+	bool CheckRotate_R(std::vector<RECT>* t);
+	bool CheckRotate_L();
+	//void HardDrop(std::vector<RECT> *t);
+	std::vector<int> GetBlockColor(int shape);
+
+	~tBlocks();
 private:
 	int CurX;
 	int CurY;
 	//7 = 블럭 외형
 	//32 = 4 * 2 * 4 (4회전, 2좌표(x,y), 4칸씩 한세트) 
 	int shapes[7][32] = {
-		// 0번 = ㅡ자
-		{ -2,0, -1,0, 0,0, 1,0,		0,-2, 0,-1, 0,0, 0,1, },
-		// 1번 = ㅁ자
-		{ -1,-1, 0,-1, -1,0, 0,0, },
-		// 2번 = s자
-		{ 1,-1, 0,-1, 0,0, -1,0,	-1,-1, -1,0, 0,0, 1,1, },
-		// 3번 = z자
-		{ -1,-1, 0,-1, 0,0, 1,0, 	1,-1, 1,0, 0,0, 0,1, },
-		// 4번 = ㄴ자 
-		{ 0,-1, 0,0, 1,0, 2,0,		0,-2, 0,-1, 0,0, 1,0,	-2,0, -1,0, 0,0, 0,1,	0,2, 0,1, 0,0, -1,0 },
-		// 5번 = 역 ㄴ자
-		{ -2,0, -1,0, 0,0, 0,-1,	0,-2, 0,-1, 0,0, 1,0,	2,0, 1,0, 0,0, 0,-1,	0,2, 0,1, 0,0, -1,0 },
-		// 6번 - ㅜ자
-		{ 0,1, -1,0, 0,0, 1,0,		-1,0, 0,0, 0,-1, 0,1,	0,-1, -1,0, 0,0, 1,0,	1,0, 0,-1, 0,0, 0,1 } };
-
+		// 0번 = I자
+		{ 0,0, -2,0, -1,0, 1,0,		0,0, 0,-2, 0,-1, 0,1,},
+		// 1번 = O자
+		{ 0,0, -1,-1, 0,-1, -1,0, },
+		// 2번 = S자
+		{ 0,0, 1,-1, 0,-1, -1,0,	0,0, -1,-1, -1,0, 0,1, },
+		// 3번 = Z자
+		{ 0,0, -1,-1, 0,-1, 1,0, 	0,0, 1,-1, 1,0, 0,1, },
+		// 4번 = L자 
+		{ 0,0, 0,-1, 1,0, 2,0,		0,0, 0,2, 0,1, -1,0,	0,0, -2,0, -1,0, 0,1,	0,0, 0,-2, 0,-1, 1,0 },
+		// 5번 = J자
+		{ 0,0, -1,0, 0,-1, 0,-2,	0,0, 1,0, 2,0, 0,-1,	0,0, 0,1, 0,2, 1,0,		0,0, -1,0, -2,0, 0,1 },
+		// 6번 - T자
+		{ 0,0, 0,1, -1,0, 1,0,		0,0, -1,0, 0,-1, 0,1,	0,0, 0,-1, -1,0, 1,0,	0,0, 1,0, 0,-1, 0,1 } };
 
 	// 외형, 유효 회전 수, R, G, B
 	int dictionary[7][5] = { 
@@ -35,16 +53,6 @@ private:
 		{ 4, 4,		255,	128,	50  },
 		{ 5, 4,		50,		255,	200 },
 		{ 6, 4,		25,		200,	25  } };
-
-public:
-	tBlocks();
-	tBlocks(int x, int y);
-	int GetCurX();
-	int GetCurY();
-	void SetCurX(int newX);
-	void SetCurY(int newY);
-	RECT GetRect();
-	std::vector<POINT> GetShape_XY(int shape, int rotate); 
-	~tBlocks();
+	
 };
 
