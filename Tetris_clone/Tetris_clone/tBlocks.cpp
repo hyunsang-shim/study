@@ -281,10 +281,17 @@ void tBlocks::UpdateTetriminoBoxes(std::vector<RECT>* t)
 	int start = 8 * (GetRotation());
 	for (int i = start; i < start + 8; i += 2)
 	{
+		//old
+		//tmp.left = GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE - mod;
+		//tmp.top = GetCurY() + shapes[this->GetShape()][i + 1] * BOX_SIZE - mod + BOX_SIZE;
+		//tmp.right = GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE + mod;
+		//tmp.bottom = GetCurY() + shapes[this->GetShape()][i + 1] * BOX_SIZE + mod + BOX_SIZE;
+
+		// trying
 		tmp.left = GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE - mod;
-		tmp.top = GetCurY() + shapes[this->GetShape()][i + 1] * BOX_SIZE - mod + BOX_SIZE;
+		tmp.top = GetCurY() + shapes[this->GetShape()][i + 1] * BOX_SIZE - mod;
 		tmp.right = GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE + mod;
-		tmp.bottom = GetCurY() + shapes[this->GetShape()][i + 1] * BOX_SIZE + mod + BOX_SIZE;
+		tmp.bottom = GetCurY() + shapes[this->GetShape()][i + 1] * BOX_SIZE + mod;
 
 		t->push_back(tmp);
 	}
