@@ -215,6 +215,44 @@ void tBlocks::HardDrop()
 	} while (!isLanded());
 }
 
+int tBlocks::DeleteLines()
+{
+	int DeletedLines = 0;
+	std::vector<int> toDeleteLines;
+	POINT tmp;
+
+	for (int i = PLAY_AREA_HEIGHT - 2; i > 2; i--)
+	{
+		int cntx = 0;
+
+		for (int j = PLAY_AREA_WIDTH - 1; j > 1; j--)
+		{
+			
+
+			if ((PLAY_AREA_STATUS[i][j] >= OCCUPIED_0) && (PLAY_AREA_STATUS[i][j]) <= OCCUPIED_6)
+				cntx++;
+
+			if (cntx == PLAY_AREA_WIDTH - 2)
+			{
+				
+				toDeleteLines.push_back(i);
+			}
+		}
+
+		
+	}
+
+	//Delete a line while toDeleteLines
+	// Delete and pull down playarea blocks(occupied spaces)
+	for (int i = 0; i < toDeleteLines.size(); i++)
+	{
+		for (int j = 1; j < PLAY_AREA_WIDTH - 1; j++)
+		{
+			PLAY_AREA_STATUS[toDeleteLines[i]][j] == EMPTY;
+		}
+	}
+}
+
 std::vector<int> tBlocks::GetBlockColor(int shape)
 {
 	std::vector<int> Color;
@@ -224,26 +262,6 @@ std::vector<int> tBlocks::GetBlockColor(int shape)
 
 	return Color;
 }
-//
-//void tBlocks::UpdateTetriminoBoxes(std::vector<RECT>* t)
-//{
-//	t->clear();
-//	RECT tmp;
-//	int mod = BOX_SIZE / 2;
-//	int curShape = GetShape();
-//
-//
-//	int start = 8 * (GetRotation());
-//	for (int i = start; i < start + 8; i += 2)
-//	{
-//		tmp.left = GetCurX() + shapes[curShape][i] * BOX_SIZE - mod;
-//		tmp.top = GetCurY() + shapes[curShape][i + 1] * BOX_SIZE - mod;
-//		tmp.right = GetCurX() + shapes[curShape][i] * BOX_SIZE + mod;
-//		tmp.bottom = GetCurY() + shapes[curShape][i + 1] * BOX_SIZE + mod;
-//
-//		t->push_back(tmp);
-//	}
-//}
 
 void tBlocks::UpdateTetrimino()
 {
@@ -276,5 +294,4 @@ void tBlocks::OccupyPlayArea()
 	{
 		PLAY_AREA_STATUS[CurY + shapes[curShape][(i + 1)]][CurX + shapes[curShape][i]] = curShape + 2;
 	}
-
 }

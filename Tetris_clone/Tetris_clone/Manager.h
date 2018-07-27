@@ -74,4 +74,5 @@ private:
 	int DownSpeed = 1000;
 	int NextTetriminos[7];
 	int NextTetriminoId = 0;
+	int score;
 };

@@ -17,6 +17,8 @@ public:
 	void Down();
 	bool CheckSpace(POINT points[]);
 	void HardDrop();
+	int DeleteLines();
+	void AddScore(int score);
 	std::vector<int> GetBlockColor(int shape);
 	//void UpdateTetriminoBoxes(std::vector<RECT> *t);
 	void UpdateTetrimino();
