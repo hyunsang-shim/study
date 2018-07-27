@@ -7,26 +7,28 @@ tBlocks::~tBlocks() {}
 // initialize a new tetrimino
 void tBlocks::InitTetrimino()
 {
-	CurX = TETRIMINO_START_X;
-	CurY = TETRIMINO_START_Y;
+	// sets shape
+	SetShape(GetNextTetriminoId());
 
+	int curShape = GetNextTetriminoId();
+
+	// sets it's rotation
+	SetRotation(0);
+	// sets landing status as false;
+	SetUnlanded();
+	// sets next tetrimino's id
+
+	SetNext(curShape + 1);
+	CurX = TETRIMINO_START_X;
+	CurY = TETRIMINO_START_Y;	
 	
 	// sets tetrimino info. to the stage(PLAY_AREA_STATUS)
-	int curShape = GetNextTetriminoId();
 	int start = 8 * (GetRotation());
 	for (int i = start; i < start + 8; i += 2)
 	{
 		PLAY_AREA_STATUS[CurY + shapes[curShape][i+1] ][CurX + shapes[curShape][i]] = curShape + 2;
 	}
 
-	// sets shape
-	SetShape(curShape);
-	// sets it's rotation
-	SetRotation(0);
-	// sets landing status as false;
-	SetUnlanded();
-	// sets next tetrimino's id
-	SetNext(curShape+1);
 	//UpdateTetriminoBoxes(t);
 	UpdateTetrimino();
 
@@ -63,7 +65,7 @@ void tBlocks::Rotate()
 
 	for (int i = start; i < start + 8; i += 2)
 	{
-		points[( i % 8 ) / 2].y = CurY + shapes[shape][(i + 1)];
+		points[(i % 8) / 2].y = CurY + shapes[shape][(i + 1)];
 		points[(i % 8) / 2].x = CurX + shapes[shape][i];
 	}
 	//
@@ -87,10 +89,11 @@ void tBlocks::Rotate()
 	}
 }
 
-
 // Move tetrimino rightward by 1 if possible
 void tBlocks::MoveRight()
 {
+	EraseTetrimino();
+
 	//
 	// generate temporal tetrimino for check.
 	//
@@ -110,16 +113,18 @@ void tBlocks::MoveRight()
 
 	if (CheckSpace(points))
 	{
-		EraseTetrimino();
 		CurX++;
-		UpdateTetrimino();
 	}
+
+	UpdateTetrimino();
 
 }
 
 // Move tetrimino leftward by 1 if possible
 void tBlocks::MoveLeft()
 {
+	EraseTetrimino();
+
 	//
 	// generate temporal tetrimino for check.
 	//
@@ -136,15 +141,15 @@ void tBlocks::MoveLeft()
 	// generation for temporal tetrimino ends.
 	//
 
+
 	if (CheckSpace(points))
 	{
-		EraseTetrimino();
 		CurX--;
-		UpdateTetrimino();
 	}
 
-}
+	UpdateTetrimino();
 
+}
 
 // Move tetrimino Downward by 1 if possible
 void tBlocks::Down()
@@ -190,17 +195,24 @@ void tBlocks::Down()
 	}
 
 	UpdateTetrimino();
-
 }
 
 bool tBlocks::CheckSpace(POINT points[])
 {
 	for (int i = 0; i < 4; i++)
 	{
-		if (PLAY_AREA_STATUS[points[i].y][points[i].x] != EMPTY)
+		if ( (PLAY_AREA_STATUS[points[i].y][points[i].x] != EMPTY)
+			&& (PLAY_AREA_STATUS[points[i].y][points[i].x] != TETRIMINO) )
 			return false;
 	}
 	return true;
+}
+
+void tBlocks::HardDrop()
+{
+	do {
+		Down();
+	} while (!isLanded());
 }
 
 std::vector<int> tBlocks::GetBlockColor(int shape)

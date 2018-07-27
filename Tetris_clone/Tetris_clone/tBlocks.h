@@ -16,7 +16,7 @@ public:
 	void MoveLeft();
 	void Down();
 	bool CheckSpace(POINT points[]);
-	//void HardDrop();
+	void HardDrop();
 	std::vector<int> GetBlockColor(int shape);
 	//void UpdateTetriminoBoxes(std::vector<RECT> *t);
 	void UpdateTetrimino();
