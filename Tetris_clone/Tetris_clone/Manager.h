@@ -4,11 +4,14 @@
 #define BOX_SIZE 30
 #define PLAY_AREA_WIDTH 15
 #define PLAY_AREA_HEIGHT 23
-#define PLAY_AREA_LEFT_MARGIN 15
+#define PLAY_AREA_MARGIN 15
+#define TETRIMINO_START_X PLAY_AREA_WIDTH/2
+#define TETRIMINO_START_Y 2
 
 enum playarea_status {
 		
 	EMPTY = 0,
+	TETRIMINO,
 	OCCUPIED_0,
 	OCCUPIED_1,
 	OCCUPIED_2,
@@ -49,16 +52,18 @@ public:
 	bool isLanded();
 	void SetDownSpeed(int speed);
 	int GetDownSpeed();
-	//int GetDownTimer();
-	//void SetDownTimer(int value);
-	int PLAY_AREA_STATUS[PLAY_AREA_HEIGHT][PLAY_AREA_WIDTH] = { 0 };
+	void NewPlayArea();
+	void SetNextTetriminos();
+	void SetNext(int nextId);
+	int GetNextTetriminoId();
+	int PLAY_AREA_STATUS[PLAY_AREA_HEIGHT][PLAY_AREA_WIDTH];
 	~Manager();
 
 public:
 	static Manager* GetInstance()
 	{
 		static Manager instance;
-
+		
 		return &instance;
 	}
 
@@ -67,5 +72,6 @@ private:
 	int Rotation;
 	bool LandingState;
 	int DownSpeed = 1000;
+	int NextTetriminos[7];
+	int NextTetriminoId = 0;
 };
-

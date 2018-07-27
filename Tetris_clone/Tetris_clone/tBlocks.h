@@ -6,30 +6,26 @@ class tBlocks : public Manager
 
 public:
 	tBlocks();
-	void InitTetrimino(int shape, int rotate, std::vector<RECT> *t);
-	void Rotate(std::vector<RECT> *t);
+	void InitTetrimino();
+	void Rotate();
 	int GetCurX();
 	int GetCurY();
 	void SetCurX(int newX);
 	void SetCurY(int newY);
-	void MoveRight(std::vector<RECT> *t);
-	void MoveLeft(std::vector<RECT> *t);
-	void Down(std::vector<RECT> *t);
-	bool CheckRight(std::vector<RECT> *t);
-	bool CheckLeft(std::vector<RECT> *t);
-	bool CheckBelow(std::vector<RECT> *t);
-	bool CheckRotate(std::vector<RECT>* t);
-	bool CheckRotate_L();
-	//void HardDrop(std::vector<RECT> *t);
+	void MoveRight();
+	void MoveLeft();
+	void Down();
+	bool CheckSpace(POINT points[]);
+	//void HardDrop();
 	std::vector<int> GetBlockColor(int shape);
-	void UpdateTetriminoBoxes(std::vector<RECT> *t);
-	void TetriminoToBlocks(std::vector<RECT> *t);
+	//void UpdateTetriminoBoxes(std::vector<RECT> *t);
+	void UpdateTetrimino();
+	void EraseTetrimino();
+	void OccupyPlayArea();
 	~tBlocks();
 private:
 	int CurX;
 	int CurY;
-	int CurX2;
-	int CurY2;
 	//7 = 블럭 외형
 	//32 = 4 * 2 * 4 (4회전, 2좌표(x,y), 4칸씩 한세트) 
 	int shapes[7][32] = {

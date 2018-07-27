@@ -5,20 +5,18 @@
 #define PLAY_AREA_WIDTH 15
 #define PLAY_AREA_HEIGHT 23
 #define PLAY_AREA_LEFT_MARGIN 15
-#define TETRIMINO_START_X PLAY_AREA_WIDTH/2
-#define TETRIMINO_START_Y 2
 
 enum playarea_status {
 		
 	EMPTY = 0,
-	TETRIMINO,
+	TETRIMINO, 
 	OCCUPIED_0,
 	OCCUPIED_1,
 	OCCUPIED_2,
 	OCCUPIED_3,
 	OCCUPIED_4,
 	OCCUPIED_5,
-	OCCUPIED_6,	
+	OCCUPIED_6,		
 	WALL,
 	GROUND
 };
@@ -52,7 +50,8 @@ public:
 	bool isLanded();
 	void SetDownSpeed(int speed);
 	int GetDownSpeed();
-	void NewPlayArea();	
+	//int GetDownTimer();
+	//void SetDownTimer(int value);
 	int PLAY_AREA_STATUS[PLAY_AREA_HEIGHT][PLAY_AREA_WIDTH] = { 0 };
 	~Manager();
 

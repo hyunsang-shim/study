@@ -1,259 +1,203 @@
 #include "stdafx.h"
 #include "tBlocks.h"
 
+tBlocks::tBlocks() {}
+tBlocks::~tBlocks() {}
 
-tBlocks::tBlocks()
+// initialize a new tetrimino
+void tBlocks::InitTetrimino()
 {
-	for (int i = 0; i < PLAY_AREA_HEIGHT; i++)
+	CurX = TETRIMINO_START_X;
+	CurY = TETRIMINO_START_Y;
+
+	
+	// sets tetrimino info. to the stage(PLAY_AREA_STATUS)
+	int curShape = GetNextTetriminoId();
+	int start = 8 * (GetRotation());
+	for (int i = start; i < start + 8; i += 2)
 	{
-		for (int j = 0; j < PLAY_AREA_WIDTH; j++)
-		{
-			PLAY_AREA_STATUS[i][j] = EMPTY;
+		PLAY_AREA_STATUS[CurY + shapes[curShape][i+1] ][CurX + shapes[curShape][i]] = curShape + 2;
+	}
 
-			if (i == (PLAY_AREA_HEIGHT - 1))
-				PLAY_AREA_STATUS[i][j] = WALL;
+	// sets shape
+	SetShape(curShape);
+	// sets it's rotation
+	SetRotation(0);
+	// sets landing status as false;
+	SetUnlanded();
+	// sets next tetrimino's id
+	SetNext(curShape+1);
+	//UpdateTetriminoBoxes(t);
+	UpdateTetrimino();
 
-			if ((j == 0) || (j == (PLAY_AREA_WIDTH - 1)))
-				PLAY_AREA_STATUS[i][j] = GROUND;
-		}
+}
+
+// returns current column idx on play_area
+int tBlocks::GetCurX() { return CurX; }
+// returns current row idx on play_area 
+int tBlocks::GetCurY() { return CurY; }
+// sets center of Tetrimino's column idx on play_area
+void tBlocks::SetCurX(int x) { CurX = x; }
+// sets center of Tetrimino's row idx on play_area
+void tBlocks::SetCurY(int y) { CurY = y; }
+
+// Rotates Tetrimino
+void tBlocks::Rotate()
+{
+
+	//
+	// generate temporal tetrimino for check.
+	POINT points[4];
+	int tmp_rotation;
+
+	// get rotation info.
+	if ((dictionary[GetShape()][1] > (GetRotation()+1)))
+		tmp_rotation = GetRotation() + 1;
+	// if none, back to first(idx 0) idx
+	else
+		tmp_rotation = 0;	// back to first;
+
+
+	int start = 8 * tmp_rotation;
+	int shape = GetShape();
+
+	for (int i = start; i < start + 8; i += 2)
+	{
+		points[( i % 8 ) / 2].y = CurY + shapes[shape][(i + 1)];
+		points[(i % 8) / 2].x = CurX + shapes[shape][i];
+	}
+	//
+	// generation for temporal tetrimino ends.	//
+
+
+	// check whether can be ratated.
+	if (CheckSpace(points))
+	{
+		EraseTetrimino();
+
+		// Rotate Tetrimino
+		// if there's a next rotation available, increase rotation idx
+		if ((dictionary[GetShape()][1] > (GetRotation() + 1)))
+			SetRotation(GetRotation() + 1);
+		// if none, back to first(idx 0) idx
+		else
+			SetRotation(0);	// back to first;
+
+		UpdateTetrimino();
 	}
 }
 
 
-void tBlocks::InitTetrimino(int shape, int rotate, std::vector<RECT> *t)
+// Move tetrimino rightward by 1 if possible
+void tBlocks::MoveRight()
 {
-	CurX = PLAY_AREA_WIDTH / 2 * BOX_SIZE + PLAY_AREA_LEFT_MARGIN;
-	CurY = 1 * BOX_SIZE;
+	//
+	// generate temporal tetrimino for check.
+	//
+	POINT points[4];
+	int start = 8 * (this->GetRotation());
+	int shape = GetShape();
 
-	t->clear();
-	RECT tmp;
-	int mod = BOX_SIZE / 2;
-
-	if (dictionary[shape][1] >= rotate)
+	for (int i = start; i < start + 8; i += 2)
 	{
-		int start = 8 * rotate;
-		for (int i = start; i < start + 8; i += 2)
-		{
-			tmp.left = GetCurX() + shapes[shape][i] * BOX_SIZE - mod;
-			tmp.top = GetCurY() + shapes[shape][i+1] * BOX_SIZE - mod;
-			tmp.right = GetCurX() + shapes[shape][i] * BOX_SIZE + mod;
-			tmp.bottom = GetCurY() + shapes[shape][i + 1] * BOX_SIZE + mod;
+		points[(i % 8) / 2].y = CurY + shapes[shape][(i + 1)];
+		points[(i % 8) / 2].x = CurX + shapes[shape][i] + 1;
+	}
+	//
+	// generation for temporal tetrimino ends.
+	//
 
-			t->push_back(tmp);
-		}
+
+	if (CheckSpace(points))
+	{
+		EraseTetrimino();
+		CurX++;
+		UpdateTetrimino();
+	}
+
+}
+
+// Move tetrimino leftward by 1 if possible
+void tBlocks::MoveLeft()
+{
+	//
+	// generate temporal tetrimino for check.
+	//
+	POINT points[4];
+	int start = 8 * (this->GetRotation());
+	int shape = GetShape();
+
+	for (int i = start; i < start + 8; i += 2)
+	{
+		points[(i % 8) / 2].y = CurY + shapes[shape][(i + 1)];
+		points[(i % 8) / 2].x = CurX + shapes[shape][i] - 1;
+	}
+	//
+	// generation for temporal tetrimino ends.
+	//
+
+	if (CheckSpace(points))
+	{
+		EraseTetrimino();
+		CurX--;
+		UpdateTetrimino();
+	}
+
+}
+
+
+// Move tetrimino Downward by 1 if possible
+void tBlocks::Down()
+{
+	EraseTetrimino();
+
+	//
+	// generate temporal tetrimino for check.
+	//
+	POINT points[4];
+	int start = 8 * (this->GetRotation());
+	int shape = GetShape();
+
+	for (int i = start; i < start + 8; i += 2)
+	{
+		points[(i % 8) / 2].y = CurY + shapes[shape][(i + 1)] +1;
+		points[(i % 8) / 2].x = CurX + shapes[shape][i];
+	}
+	//
+	// generation for temporal tetrimino ends.
+	//
+
+	// tetrimino is landed but not fixed. -> yet can move!
+	if (CheckSpace(points))
+	{
+		// add Y Coord.
+		CurY++;
 	}
 	else
 	{
-		for (int i = 0; i < 8; i += 2)
+		if (isLanded())
 		{
-			tmp.left = GetCurX() + shapes[shape][i] * BOX_SIZE - mod;
-			tmp.top = GetCurY() + shapes[shape][i+1] * BOX_SIZE - mod;
-			tmp.right = GetCurX() + shapes[shape][i] * BOX_SIZE + mod;
-			tmp.bottom = GetCurY() + shapes[shape][i + 1] * BOX_SIZE + mod;
-
-			t->push_back(tmp);
+			// check the playarea for filled horezontal lines. if it is, delete it if possible.
+			// check gameover condition.
+			// game isn't over, then add point(score) 
+			// gameover -> update Tetrimino image shown on "next" area. 
+			// !gameover -> Re-Initialize Tetrimino as shown as "next" area.
+			OccupyPlayArea();
+			InitTetrimino();
 		}
-	}
-
-	SetShape(shape);
-	SetRotation(rotate);
-	SetUnlanded();
-}
-
-
-int tBlocks::GetCurX()	{	return CurX;	}
-int tBlocks::GetCurY()	{	return CurY;	}
-void tBlocks::SetCurX(int newX)	{	CurX = newX;	}
-void tBlocks::SetCurY(int newY)	{	CurY = newY;	}
-
-void tBlocks::Rotate(std::vector<RECT> *t)
-{
-	//회전할 수 있으면
-	if (CheckRotate(t))
-	{
-		//회전을 진행한다.
-		// 더 회전할 수 있으면 테트리미노를 회전시킨다.
-		if ((dictionary[this->GetShape()][1] > (this->GetRotation() + 1)))
-			this->SetRotation(this->GetRotation() + 1);
-		else
-			this->SetRotation(0);	// 끝까지 갔으면 처음으로
-	}
-}
-
-
-void tBlocks::MoveRight(std::vector<RECT> *t)
-{
-	if (CheckRight(t))
-	{
-		// printf("Move : x = %d, y = %d  -->  ", CurX, CurY);
-		CurX += BOX_SIZE;
-		// printf("Move : x = %d, y = %d\n", CurX, CurY);
-	}
-
-	UpdateTetriminoBoxes(t);
-}
-void tBlocks::MoveLeft(std::vector<RECT> *t)
-{
-	if (CheckLeft(t))
-	{
-		printf("Move : x = %d, y = %d  -->  ", CurX, CurY);
-		CurX = CurX - BOX_SIZE;
-		CurY = CurY;
-		printf("Move : x = %d, y = %d\n", CurX, CurY);
-	}
-
-	UpdateTetriminoBoxes(t);
-}
-
-
-void tBlocks::Down(std::vector<RECT> *t)
-{
-	// tetrimino is landed but not fixed. -> yet can move!
-	if (isLanded())
-	{
-		// for console output.
-		printf("BOOM!!!\n");
-		// write code as follow.
-		// let playarea's attribute to be changed. EMPTY -> OCCUPIED. (fill inside as tetrimino's own color)
-		TetriminoToBlocks(t);
-		// check the playarea for filled horezontal lines. if it is, delete it if possible.
-		// check gameover condition.
-		// game isn't over, then add point(score) 
-		// gameover -> update Tetrimino image shown on "next" area. 
-		// !gameover -> Re-Initialize Tetrimino as shown as "next" area.
-		InitTetrimino(rand()%7, 0, t);
-	}
-	else if (CheckBelow(t))
-	{	
-		// add Y Coord.
-		CurY += BOX_SIZE;
-
-		// if can't move again, it's landed.
-		if (!CheckBelow(t))
-		{
+		else 
 			SetLanded();
-		}	
-	}
-	else if (!CheckBelow(t))
-	{
-		SetLanded();
-		printf("Landed!!\n");
 	}
 
-	UpdateTetriminoBoxes(t);
+	UpdateTetrimino();
+
 }
 
-
-
-bool tBlocks::CheckRight(std::vector<RECT>* t)
-{
-	int mod = BOX_SIZE / 2;
-
-	int start = 8 * (this->GetRotation());
-	for (int i = start; i < start + 8; i += 2)
-	{
-		if ((GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE + mod) > ((PLAY_AREA_WIDTH - 2) * BOX_SIZE))
-			return false;
-	}
-	return true;
-}
-
-
-bool tBlocks::CheckLeft(std::vector<RECT>* t)
-{
-	int mod = BOX_SIZE / 2;
-
-	int start = 8 * (this->GetRotation());
-	for (int i = start; i < start + 8; i += 2)
-	{
-		if ((GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE - mod ) < BOX_SIZE + PLAY_AREA_LEFT_MARGIN)
-			return false;
-	}
-	return true;
-}
-
-
-bool tBlocks::CheckBelow(std::vector<RECT>* t)
+bool tBlocks::CheckSpace(POINT points[])
 {
 	for (int i = 0; i < 4; i++)
 	{
-		int col = ((t->begin() + i)->left + BOX_SIZE / 2) / BOX_SIZE;
-		int row = ((t->begin() + i)->top + BOX_SIZE / 2) / BOX_SIZE + 1;
-		
-		if ( (GetCurY() + (shapes[this->GetShape()][i]) * BOX_SIZE + BOX_SIZE/2) > ((PLAY_AREA_HEIGHT - 2) * BOX_SIZE) - BOX_SIZE)
-		{
-			return false;
-		}
-		if (PLAY_AREA_STATUS[row][col] != EMPTY)
-		{
-			return false;
-		}	
-		
-	}
-	return true;
-}
-
-
-bool tBlocks::CheckRotate(std::vector<RECT>* t)
-{
-	bool chk = false;
-	// for the check, just rotate once.
-	// when check is completed, return is needed
-	int oldRotation = GetRotation();
-
-	if ((dictionary[this->GetShape()][1] >(this->GetRotation() + 1)))
-		this->SetRotation(this->GetRotation() + 1);
-	else
-		this->SetRotation(0);	// restart from the beginning.
-
-	int mod = BOX_SIZE / 2;
-	int start = 8 * (this->GetRotation());
-	for (int i = start; i < start + 8; i += 2)
-	{
-		// check right whether it's possible
-		if ( (GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE) > ((PLAY_AREA_WIDTH - 2) * BOX_SIZE) - mod)
-		{
-			chk = false;
-			this->SetRotation(oldRotation);
-			break;
-		}
-		// check left whether it's possible
-		else if ( (GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE) < BOX_SIZE)
-		{ 
-			chk = false;
-			this->SetRotation(oldRotation);
-			break;
-		}
-		// check below whether it's possible
-		else if ((GetCurY() + shapes[this->GetShape()][i] * BOX_SIZE) > ((PLAY_AREA_HEIGHT - 2) * BOX_SIZE))
-		{
-			chk = false;
-			this->SetRotation(oldRotation);
-			break;
-		}
-		else
-			chk = true;
-	}
-
-	//Completed the Check, return it to the former shape.
-	this->SetRotation(oldRotation);
-	return chk;
-	
-}
-
-bool tBlocks::CheckRotate_L()
-{
-	if ((dictionary[this->GetShape()][1] >(this->GetRotation() + 1)))
-		this->SetRotation(this->GetRotation() + 1);
-	else
-		this->SetRotation(0);	// 끝까지 갔으면 처음으로
-
-	int mod = BOX_SIZE / 2;
-
-	int start = 8 * (this->GetRotation());
-	for (int i = start; i < start + 8; i += 2)
-	{
-		if ((GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE + mod) < BOX_SIZE )
+		if (PLAY_AREA_STATUS[points[i].y][points[i].x] != EMPTY)
 			return false;
 	}
 	return true;
@@ -262,60 +206,63 @@ bool tBlocks::CheckRotate_L()
 std::vector<int> tBlocks::GetBlockColor(int shape)
 {
 	std::vector<int> Color;
-
 	Color.push_back(dictionary[shape][2]);
 	Color.push_back(dictionary[shape][3]);
 	Color.push_back(dictionary[shape][4]);
 
 	return Color;
-	
 }
+//
+//void tBlocks::UpdateTetriminoBoxes(std::vector<RECT>* t)
+//{
+//	t->clear();
+//	RECT tmp;
+//	int mod = BOX_SIZE / 2;
+//	int curShape = GetShape();
+//
+//
+//	int start = 8 * (GetRotation());
+//	for (int i = start; i < start + 8; i += 2)
+//	{
+//		tmp.left = GetCurX() + shapes[curShape][i] * BOX_SIZE - mod;
+//		tmp.top = GetCurY() + shapes[curShape][i + 1] * BOX_SIZE - mod;
+//		tmp.right = GetCurX() + shapes[curShape][i] * BOX_SIZE + mod;
+//		tmp.bottom = GetCurY() + shapes[curShape][i + 1] * BOX_SIZE + mod;
+//
+//		t->push_back(tmp);
+//	}
+//}
 
-void tBlocks::UpdateTetriminoBoxes(std::vector<RECT>* t)
+void tBlocks::UpdateTetrimino()
 {
-	t->clear();
-	RECT tmp;
-	int mod = BOX_SIZE / 2;
-
-
+	int curShape = GetShape();
+	// sets tetrimino info. to the stage(PLAY_AREA_STATUS)
 	int start = 8 * (GetRotation());
 	for (int i = start; i < start + 8; i += 2)
 	{
-		//old
-		//tmp.left = GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE - mod;
-		//tmp.top = GetCurY() + shapes[this->GetShape()][i + 1] * BOX_SIZE - mod + BOX_SIZE;
-		//tmp.right = GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE + mod;
-		//tmp.bottom = GetCurY() + shapes[this->GetShape()][i + 1] * BOX_SIZE + mod + BOX_SIZE;
-
-		// trying
-		tmp.left = GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE - mod;
-		tmp.top = GetCurY() + shapes[this->GetShape()][i + 1] * BOX_SIZE - mod;
-		tmp.right = GetCurX() + shapes[this->GetShape()][i] * BOX_SIZE + mod;
-		tmp.bottom = GetCurY() + shapes[this->GetShape()][i + 1] * BOX_SIZE + mod;
-
-		t->push_back(tmp);
+		PLAY_AREA_STATUS[CurY + shapes[curShape][i + 1]][CurX + shapes[curShape][i]] = TETRIMINO;
 	}
-
-	return;
 }
 
-void tBlocks::TetriminoToBlocks(std::vector<RECT>* t)
+void tBlocks::EraseTetrimino()
 {
-	// Tetrimino into Blocks.
-	// make tetrimino immobilize and set it to playarea's block (Occupied)
+	int curShape = GetShape();
+	int start = 8 * (GetRotation());
 
-	// set playarea attribute EMPTY -> OCCUPIED
-
-	for (int i = 0; i < t->size(); i++)
+	for (int i = start; i < start + 8; i += 2)
 	{
-		int col = ( (t->begin() + i)->left + BOX_SIZE / 2) / BOX_SIZE;
-		int row = ( (t->begin() + i)->top + BOX_SIZE / 2 ) / BOX_SIZE;
-
-		PLAY_AREA_STATUS[row][col] = GetShape();
+		PLAY_AREA_STATUS[CurY + shapes[curShape][(i + 1)]][CurX + shapes[curShape][i]] = EMPTY;
 	}
-
 }
 
-tBlocks::~tBlocks()
+void tBlocks::OccupyPlayArea()
 {
+	int curShape = GetShape();
+	// sets tetrimino info. to the stage(PLAY_AREA_STATUS)
+	int start = 8 * (GetRotation());
+	for (int i = start; i < start + 8; i += 2)
+	{
+		PLAY_AREA_STATUS[CurY + shapes[curShape][(i + 1)]][CurX + shapes[curShape][i]] = curShape + 2;
+	}
+
 }
