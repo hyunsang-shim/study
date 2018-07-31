@@ -154,8 +154,8 @@ void tBlocks::MoveLeft()
 // Move tetrimino Downward by 1 if possible
 void tBlocks::Down()
 {
-	EraseTetrimino();
 
+	EraseTetrimino();
 	//
 	// generate temporal tetrimino for check.
 	//
@@ -188,6 +188,7 @@ void tBlocks::Down()
 			// gameover -> update Tetrimino image shown on "next" area. 
 			// !gameover -> Re-Initialize Tetrimino as shown as "next" area.
 			OccupyPlayArea();
+			DeleteLines();
 			InitTetrimino();
 		}
 		else 
@@ -215,41 +216,66 @@ void tBlocks::HardDrop()
 	} while (!isLanded());
 }
 
-int tBlocks::DeleteLines()
+
+// have some glitches
+void tBlocks::DeleteLines()
 {
-	int DeletedLines = 0;
 	std::vector<int> toDeleteLines;
-	POINT tmp;
+	int deletedLines = 0;
 
 	for (int i = PLAY_AREA_HEIGHT - 2; i > 2; i--)
 	{
 		int cntx = 0;
 
-		for (int j = PLAY_AREA_WIDTH - 1; j > 1; j--)
+		for (int j = PLAY_AREA_WIDTH - 1; j > 0; j--)
 		{
 			
-
+			// check how many blocks are filled in a row.
 			if ((PLAY_AREA_STATUS[i][j] >= OCCUPIED_0) && (PLAY_AREA_STATUS[i][j]) <= OCCUPIED_6)
 				cntx++;
 
+			// store the row idx.
 			if (cntx == PLAY_AREA_WIDTH - 2)
-			{
-				
+			{			
 				toDeleteLines.push_back(i);
 			}
-		}
-
-		
+		}				
 	}
 
-	//Delete a line while toDeleteLines
-	// Delete and pull down playarea blocks(occupied spaces)
-	for (int i = 0; i < toDeleteLines.size(); i++)
+
+	if (toDeleteLines.size() >= 1)
 	{
-		for (int j = 1; j < PLAY_AREA_WIDTH - 1; j++)
-		{
-			PLAY_AREA_STATUS[toDeleteLines[i]][j] == EMPTY;
-		}
+		deletedLines = toDeleteLines.size();
+		do {
+ 			for (int i = deletedLines-1; i >=0 ; i--)
+				{
+				for (int j = toDeleteLines[i]; j < deletedLines; j++)
+				{
+					for (int k = 1; k < PLAY_AREA_WIDTH - 1; k++)
+					{
+						// copy upper row into to-be-deleted row
+					}
+				}
+				}
+			
+
+			toDeleteLines.pop_back();
+		} while (!toDeleteLines.empty());
+	}
+
+	// clear the to-be-deleted list
+	toDeleteLines.clear();
+
+}
+
+void tBlocks::EraseTetrimino()
+{
+	int curShape = GetShape();
+	int start = 8 * (GetRotation());
+
+	for (int i = start; i < start + 8; i += 2)
+	{
+		PLAY_AREA_STATUS[CurY + shapes[curShape][(i + 1)]][CurX + shapes[curShape][i]] = EMPTY;
 	}
 }
 
@@ -265,23 +291,13 @@ std::vector<int> tBlocks::GetBlockColor(int shape)
 
 void tBlocks::UpdateTetrimino()
 {
+
 	int curShape = GetShape();
 	// sets tetrimino info. to the stage(PLAY_AREA_STATUS)
 	int start = 8 * (GetRotation());
 	for (int i = start; i < start + 8; i += 2)
 	{
 		PLAY_AREA_STATUS[CurY + shapes[curShape][i + 1]][CurX + shapes[curShape][i]] = TETRIMINO;
-	}
-}
-
-void tBlocks::EraseTetrimino()
-{
-	int curShape = GetShape();
-	int start = 8 * (GetRotation());
-
-	for (int i = start; i < start + 8; i += 2)
-	{
-		PLAY_AREA_STATUS[CurY + shapes[curShape][(i + 1)]][CurX + shapes[curShape][i]] = EMPTY;
 	}
 }
 

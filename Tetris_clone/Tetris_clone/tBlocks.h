@@ -17,12 +17,12 @@ public:
 	void Down();
 	bool CheckSpace(POINT points[]);
 	void HardDrop();
-	int DeleteLines();
+	void DeleteLines();
+	void EraseTetrimino();
 	void AddScore(int score);
 	std::vector<int> GetBlockColor(int shape);
 	//void UpdateTetriminoBoxes(std::vector<RECT> *t);
 	void UpdateTetrimino();
-	void EraseTetrimino();
 	void OccupyPlayArea();
 	~tBlocks();
 private:
