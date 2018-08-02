@@ -140,6 +140,13 @@ LRESULT CALLBACK WindProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			TCHAR mass[20];
 			wsprintf(mass, "%d", vCircles[i].getRadius());
 			TextOut(hdc, rectView.left + 10, rectView.top + 10, mass, lstrlen(mass));
+
+			if (vCircles.size() < 1)
+			{
+				addCircle();
+				setCircle(lParam);
+				last_cnt = 1;
+			}
 		}
 		InvalidateRgn(hwnd, NULL, TRUE);
 		break;
