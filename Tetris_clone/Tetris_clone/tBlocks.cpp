@@ -259,12 +259,12 @@ void tBlocks::DeleteLines()
 				}
 			
 
-			toDeleteLines.pop_back();
+			//toDeleteLines.pop_back();
 		} while (!toDeleteLines.empty());
 	}
 
 	// clear the to-be-deleted list
-	toDeleteLines.clear();
+	//toDeleteLines.clear();
 
 }
 

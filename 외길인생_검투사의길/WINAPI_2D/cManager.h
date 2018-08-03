@@ -1,10 +1,17 @@
 #pragma once
+#include "WINAPI_2D.h"
+
 class cManager
 {
 public:
 	cManager();
-	~cManager();
+	void SetCurScene(int SceneName);
 	int GetCurScene();
+	void SetCurMenu(int menu); 
+	int GetCurMenu();
+	
+	~cManager();
+	
 
 
 
@@ -17,6 +24,7 @@ public:
 	}
 
 private:
-	int CurScene;
+	int CurScene = TitleScene;
+	int CurMenu = menuNew;
 };
 
