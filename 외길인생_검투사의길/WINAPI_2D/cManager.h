@@ -1,6 +1,11 @@
 #pragma once
 #include "WINAPI_2D.h"
 
+
+#define SCREEN_WIDTH 816
+#define SCREEN_HEIGHT 624
+
+
 class cManager
 {
 public:
@@ -24,7 +29,8 @@ public:
 	}
 
 private:
-	int CurScene = TitleScene;
+	int CurScene;
 	int CurMenu = menuNew;
+	
 };
 
