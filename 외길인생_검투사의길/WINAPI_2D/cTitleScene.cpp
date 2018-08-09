@@ -4,7 +4,7 @@
 
 
 cTitleScene::cTitleScene()
-{	
+{
 }
 
 
@@ -17,10 +17,10 @@ void cTitleScene::LoadScene(HINSTANCE hInst, HDC hdc)
 	menu1 = (HBITMAP)LoadImage(hInst, _T(".\\Resources\\Scene\\Title\\btn_new.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	menu2_on = (HBITMAP)LoadImage(hInst, _T(".\\Resources\\Scene\\Title\\btn_load_on.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	menu2_off = (HBITMAP)LoadImage(hInst, _T(".\\Resources\\Scene\\Title\\btn_load_off.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	menu3 = (HBITMAP)LoadImage(hInst, _T(".\\Resources\\Scene\\Title\\btn_quit.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);		
+	menu3 = (HBITMAP)LoadImage(hInst, _T(".\\Resources\\Scene\\Title\\btn_quit.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	selector = (HBITMAP)LoadImage(hInst, _T(".\\Resources\\Character\\PC_walk.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	
-	
+
+
 }
 
 //void cTitleScene::UnLoadScene()
@@ -67,9 +67,9 @@ void cTitleScene::DrawScene(HDC hdc)
 	DrawSpriteImage(BackMemDC, 245, 96, txt2);	// sub Title
 	DrawSpriteImage(BackMemDC, 600, 390, menu1);	// menu - start
 
-	// condition flagged as 'true' if there is a save file exists.
-	// according the result, load different image
-	// checker funtion sould be made later.
+													// condition flagged as 'true' if there is a save file exists.
+													// according the result, load different image
+													// checker funtion sould be made later.
 	if (0)
 		DrawSpriteImage(BackMemDC, 600, 450, menu2_on);	// menu - load (on)
 	else
@@ -77,17 +77,17 @@ void cTitleScene::DrawScene(HDC hdc)
 
 	DrawSpriteImage(BackMemDC, 600, 510, menu3);	// menu - quit
 
-	static int frameCounter = (TARGET_FPS / selectorFrameMax) / 2;
+	static int frameCounter = (TARGET_FPS / CHARACTER_FRAME_MAX) / 2;
 
 	if (frameCounter < 0)
 	{
 		this->curSelectorFrame += 1;
-		frameCounter = (TARGET_FPS / selectorFrameMax) / 2;
+		frameCounter = (TARGET_FPS / CHARACTER_FRAME_MAX) / 2;
 	}
 	else
 		frameCounter--;
 
-	if (this->curSelectorFrame >(selectorFrameMax - 1))
+	if (this->curSelectorFrame >(CHARACTER_FRAME_MAX - 1))
 		this->curSelectorFrame = 0;
 
 	DrawSpriteImage(BackMemDC, 550, 390 + this->GetCurMenu() * 60, selector, curSelectorFrame);
@@ -137,7 +137,7 @@ void cTitleScene::ProcessKeyInput(HWND hWnd, WPARAM wParam)
 			PostQuitMessage(0);
 			break;
 		case menuNew:
-			UnLoadScene();
+			UnloadScene();
 			SetCurScene(TownScene);
 		}
 		break;
@@ -147,5 +147,5 @@ void cTitleScene::ProcessKeyInput(HWND hWnd, WPARAM wParam)
 
 cTitleScene::~cTitleScene()
 {
-	UnLoadScene();
+	UnloadScene();
 }

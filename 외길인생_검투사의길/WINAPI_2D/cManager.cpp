@@ -14,6 +14,11 @@ void cManager::SetCurScene(int SceneName)
 }
 
 
+HWND cManager::GetMyHWND()
+{
+	return this->MyHWND;
+}
+
 cManager::~cManager()
 {
 }
@@ -47,6 +52,28 @@ bool cManager::HaveSaveFile()
 {
 	return false;
 }
+
+int cManager::GetDirection_PC()
+{
+	return PC_Direction;
+}
+
+void cManager::SetDirection_PC(int direction)
+{
+	if (PC_Direction != direction)
+		PC_Direction = direction;
+}
+
+void cManager::SetMyHWND(HWND hWnd)
+{
+	MyHWND = hWnd;
+}
+
+int cManager::GetSpeed_PC()
+{
+	return PC_Speed;
+}
+
 
 
 

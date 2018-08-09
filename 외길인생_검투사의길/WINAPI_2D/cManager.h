@@ -16,7 +16,11 @@ public:
 	void SetLastScene(int SceneName);
 	int GetLastScene();
 	bool HaveSaveFile();
-
+	int GetDirection_PC();
+	void SetDirection_PC(int direction);
+	void SetMyHWND(HWND hWnd);
+	int GetSpeed_PC();
+	HWND GetMyHWND();
 	~cManager();
 	
 
@@ -32,6 +36,9 @@ private:
 	int CurScene;
 	int CurMenu = menuNew;
 	int lastScene = TitleScene;	
+	int PC_Direction = FacingRight;
+	int PC_Speed = 6;
+	HWND MyHWND;
 	HINSTANCE hInst;
 	
 };
