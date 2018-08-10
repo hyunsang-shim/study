@@ -1,8 +1,7 @@
 #pragma once
 #include "WINAPI_2D.h"
 
-#define SCREEN_WIDTH 816
-#define SCREEN_HEIGHT 624
+
 
 
 class cManager
@@ -20,6 +19,8 @@ public:
 	void SetDirection_PC(int direction);
 	void SetMyHWND(HWND hWnd);
 	int GetSpeed_PC();
+	void SetPC_State(int state);
+	int GetPC_State();
 	HWND GetMyHWND();
 	~cManager();
 	
@@ -38,6 +39,7 @@ private:
 	int lastScene = TitleScene;	
 	int PC_Direction = FacingRight;
 	int PC_Speed = 6;
+	int PC_State = Idle;
 	HWND MyHWND;
 	HINSTANCE hInst;
 	

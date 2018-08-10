@@ -60,7 +60,7 @@ int cManager::GetDirection_PC()
 
 void cManager::SetDirection_PC(int direction)
 {
-	if (PC_Direction != direction)
+	//if (PC_Direction != direction)
 		PC_Direction = direction;
 }
 
@@ -74,7 +74,12 @@ int cManager::GetSpeed_PC()
 	return PC_Speed;
 }
 
+void cManager::SetPC_State(int state)
+{
+	PC_State = state;
+}
 
-
-
-
+int cManager::GetPC_State()
+{
+	return PC_State;
+}

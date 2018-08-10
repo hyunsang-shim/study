@@ -93,17 +93,19 @@ void SceneManager::ChangeScene(int destSceneidx)
 	switch (destSceneidx)
 	{
 	case TitleScene:
-		this->SetCurScene(TitleScene);
+		SetCurScene(TitleScene);
 		LoadScene(destSceneidx);
 		SetDirection_PC(FacingRight);
 		InvalidateRgn(GetMyHWND(), NULL, TRUE);
 		break;
 	case TownScene:
-		this->SetCurScene(TownScene);
-		PC_POS.x = 386;
-		PC_POS.y = 560;
+		SetCurScene(TownScene);
+		SetPC_COORD(11, 9);
+		SetPC_COORD_NEXT(11, 9);
+		SetPC_POS(11, 9);
 		LoadScene(destSceneidx);
 		SetDirection_PC(FacingUp);
+		SetPC_State(Idle);
 		InvalidateRgn(GetMyHWND(), NULL, TRUE);
 		break;
 	case BattleScene:
@@ -190,27 +192,16 @@ void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP s
 
 void SceneManager::DrawToFront(HDC destDC, HDC srcDC)
 {
-	//for town map movement test
-	if ((GetCurScene() == TownScene) && tmpflag > 0)
-	{
-		for (int i = 1; i < 15; i++)
-		{
-			for (int j = 1; j < 18; j++)
-			{
-				RECT tmp;
 
-				if (TownMap[i][j])
-					SelectObject(srcDC, GetStockObject(HOLLOW_BRUSH));
-				else
-					SelectObject(srcDC, GetStockObject(WHITE_BRUSH));
-				tmp.top = (i-1) * 48;
-				tmp.left = (j-1) * 48;
-				tmp.bottom = tmp.top + 48;
-				tmp.right = tmp.left + 48;
-				Rectangle(srcDC, tmp.left, tmp.top, tmp.right, tmp.bottom);
+	//>>
+	// for testing purpose
+	if (GetCurScene() == TownScene && tmpflag >0)
+	for (int row = 0; row < 14; row++)
+		for (int col = 0; col < 18; col++)
+			if (!TownMap[row][col])
+			{
+				Rectangle(srcDC, col * 48, row * 48, (col + 1) * 48 - 1, (row + 1) * 48 - 1);
 			}
-		}
-	}
 
 
 	// Draw image on buffer DC onto front DC
@@ -316,9 +307,6 @@ void SceneManager::DrawTownScene(HDC hdc)
 	static int characterFrame = 0;
 	framecounter++;
 
-	// for testing
-	if (framecounter%4 ==3)
-		std::cout << "Cur x : " << PC_POS.x << "Y : " << PC_POS.y << "          " << PC_POS.y / 48 << "   " << PC_POS.x/48 << "\n";
 
 	if (framecounter > (CHARACTER_FRAME_MAX * 12))
 		framecounter = 0;
@@ -338,6 +326,13 @@ void SceneManager::DrawTownScene(HDC hdc)
 
 void SceneManager::KeyInput(WPARAM wParam)
 {
+	
+	// 이동 명령이 들어오면
+	// if 이동중이면
+	//	무시
+	// else
+	//	해당 방향으로 방향 전환
+	//	다음 타일로 이동 진행
 	switch (GetCurScene())
 	{
 	case TitleScene:
@@ -387,50 +382,183 @@ void SceneManager::KeyInput(WPARAM wParam)
 		switch (wParam)
 		{
 		case VK_ESCAPE:
-			ChangeScene(TitleScene);			
+			ChangeScene(TitleScene);
 			break;
 		case VK_UP:
-			SetDirection_PC(FacingUp);
+			if (GetPC_State() == Moving)
+			{
+				MoveCharacter(GetPC_COORD_NEXT());
+				break;
+			}
+			else
+			{
+				SetDirection_PC(FacingUp);
+				if (PeekNextCoord(PC_COORD))
+				{
+					SetPC_State(Moving);
+					SetPC_COORD_NEXT(PC_COORD.y - 1, PC_COORD.x);
+					SetPC_COORD(PC_COORD.y - 1, PC_COORD.x);
+					MoveCharacter(GetPC_COORD_NEXT());
+				}
+				break;
+			}
 		case VK_DOWN:			
-			SetDirection_PC(FacingDown);			
-			break;
+			if (GetPC_State() == Moving)
+			{
+				MoveCharacter(GetPC_COORD_NEXT());
+				break;
+			}
+			else
+			{
+				SetDirection_PC(FacingDown);
+				if (PeekNextCoord(PC_COORD))
+				{
+					SetPC_State(Moving);
+					SetPC_COORD_NEXT(PC_COORD.y + 1, PC_COORD.x);
+					SetPC_COORD(PC_COORD.y + 1, PC_COORD.x);
+					MoveCharacter(GetPC_COORD_NEXT());
+				}
+				break;
+			}
 		case VK_LEFT:			
-			SetDirection_PC(FacingLeft);
-			break;
+			if (GetPC_State() == Moving)
+			{
+				MoveCharacter(GetPC_COORD_NEXT());
+				break;
+			}
+			else
+			{
+				SetDirection_PC(FacingLeft);
+				if (PeekNextCoord(PC_COORD))
+				{
+					SetPC_State(Moving);
+					SetPC_COORD_NEXT(PC_COORD.y, PC_COORD.x - 1);
+					SetPC_COORD(PC_COORD.y, PC_COORD.x - 1);
+					MoveCharacter(GetPC_COORD_NEXT());
+				}
+				break;
+			}
 		case VK_RIGHT:			
-			SetDirection_PC(FacingRight);
-			break;
-		case VK_SPACE:
+			if (GetPC_State() == Moving)
+			{
+				MoveCharacter(GetPC_COORD_NEXT());
+				break;
+			}
+			else
+			{
+				SetDirection_PC(FacingRight);
+				if (PeekNextCoord(PC_COORD))
+				{
+					SetPC_State(Moving);
+					SetPC_COORD_NEXT(PC_COORD.y, PC_COORD.x + 1);
+					SetPC_COORD(PC_COORD.y, PC_COORD.x + 1);
+					MoveCharacter(GetPC_COORD_NEXT());
+				}
+				break;
+			}
+		case VK_SPACE:	// for testing purpose
 			tmpflag *= -1;
+			break;
 		}
-		
 		break;
 	}
 }
 
-bool SceneManager::PeekNextPlace(POINT nextPos)
+bool SceneManager::PeekNextCoord(POINT CurPos)
 {
-	POINT tmp = nextPos;
-	/*
-	다음 좌표값 -> 맵칩 사이즈로 나눈걸로 배열 찾아서
-	값을 리턴시킨다.	
-	*/
+	// 사각형 충돌 확인 함수(IntersectRect()) 참고 : https://m.blog.naver.com/PostView.nhn?blogId=pok_jadan&logNo=186535496&proxyReferer=https%3A%2F%2Fwww.google.co.kr%2F
+	
+	// 다음 row/col 값을 확인하고, 1이면 이동 아니면 제자리	
 
 	switch (GetDirection_PC())
 	{
+	case FacingLeft:
+		if (CurPos.x - 1 < 0)
+			return false;
+		else
+			return TownMap[CurPos.y][CurPos.x - 1];
 	case FacingRight:
-		tmp.x += CHARACTER_SIZE;
-		break;
+		if (CurPos.x + 1 >= TOWN_COL)
+			return FALSE;
+		else
+			return TownMap[CurPos.y][CurPos.x + 1];
+	case FacingUp:
+		if (CurPos.y - 1 < 0)
+			return false;
+		else 
+			return TownMap[CurPos.y - 1][CurPos.x];
 	case FacingDown:
-		tmp.y += CHARACTER_SIZE;
-		break;
+		if (CurPos.y + 1 >= TOWN_ROW)
+			return false;
+		else
+			return TownMap[CurPos.y + 1][CurPos.x];
 	}
 	
-	switch (GetCurScene())
-	{
-	case TownScene:
-		return TownMap[(tmp.y) / 48][(tmp.x) / 48];
-		break;
-	}
 }
 
+void SceneManager::MoveCharacter(POINT nextPos)
+{
+	//현재 coord에서 다음 coord까지 캐릭터를 이동시킨다.
+	//이동 중 입력이 들어오면 무시 되어야 한다.
+
+	// 이동중인 상태일 때만
+	int DestX = nextPos.x * 48;
+	int DestY = nextPos.y * 48;
+
+	//x좌표값 조정
+	if (DestX - PC_POS.x > 0)
+		PC_POS.x += GetSpeed_PC();
+	else if (DestX - PC_POS.x < 0)
+		PC_POS.x -= GetSpeed_PC();
+	
+	// y좌표값 조정
+	if (DestY - PC_POS.y > 0)
+		PC_POS.y += GetSpeed_PC();
+	else if (DestY - PC_POS.y < 0)
+		PC_POS.y -= GetSpeed_PC();
+
+
+	// 목표 좌표까지 이동 되었으면 상태를 Idle로 전환한다
+	if ((PC_POS.x == DestX) && (PC_POS.y == DestY))
+	{
+		SetPC_State(Idle);
+		SetPC_COORD_NEXT(GetPC_COORD().y, GetPC_COORD().x);
+	}
+
+
+}
+
+
+void SceneManager::SetPC_POS(int row, int col)
+{
+	PC_POS.x = col * 48;
+	PC_POS.y = row * 48;
+}
+
+POINT SceneManager::GetPC_POS()
+{
+	return PC_POS;
+}
+
+void SceneManager::SetPC_COORD(int row, int col)
+{
+	
+	PC_COORD.x = col;
+	PC_COORD.y = row;
+}
+
+POINT SceneManager::GetPC_COORD()
+{
+	return PC_COORD;
+}
+
+void SceneManager::SetPC_COORD_NEXT(int row, int col)
+{
+	PC_COORD_NEXT.x = col;
+	PC_COORD_NEXT.y = row;
+}
+
+POINT SceneManager::GetPC_COORD_NEXT()
+{
+	return PC_COORD_NEXT;
+}
