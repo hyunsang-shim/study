@@ -11,64 +11,40 @@ SceneManager::~SceneManager()
 {
 }
 
-void SceneManager::UnloadScene()
+void SceneManager::UnLoadResource()
 {
-	for (int i = 0; i < resources.size(); i++)
-	{
-		SelectObject(GetDC((HWND)GetModuleHandle(NULL)), resources[i]);
-		DeleteObject(resources[i]);		
-	}
+	DeleteObject(resTitle_bg);
+	DeleteObject(resTitle_txt1);
+	DeleteObject(resTitle_txt1);
+	DeleteObject(resTitle_txt2);
+	DeleteObject(resTitle_btn1);
+	DeleteObject(resTitle_btn2_on);
+	DeleteObject(resTitle_btn2_off);
+	DeleteObject(resTitle_btn3);
+	
+	DeleteObject(resTown_bg);
+	
+	DeleteObject(resBattle_bg);
 
-	resources.clear();
+	DeleteObject(resPC_walk);
+
 }
 
-void SceneManager::LoadScene(int destSceneidx)
+void SceneManager::LoadResource()
 {
-	resources.clear();
+	resTitle_bg = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\BG\\title.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_txt1 = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\title_text1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_txt2 = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\title_text2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_btn1 = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_new.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_btn2_on = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_load_on.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_btn2_off = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_load_off.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_btn3 = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_quit.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-	switch (destSceneidx)
-	{
-	case TitleScene:
-		this->SetCurScene(TitleScene);
-		resources.push_back((HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\BG\\title.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-		resources.push_back((HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\title_text1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-		resources.push_back((HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\title_text2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-		resources.push_back((HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_new.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-		resources.push_back((HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_load_on.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-		resources.push_back((HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_load_off.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-		resources.push_back((HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_quit.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-		resources.push_back((HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\Character\\PC_walk.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-		break;
-	case TownScene:
-		this->SetCurScene(TownScene);
-		resources.push_back((HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\BG\\town.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-		resources.push_back((HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\Character\\PC_walk.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-		SetDirection_PC(FacingUp);
-		break;
-	case BattleScene:
-		this->SetCurScene(BattleScene);
-		break;
-	case GameOverScene:
-		this->SetCurScene(GameOverScene);
-		break;
-	case ShopGym:
-		this->SetCurScene(ShopGym);
-		break;
-	case ShopChurch:
-		this->SetCurScene(ShopChurch);
-		break;
-	case ShopBlacksmith:
-		this->SetCurScene(ShopBlacksmith);
-		break;
-	case ShopGuild:
-		this->SetCurScene(ShopGuild);
-		break;
-	case House:
-		this->SetCurScene(House);
-		break;
-	}
+	resTown_bg = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\BG\\town.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
+	resBattle_bg = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\BG\\battle.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
+	resPC_walk = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\Character\\PC_walk.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);	
 }
 
 void SceneManager::DrawScene(HDC hdc)
@@ -81,35 +57,40 @@ void SceneManager::DrawScene(HDC hdc)
 	case TownScene:
 		DrawTownScene(hdc);
 		break;
+	case BattleScene:
+		DrawBattleScene(hdc);
+		break;
 	}
 
 }
 
 void SceneManager::ChangeScene(int destSceneidx)
 {
-	UnloadScene();	
-	
-	
+		
 	switch (destSceneidx)
 	{
 	case TitleScene:
 		SetCurScene(TitleScene);
-		LoadScene(destSceneidx);
 		SetDirection_PC(FacingRight);
-		InvalidateRgn(GetMyHWND(), NULL, TRUE);
+		SetCurMenu(menuNew);
+		InvalidateRgn(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")), NULL, TRUE);
 		break;
 	case TownScene:
 		SetCurScene(TownScene);
-		SetPC_COORD(11, 9);
-		SetPC_COORD_NEXT(11, 9);
-		SetPC_POS(11, 9);
-		LoadScene(destSceneidx);
+		SetPC_COORD(11, 8);
+		SetPC_POS(11, 8);
+		SetPC_COORD_NEXT(11, 8);
 		SetDirection_PC(FacingUp);
 		SetPC_State(Idle);
-		InvalidateRgn(GetMyHWND(), NULL, TRUE);
+		InvalidateRgn(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")), NULL, TRUE);
 		break;
 	case BattleScene:
-		this->SetCurScene(BattleScene);
+		SetCurScene(BattleScene);
+		SetPC_COORD(7, 1);
+		SetPC_POS(7, 1);
+		SetPC_COORD_NEXT(7, 1);
+		SetDirection_PC(FacingRight);
+		SetPC_State(Idle);		
 		break;
 	case GameOverScene:
 		this->SetCurScene(GameOverScene);
@@ -133,61 +114,45 @@ void SceneManager::ChangeScene(int destSceneidx)
 	 	
 }
 
-void  SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src)
+void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src)
 {
-	HDC BackMemDC;
+	RECT tmpRect;
+	HWND myHwnd = FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길"));
+	GetClientRect(myHwnd, &tmpRect);
+
+	int srcWidth, srcHeight;
+	{
+		BITMAP bit;
+		GetObject(src, sizeof(BITMAP), &bit);
+		srcWidth = bit.bmWidth;
+		srcHeight = bit.bmHeight;
+	}
+	
+	HDC hMemDC;
 	HBITMAP hOldBitmap;
 
-	// copy front DC's attributes intto BackMemDC
-	BackMemDC = CreateCompatibleDC(destDC);
-	//make BackMemDC's size properly and select source image onto BackMemDC
-	//hOldBitmap = (HBITMAP)SelectObject(BackMemDC, bg_title);
+	hMemDC = CreateCompatibleDC(destDC);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
 
+	TransparentBlt(destDC, startX, startY, srcWidth, srcHeight, hMemDC, 0, 0, srcWidth, srcHeight, RGB(255, 0, 255));
 
-	HBITMAP hBit4 = CreateCompatibleBitmap(GetDC(NULL), SCREEN_WIDTH, SCREEN_HEIGHT);
-	hOldBitmap = (HBITMAP)SelectObject(BackMemDC, hBit4);
-
-	HDC hMemDC2;
-	hMemDC2 = CreateCompatibleDC(BackMemDC);
-	HBITMAP hOldBitmap2;
-	BITMAP bit;
-	GetObject(src, sizeof(BITMAP), &bit);
-
-	hOldBitmap2 = (HBITMAP)SelectObject(hMemDC2, src);
-
-	BitBlt(BackMemDC, 0, 0, bit.bmWidth, bit.bmHeight, hMemDC2, 0, 0, SRCCOPY);
-	SelectObject(hMemDC2, hOldBitmap2);
-
-	TransparentBlt(destDC, startX, startY, bit.bmWidth, bit.bmHeight, BackMemDC, 0,0, bit.bmWidth, bit.bmHeight, RGB(255, 0, 255));
-
-
-	SelectObject(hMemDC2, hOldBitmap2);
-	DeleteObject(hOldBitmap2);
-
-	SelectObject(hMemDC2, hBit4);
-	DeleteObject(hBit4);
-
-
-	SelectObject(BackMemDC, hOldBitmap);
-	DeleteObject(hOldBitmap);
-
-	DeleteDC(BackMemDC);
-	DeleteDC(hMemDC2);
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteDC(hMemDC);
 }
 
 void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
+
 	hMemDC = CreateCompatibleDC(destDC);
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
+
 	
-	TransparentBlt(destDC, startX, startY, CHARACTER_SIZE, CHARACTER_SIZE, hMemDC,
-		frameNumber * 50, GetDirection_PC() * 48, CHARACTER_SIZE, CHARACTER_SIZE-1,
-		RGB(255, 0, 255));
+	TransparentBlt(destDC, startX, startY, CHARACTER_SIZE, CHARACTER_SIZE-1, hMemDC, frameNumber * 50, GetDirection_PC() * 48, CHARACTER_SIZE, CHARACTER_SIZE - 1, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
-	DeleteDC(hMemDC);
+	DeleteDC(hMemDC);	
 }
 
 void SceneManager::DrawToFront(HDC destDC, HDC srcDC)
@@ -225,33 +190,31 @@ void SceneManager::DrawTitleScene(HDC hdc)
 		HDC hMemDC2;
 		hMemDC2 = CreateCompatibleDC(BackMemDC);
 		HBITMAP hOldBitmap2;
-		BITMAP bit;
-		GetObject(resources[0], sizeof(BITMAP), &bit);
+		static BITMAP bit;
+		GetObject(resTitle_bg, sizeof(BITMAP), &bit);
 
-		hOldBitmap2 = (HBITMAP)SelectObject(hMemDC2, resources[0]);
+		hOldBitmap2 = (HBITMAP)SelectObject(hMemDC2, resTitle_bg);
 
 		BitBlt(BackMemDC, 0, 0, bit.bmWidth, bit.bmHeight, hMemDC2, 0, 0, SRCCOPY);
 		SelectObject(hMemDC2, hOldBitmap2);
+		DeleteObject(hBit4);
 
-		DeleteObject(hOldBitmap2);
 		DeleteDC(hMemDC2);
-
-
 	}
 
-	DrawSpriteImage(BackMemDC, 245, 0, resources[1]);	// Title
-	DrawSpriteImage(BackMemDC, 245, 96, resources[2]);	// sub Title
-	DrawSpriteImage(BackMemDC, 600, 390, resources[3]);	// menu - start
+	DrawSpriteImage(BackMemDC, 210, 0, resTitle_txt1);	// Title
+	DrawSpriteImage(BackMemDC, 210, 96, resTitle_txt2);	// sub Title
+	DrawSpriteImage(BackMemDC, 600, 400, resTitle_btn1);	// menu - start
 
 													// condition flagged as 'true' if there is a save file exists.
 													// according the result, load different image
 													// checker funtion sould be made later.
 	if (0)
-		DrawSpriteImage(BackMemDC, 600, 450, resources[4]);	// menu - load (on)
+		DrawSpriteImage(BackMemDC, 600, 460, resTitle_btn2_on);	// menu - load (on)
 	else
-		DrawSpriteImage(BackMemDC, 600, 450, resources[5]);	// menu - load (off)
+		DrawSpriteImage(BackMemDC, 600, 460, resTitle_btn2_off);	// menu - load (off)
 
-	DrawSpriteImage(BackMemDC, 600, 510, resources[6]);	// menu - quit
+	DrawSpriteImage(BackMemDC, 600, 520, resTitle_btn3);	// menu - quit
 
 	static int framecounter = 0;
 	static int characterFrame = 0;
@@ -264,16 +227,79 @@ void SceneManager::DrawTitleScene(HDC hdc)
 		characterFrame = (framecounter / 4) % 4;
 
 
-	DrawSpriteImage(BackMemDC, 550, 390 + this->GetCurMenu() * 60, resources[7], characterFrame);
+	DrawSpriteImage(BackMemDC, 550, 390 + this->GetCurMenu() * 60, resPC_walk, characterFrame);
 
-	DrawToFront(hdc, BackMemDC);	// Draw backbuffer DC onto front DC
+	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
+	// Draw backbuffer DC onto front DC
+
+	SelectObject(BackMemDC, hOldBitmap); // << : 
+	//DeleteObject(hOldBitmap);
+	DeleteDC(BackMemDC);
+
+
+}
+
+void SceneManager::DrawTownScene(HDC hdc)
+{
+	 HDC BackMemDC;
+	 HBITMAP hOldBitmap;
+
+	// copy front DC's attributes intto BackMemDC
+	BackMemDC = CreateCompatibleDC(hdc);
+	//make BackMemDC's size properly and select source image onto BackMemDC
+	//hOldBitmap = (HBITMAP)SelectObject(BackMemDC, bg_title);
+
+	{
+		HBITMAP hBit4 = CreateCompatibleBitmap(GetDC(NULL), SCREEN_WIDTH, SCREEN_HEIGHT);
+		hOldBitmap = (HBITMAP)SelectObject(BackMemDC, hBit4);
+
+		HDC hMemDC2;
+		hMemDC2 = CreateCompatibleDC(BackMemDC);
+		HBITMAP hOldBitmap2;
+		BITMAP bit;
+		GetObject(resTown_bg, sizeof(BITMAP), &bit);
+
+		hOldBitmap2 = (HBITMAP)SelectObject(hMemDC2, resTown_bg);
+
+		BitBlt(BackMemDC, 0, 0, bit.bmWidth, bit.bmHeight, hMemDC2, 0, 0, SRCCOPY);
+		SelectObject(hMemDC2, hOldBitmap2);
+		
+		DeleteObject(hOldBitmap2);
+		hOldBitmap = (HBITMAP)SelectObject(hMemDC2, hBit4);
+		DeleteObject(hBit4);
+		DeleteDC(hMemDC2);
+
+	}
+
+	static int framecounter = 0;
+	static int characterFrame = 0;
+	framecounter++;
+
+
+	if (framecounter > (CHARACTER_FRAME_MAX * 12))
+		framecounter = 0;
+	else
+		characterFrame = (framecounter / 4) % 4;
+
+	DrawSpriteImage(BackMemDC, PC_POS.x, PC_POS.y, resPC_walk, characterFrame);
+
+	//for Testing purpose
+	/*for (int row = 0; row < 14; row++)
+		for (int col = 0; col < 17; col++)
+			if (TownMap[row][col])
+				Rectangle(BackMemDC, col * MAPCHIP_SIZE, row * MAPCHIP_SIZE, col * MAPCHIP_SIZE + MAPCHIP_SIZE, row * MAPCHIP_SIZE + MAPCHIP_SIZE - 1);*/
+
+	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
+	// Draw backbuffer DC onto front DC
 
 	SelectObject(BackMemDC, hOldBitmap); // << : 
 	DeleteObject(hOldBitmap);
 	DeleteDC(BackMemDC);
+
+
 }
 
-void SceneManager::DrawTownScene(HDC hdc)
+void SceneManager::DrawBattleScene(HDC hdc)
 {
 	HDC BackMemDC;
 	HBITMAP hOldBitmap;
@@ -291,14 +317,16 @@ void SceneManager::DrawTownScene(HDC hdc)
 		hMemDC2 = CreateCompatibleDC(BackMemDC);
 		HBITMAP hOldBitmap2;
 		BITMAP bit;
-		GetObject(resources[0], sizeof(BITMAP), &bit);
+		GetObject(resTown_bg, sizeof(BITMAP), &bit);
 
-		hOldBitmap2 = (HBITMAP)SelectObject(hMemDC2, resources[0]);
+		hOldBitmap2 = (HBITMAP)SelectObject(hMemDC2, resBattle_bg);
 
 		BitBlt(BackMemDC, 0, 0, bit.bmWidth, bit.bmHeight, hMemDC2, 0, 0, SRCCOPY);
 		SelectObject(hMemDC2, hOldBitmap2);
-		
+
 		DeleteObject(hOldBitmap2);
+		hOldBitmap = (HBITMAP)SelectObject(hMemDC2, hBit4);
+		DeleteObject(hBit4);
 		DeleteDC(hMemDC2);
 
 	}
@@ -313,14 +341,28 @@ void SceneManager::DrawTownScene(HDC hdc)
 	else
 		characterFrame = (framecounter / 4) % 4;
 
-	DrawSpriteImage(BackMemDC, PC_POS.x, PC_POS.y, resources[1], characterFrame);
+	DrawSpriteImage(BackMemDC, PC_POS.x, PC_POS.y, resPC_walk, characterFrame);
 
-	DrawToFront(hdc, BackMemDC);	// Draw backbuffer DC onto front DC
+
+
+	// for testing purpose
+	/*for (int row = 0; row < 14; row++)
+		for (int col = 0; col < 17; col++)
+			if (BattleMap[row][col])
+				Rectangle(BackMemDC, col * MAPCHIP_SIZE, row * MAPCHIP_SIZE, col * MAPCHIP_SIZE + MAPCHIP_SIZE, row * MAPCHIP_SIZE + MAPCHIP_SIZE - 1);*/
+
+
+
+
+	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
+	// Draw backbuffer DC onto front DC
+
+
+	//std::cout << GetPC_COORD().y << " " << GetPC_COORD().x << " " << BattleMap[GetPC_COORD().y][GetPC_COORD().x] << " \n";
 
 	SelectObject(BackMemDC, hOldBitmap); // << : 
 	DeleteObject(hOldBitmap);
 	DeleteDC(BackMemDC);
-
 
 }
 
@@ -369,7 +411,6 @@ void SceneManager::KeyInput(WPARAM wParam)
 			switch (GetCurMenu())
 			{
 			case menuQuit:
-				UnloadScene();
 				PostQuitMessage(0);
 				break;
 			case menuNew:
@@ -457,8 +498,49 @@ void SceneManager::KeyInput(WPARAM wParam)
 				break;
 			}
 		case VK_SPACE:	// for testing purpose
-			tmpflag *= -1;
+			ChangeScene(BattleScene);
 			break;
+		}
+		break;
+	case BattleScene:
+		switch (wParam)
+		{
+		case VK_LEFT:
+			if (GetPC_State() == Moving)
+			{
+				MoveCharacter(GetPC_COORD_NEXT());
+				break;
+			}
+			else
+			{
+				SetDirection_PC(FacingLeft);
+				if (PeekNextCoord(PC_COORD))
+				{
+					SetPC_State(Moving);
+					SetPC_COORD_NEXT(PC_COORD.y, PC_COORD.x - 1);
+					SetPC_COORD(PC_COORD.y, PC_COORD.x - 1);
+					MoveCharacter(GetPC_COORD_NEXT());
+				}
+				break;
+			}
+		case VK_RIGHT:
+			if (GetPC_State() == Moving)
+			{
+				MoveCharacter(GetPC_COORD_NEXT());
+				break;
+			}
+			else
+			{
+				SetDirection_PC(FacingRight);
+				if (PeekNextCoord(PC_COORD))
+				{
+					SetPC_State(Moving);
+					SetPC_COORD_NEXT(PC_COORD.y, PC_COORD.x + 1);
+					SetPC_COORD(PC_COORD.y, PC_COORD.x + 1);
+					MoveCharacter(GetPC_COORD_NEXT());
+				}
+				break;
+			}
 		}
 		break;
 	}
@@ -469,7 +551,9 @@ bool SceneManager::PeekNextCoord(POINT CurPos)
 	// 사각형 충돌 확인 함수(IntersectRect()) 참고 : https://m.blog.naver.com/PostView.nhn?blogId=pok_jadan&logNo=186535496&proxyReferer=https%3A%2F%2Fwww.google.co.kr%2F
 	
 	// 다음 row/col 값을 확인하고, 1이면 이동 아니면 제자리	
-
+	switch(GetCurScene())
+	{
+	case TownScene:
 	switch (GetDirection_PC())
 	{
 	case FacingLeft:
@@ -478,7 +562,7 @@ bool SceneManager::PeekNextCoord(POINT CurPos)
 		else
 			return TownMap[CurPos.y][CurPos.x - 1];
 	case FacingRight:
-		if (CurPos.x + 1 >= TOWN_COL)
+		if (CurPos.x + 1 >= MAP_COL)
 			return FALSE;
 		else
 			return TownMap[CurPos.y][CurPos.x + 1];
@@ -488,37 +572,63 @@ bool SceneManager::PeekNextCoord(POINT CurPos)
 		else 
 			return TownMap[CurPos.y - 1][CurPos.x];
 	case FacingDown:
-		if (CurPos.y + 1 >= TOWN_ROW)
+		if (CurPos.y + 1 >= MAP_ROW)
 			return false;
 		else
 			return TownMap[CurPos.y + 1][CurPos.x];
 	}
-	
+	break;
+	case BattleScene:
+	switch (GetDirection_PC())
+	{
+	case FacingLeft:
+		if (CurPos.x - 1 < 0)
+			return false;
+		else
+			return BattleMap[CurPos.y][CurPos.x - 1];
+	case FacingRight:
+		if (CurPos.x + 1 >= MAP_COL)
+			return FALSE;
+		else
+			return BattleMap[CurPos.y][CurPos.x + 1];
+	case FacingUp:
+		if (CurPos.y - 1 < 0)
+			return false;
+		else
+			return BattleMap[CurPos.y - 1][CurPos.x];
+	case FacingDown:
+		if (CurPos.y + 1 >= MAP_ROW)
+			return false;
+		else
+			return BattleMap[CurPos.y + 1][CurPos.x];
+	}
+	break;
+	}
 }
 
 void SceneManager::MoveCharacter(POINT nextPos)
 {
-	//현재 coord에서 다음 coord까지 캐릭터를 이동시킨다.
-	//이동 중 입력이 들어오면 무시 되어야 한다.
+	// Move Character from currend coordinate to next coordinate.
+	// should ignore input while moving
 
-	// 이동중인 상태일 때만
+
 	int DestX = nextPos.x * 48;
 	int DestY = nextPos.y * 48;
 
-	//x좌표값 조정
+	// Set x position
 	if (DestX - PC_POS.x > 0)
 		PC_POS.x += GetSpeed_PC();
 	else if (DestX - PC_POS.x < 0)
 		PC_POS.x -= GetSpeed_PC();
 	
-	// y좌표값 조정
+	// Set y position
 	if (DestY - PC_POS.y > 0)
 		PC_POS.y += GetSpeed_PC();
 	else if (DestY - PC_POS.y < 0)
 		PC_POS.y -= GetSpeed_PC();
 
 
-	// 목표 좌표까지 이동 되었으면 상태를 Idle로 전환한다
+	// change character status to Idle whel reaches target position.
 	if ((PC_POS.x == DestX) && (PC_POS.y == DestY))
 	{
 		SetPC_State(Idle);
@@ -526,6 +636,9 @@ void SceneManager::MoveCharacter(POINT nextPos)
 	}
 
 
+	// TODO : check for event
+	//if ((GetPC_COORD().y == 12) && (GetPC_COORD().x == 8))
+	//	ChangeScene(BattleScene);
 }
 
 

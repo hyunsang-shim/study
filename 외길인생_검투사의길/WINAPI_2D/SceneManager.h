@@ -7,8 +7,8 @@ class SceneManager : public cManager
 public:
 	SceneManager();
 	~SceneManager();
-	void UnloadScene();
-	void LoadScene(int destSceneidx);
+	void LoadResource();
+	void UnLoadResource();
 	void DrawScene(HDC hdc);
 	void ChangeScene(int destSceneidx);
 	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src);
@@ -16,6 +16,7 @@ public:
 	void DrawToFront(HDC destDC, HDC srcDC);
 	void DrawTitleScene(HDC hdc);
 	void DrawTownScene(HDC hdc);
+	void DrawBattleScene(HDC hdc);
 	void KeyInput(WPARAM wParam);
 	bool PeekNextCoord(POINT CurPos);
 	void MoveCharacter(POINT nextPoint);
@@ -50,7 +51,39 @@ private:
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 	};
 
+	short BattleMap[14][17] = {
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
+		0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+		0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+		0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	};
+
 	//for town map movement test
 	int tmpflag = -1;
+
+	//resource Lists
+	HBITMAP resTitle_bg;
+	HBITMAP resTitle_txt1;
+	HBITMAP resTitle_txt2;
+	HBITMAP resTitle_btn1;
+	HBITMAP resTitle_btn2_on;
+	HBITMAP resTitle_btn2_off;
+	HBITMAP resTitle_btn3;
+	HBITMAP resTown_bg;
+	HBITMAP resPC_walk;
+	HBITMAP resBattle_bg;
+
+	std::vector<POINT> Event_List;
+
 };
 
