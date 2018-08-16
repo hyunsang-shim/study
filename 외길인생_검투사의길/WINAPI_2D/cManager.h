@@ -38,7 +38,7 @@ private:
 	int CurMenu = menuNew;
 	int lastScene = TitleScene;	
 	int PC_Direction = FacingRight;
-	int PC_Speed = 6;
+	int PC_Speed = 4;
 	int PC_State = Idle;
 	HWND MyHWND;
 	HINSTANCE hInst;

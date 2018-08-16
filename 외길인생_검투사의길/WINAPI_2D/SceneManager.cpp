@@ -27,6 +27,10 @@ void SceneManager::UnLoadResource()
 	DeleteObject(resBattle_bg);
 
 	DeleteObject(resPC_walk);
+	DeleteObject(resPC_shadow);
+	DeleteObject(resPC_battle);
+
+	DeleteObject(resMob_rat);
 
 }
 
@@ -45,6 +49,11 @@ void SceneManager::LoadResource()
 	resBattle_bg = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\BG\\battle.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	resPC_walk = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\Character\\PC_walk.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);	
+	resPC_shadow = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\Character\\PC_shadow.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resPC_battle = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\Character\\PC_battle.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+	resMob_rat = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\Character\\Mob_rat.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
 }
 
 void SceneManager::DrawScene(HDC hdc)
@@ -86,11 +95,11 @@ void SceneManager::ChangeScene(int destSceneidx)
 		break;
 	case BattleScene:
 		SetCurScene(BattleScene);
-		SetPC_COORD(7, 1);
-		SetPC_POS(7, 1);
-		SetPC_COORD_NEXT(7, 1);
-		SetDirection_PC(FacingRight);
-		SetPC_State(Idle);		
+		SetPC_COORD(7, 13);
+		SetPC_POS(7, 13);
+		SetPC_COORD_NEXT(7, 13);
+		SetDirection_PC(FacingLeft);
+		SetPC_State(Idle);
 		break;
 	case GameOverScene:
 		this->SetCurScene(GameOverScene);
@@ -120,13 +129,8 @@ void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP s
 	HWND myHwnd = FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길"));
 	GetClientRect(myHwnd, &tmpRect);
 
-	int srcWidth, srcHeight;
-	{
-		BITMAP bit;
-		GetObject(src, sizeof(BITMAP), &bit);
-		srcWidth = bit.bmWidth;
-		srcHeight = bit.bmHeight;
-	}
+
+	GetObject(src, sizeof(BITMAP), &bm);
 	
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -134,7 +138,7 @@ void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP s
 	hMemDC = CreateCompatibleDC(destDC);
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
 
-	TransparentBlt(destDC, startX, startY, srcWidth, srcHeight, hMemDC, 0, 0, srcWidth, srcHeight, RGB(255, 0, 255));
+	TransparentBlt(destDC, startX, startY, bm.bmWidth, bm.bmHeight, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteDC(hMemDC);
@@ -147,12 +151,57 @@ void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP s
 
 	hMemDC = CreateCompatibleDC(destDC);
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
-
-	
-	TransparentBlt(destDC, startX, startY, CHARACTER_SIZE, CHARACTER_SIZE-1, hMemDC, frameNumber * 50, GetDirection_PC() * 48, CHARACTER_SIZE, CHARACTER_SIZE - 1, RGB(255, 0, 255));
+		
+	TransparentBlt(destDC, startX, startY, CHARACTER_SIZE, CHARACTER_SIZE-1, hMemDC, frameNumber * CHARACTER_SIZE, GetDirection_PC() * CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE - 1, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteDC(hMemDC);	
+
+}
+
+void SceneManager::DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src)
+{
+	HDC hMemDC;
+	HBITMAP hOldBitmap;
+
+	hMemDC = CreateCompatibleDC(destDC);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
+
+	GetObject(src, sizeof(BITMAP), &bm);
+
+	TransparentBlt(destDC, 96, 280, bm.bmWidth, bm.bmHeight - 1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight - 1, RGB(255, 0, 255));
+
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteDC(hMemDC);
+
+}
+void SceneManager::DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber)
+{
+	HDC hMemDC;
+	HBITMAP hOldBitmap;
+
+	hMemDC = CreateCompatibleDC(destDC);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
+
+	TransparentBlt(destDC, startX, startY, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, GetPC_State()%100 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
+
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteDC(hMemDC);
+
+}
+void SceneManager::DrawSpriteShadow(HDC destDC, int startX, int startY, HBITMAP src)
+{
+	HDC hMemDC;
+	HBITMAP hOldBitmap;
+
+	hMemDC = CreateCompatibleDC(destDC);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
+
+	TransparentBlt(destDC, startX, startY+2, CHARACTER_SIZE, CHARACTER_SIZE - 1, hMemDC, 0, 0, CHARACTER_SIZE, CHARACTER_SIZE, RGB(255, 0, 255));
+
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteDC(hMemDC);
+
 }
 
 void SceneManager::DrawToFront(HDC destDC, HDC srcDC)
@@ -190,12 +239,11 @@ void SceneManager::DrawTitleScene(HDC hdc)
 		HDC hMemDC2;
 		hMemDC2 = CreateCompatibleDC(BackMemDC);
 		HBITMAP hOldBitmap2;
-		static BITMAP bit;
-		GetObject(resTitle_bg, sizeof(BITMAP), &bit);
+		GetObject(resTitle_bg, sizeof(BITMAP), &bm);
 
 		hOldBitmap2 = (HBITMAP)SelectObject(hMemDC2, resTitle_bg);
 
-		BitBlt(BackMemDC, 0, 0, bit.bmWidth, bit.bmHeight, hMemDC2, 0, 0, SRCCOPY);
+		BitBlt(BackMemDC, 0, 0, bm.bmWidth, bm.bmHeight, hMemDC2, 0, 0, SRCCOPY);
 		SelectObject(hMemDC2, hOldBitmap2);
 		DeleteObject(hBit4);
 
@@ -221,10 +269,10 @@ void SceneManager::DrawTitleScene(HDC hdc)
 	framecounter++;
 
 
-	if (framecounter > (CHARACTER_FRAME_MAX * 12))
+	if (framecounter > (CHARACTER_FRAME_MAX * 60))
 		framecounter = 0;
 	else
-		characterFrame = (framecounter / 4) % 4;
+		characterFrame = (framecounter / 10) % 4;
 
 
 	DrawSpriteImage(BackMemDC, 550, 390 + this->GetCurMenu() * 60, resPC_walk, characterFrame);
@@ -241,8 +289,8 @@ void SceneManager::DrawTitleScene(HDC hdc)
 
 void SceneManager::DrawTownScene(HDC hdc)
 {
-	 HDC BackMemDC;
-	 HBITMAP hOldBitmap;
+	HDC BackMemDC;
+	HBITMAP hOldBitmap;
 
 	// copy front DC's attributes intto BackMemDC
 	BackMemDC = CreateCompatibleDC(hdc);
@@ -256,14 +304,13 @@ void SceneManager::DrawTownScene(HDC hdc)
 		HDC hMemDC2;
 		hMemDC2 = CreateCompatibleDC(BackMemDC);
 		HBITMAP hOldBitmap2;
-		BITMAP bit;
-		GetObject(resTown_bg, sizeof(BITMAP), &bit);
+		GetObject(resTown_bg, sizeof(BITMAP), &bm);
 
 		hOldBitmap2 = (HBITMAP)SelectObject(hMemDC2, resTown_bg);
 
-		BitBlt(BackMemDC, 0, 0, bit.bmWidth, bit.bmHeight, hMemDC2, 0, 0, SRCCOPY);
+		BitBlt(BackMemDC, 0, 0, bm.bmWidth, bm.bmHeight, hMemDC2, 0, 0, SRCCOPY);
 		SelectObject(hMemDC2, hOldBitmap2);
-		
+
 		DeleteObject(hOldBitmap2);
 		hOldBitmap = (HBITMAP)SelectObject(hMemDC2, hBit4);
 		DeleteObject(hBit4);
@@ -276,21 +323,24 @@ void SceneManager::DrawTownScene(HDC hdc)
 	framecounter++;
 
 
-	if (framecounter > (CHARACTER_FRAME_MAX * 12))
+	if (framecounter > (CHARACTER_FRAME_MAX * 60))
 		framecounter = 0;
 	else
-		characterFrame = (framecounter / 4) % 4;
+		characterFrame = (framecounter / 10) % 4;
 
+	DrawSpriteShadow(BackMemDC, PC_POS.x, PC_POS.y, resPC_shadow);
 	DrawSpriteImage(BackMemDC, PC_POS.x, PC_POS.y, resPC_walk, characterFrame);
 
-	//for Testing purpose
-	/*for (int row = 0; row < 14; row++)
-		for (int col = 0; col < 17; col++)
-			if (TownMap[row][col])
-				Rectangle(BackMemDC, col * MAPCHIP_SIZE, row * MAPCHIP_SIZE, col * MAPCHIP_SIZE + MAPCHIP_SIZE, row * MAPCHIP_SIZE + MAPCHIP_SIZE - 1);*/
+	if (tmpflag ==1)
+	{
+		for (int row = 0; row < 14; row++)
+			for (int col = 0; col < 17; col++)
+				if (TownMap[row][col])
+					Rectangle(BackMemDC, col * MAPCHIP_SIZE, row * MAPCHIP_SIZE, col * MAPCHIP_SIZE + MAPCHIP_SIZE, row * MAPCHIP_SIZE + MAPCHIP_SIZE - 1);
+	}
 
-	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
 	// Draw backbuffer DC onto front DC
+	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
 
 	SelectObject(BackMemDC, hOldBitmap); // << : 
 	DeleteObject(hOldBitmap);
@@ -316,12 +366,11 @@ void SceneManager::DrawBattleScene(HDC hdc)
 		HDC hMemDC2;
 		hMemDC2 = CreateCompatibleDC(BackMemDC);
 		HBITMAP hOldBitmap2;
-		BITMAP bit;
-		GetObject(resTown_bg, sizeof(BITMAP), &bit);
+		GetObject(resTown_bg, sizeof(BITMAP), &bm);
 
 		hOldBitmap2 = (HBITMAP)SelectObject(hMemDC2, resBattle_bg);
 
-		BitBlt(BackMemDC, 0, 0, bit.bmWidth, bit.bmHeight, hMemDC2, 0, 0, SRCCOPY);
+		BitBlt(BackMemDC, 0, 0, bm.bmWidth, bm.bmHeight, hMemDC2, 0, 0, SRCCOPY);
 		SelectObject(hMemDC2, hOldBitmap2);
 
 		DeleteObject(hOldBitmap2);
@@ -336,30 +385,32 @@ void SceneManager::DrawBattleScene(HDC hdc)
 	framecounter++;
 
 
-	if (framecounter > (CHARACTER_FRAME_MAX * 12))
+	if (framecounter > (CHARACTER_FRAME_MAX * 60))
 		framecounter = 0;
 	else
-		characterFrame = (framecounter / 4) % 4;
-
-	DrawSpriteImage(BackMemDC, PC_POS.x, PC_POS.y, resPC_walk, characterFrame);
+		characterFrame = (framecounter / 10) % 4;
 
 
+	//for Testing purpose
+	if (tmpflag == 1)
+	{
+		for (int row = 0; row < 14; row++)
+			for (int col = 0; col < 17; col++)
+				if (BattleMap[row][col])
+					Rectangle(BackMemDC, col * MAPCHIP_SIZE, row * MAPCHIP_SIZE, col * MAPCHIP_SIZE + MAPCHIP_SIZE, row * MAPCHIP_SIZE + MAPCHIP_SIZE - 1);
+	}
 
-	// for testing purpose
-	/*for (int row = 0; row < 14; row++)
-		for (int col = 0; col < 17; col++)
-			if (BattleMap[row][col])
-				Rectangle(BackMemDC, col * MAPCHIP_SIZE, row * MAPCHIP_SIZE, col * MAPCHIP_SIZE + MAPCHIP_SIZE, row * MAPCHIP_SIZE + MAPCHIP_SIZE - 1);*/
 
+	DrawBattler_Mob(BackMemDC, PC_POS.x, PC_POS.y, resMob_rat);
 
-
+	DrawSpriteShadow(BackMemDC, PC_POS.x+8, PC_POS.y+18, resPC_shadow);
+	DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+	
 
 	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
 	// Draw backbuffer DC onto front DC
-
-
+	
 	//std::cout << GetPC_COORD().y << " " << GetPC_COORD().x << " " << BattleMap[GetPC_COORD().y][GetPC_COORD().x] << " \n";
-
 	SelectObject(BackMemDC, hOldBitmap); // << : 
 	DeleteObject(hOldBitmap);
 	DeleteDC(BackMemDC);
@@ -501,46 +552,20 @@ void SceneManager::KeyInput(WPARAM wParam)
 			ChangeScene(BattleScene);
 			break;
 		}
+		SetEventID(TownMap[PC_COORD.y][PC_COORD.x]);
+		std::cout << "Current PC Coord (row,col) : (" << PC_COORD.y << "," << PC_COORD.x << ")  EventID : " << EventId << "\n";
 		break;
 	case BattleScene:
 		switch (wParam)
-		{
-		case VK_LEFT:
-			if (GetPC_State() == Moving)
-			{
-				MoveCharacter(GetPC_COORD_NEXT());
-				break;
-			}
-			else
-			{
-				SetDirection_PC(FacingLeft);
-				if (PeekNextCoord(PC_COORD))
-				{
-					SetPC_State(Moving);
-					SetPC_COORD_NEXT(PC_COORD.y, PC_COORD.x - 1);
-					SetPC_COORD(PC_COORD.y, PC_COORD.x - 1);
-					MoveCharacter(GetPC_COORD_NEXT());
-				}
-				break;
-			}
-		case VK_RIGHT:
-			if (GetPC_State() == Moving)
-			{
-				MoveCharacter(GetPC_COORD_NEXT());
-				break;
-			}
-			else
-			{
-				SetDirection_PC(FacingRight);
-				if (PeekNextCoord(PC_COORD))
-				{
-					SetPC_State(Moving);
-					SetPC_COORD_NEXT(PC_COORD.y, PC_COORD.x + 1);
-					SetPC_COORD(PC_COORD.y, PC_COORD.x + 1);
-					MoveCharacter(GetPC_COORD_NEXT());
-				}
-				break;
-			}
+		{		
+		case VK_RETURN:	
+			break;
+		case VK_SPACE:
+			tmpflag *= -1;
+			break;
+		case VK_ESCAPE:
+			ChangeScene(TownScene);
+			SetEventID(1);
 		}
 		break;
 	}
@@ -638,9 +663,9 @@ void SceneManager::MoveCharacter(POINT nextPos)
 
 	// TODO : check for event
 	//if ((GetPC_COORD().y == 12) && (GetPC_COORD().x == 8))
-	//	ChangeScene(BattleScene);
+	if (GetEventID() > 1)
+		ChangeScene(EventId);
 }
-
 
 void SceneManager::SetPC_POS(int row, int col)
 {
@@ -674,4 +699,33 @@ void SceneManager::SetPC_COORD_NEXT(int row, int col)
 POINT SceneManager::GetPC_COORD_NEXT()
 {
 	return PC_COORD_NEXT;
+}
+
+void SceneManager::SetEventID(int eventID)
+{
+	this->EventId = eventID;
+}
+
+int SceneManager::GetEventID()
+{
+	return EventId;
+}
+
+void SceneManager::ShowEvent(int EventId)
+{
+	switch (EventId)
+	{
+	case 100://교회
+	case 200://대장간
+	case 300://길드
+	case 400://체육관
+	case 500://숙소
+		std::cout << "이벤트 발생!" << std::endl;
+		SetEventID(1);
+		break;
+	case 600://출구
+		ChangeScene(BattleScene);
+		SetEventID(1);
+		break;
+	}
 }

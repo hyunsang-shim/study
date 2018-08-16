@@ -12,7 +12,10 @@ public:
 	void DrawScene(HDC hdc);
 	void ChangeScene(int destSceneidx);
 	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src);
+	void DrawSpriteShadow(HDC destDC, int startX, int startY, HBITMAP src);
 	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
+	void DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src);
+	void DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
 	void DrawToFront(HDC destDC, HDC srcDC);
 	void DrawTitleScene(HDC hdc);
 	void DrawTownScene(HDC hdc);
@@ -26,6 +29,10 @@ public:
 	POINT GetPC_COORD();
 	void SetPC_COORD_NEXT(int row, int col);
 	POINT GetPC_COORD_NEXT();
+	void SetEventID(int eventID);
+	int GetEventID();
+	void ShowEvent(int EventId);
+
 	std::vector<HBITMAP> resources;
 
 
@@ -36,21 +43,21 @@ private:
 	POINT PC_COORD_NEXT;
 	short TownMap[14][17] = {
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-		0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 		1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-		0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
-		0,1,1,0,0,0,0,0,1,1,0,1,1,0,1,0,0,
+		0,1,1,0,0,0,0,0,200,0,0,0,0,0,0,0,0,
+		0,1,1,0,0,0,0,0,1,1,0,1,1,0,400,0,0,
 		0,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,
 		0,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,
 		0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,
 		0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,
 		0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,
-		0,0,1,0,1,1,1,1,1,0,1,1,1,0,1,0,0,
+		0,0,300,0,1,1,1,1,1,0,1,1,1,0,500,0,0,
 		0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
 		0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		0,0,0,0,0,0,0,0,600,0,0,0,0,0,0,0,0
 	};
-
+	 
 	short BattleMap[14][17] = {
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
@@ -81,9 +88,13 @@ private:
 	HBITMAP resTitle_btn3;
 	HBITMAP resTown_bg;
 	HBITMAP resPC_walk;
+	HBITMAP resPC_shadow;
+	HBITMAP resPC_battle;
+	HBITMAP resMob_rat;
 	HBITMAP resBattle_bg;
 
-	std::vector<POINT> Event_List;
+	BITMAP bm;
 
+	int EventId;
 };
 
