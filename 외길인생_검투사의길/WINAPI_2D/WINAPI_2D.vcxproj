@@ -147,7 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="cBattleScene.h" />
+    <ClInclude Include="BattleManager.h" />
     <ClInclude Include="cManager.h" />
     <ClInclude Include="cTitleScene.h" />
     <ClInclude Include="Resource.h" />
@@ -158,7 +158,7 @@
     <ClInclude Include="WINAPI_2D.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cBattleScene.cpp" />
+    <ClCompile Include="BattleManager.cpp" />
     <ClCompile Include="cManager.cpp" />
     <ClCompile Include="cTitleScene.cpp" />
     <ClCompile Include="SceneManager.cpp" />

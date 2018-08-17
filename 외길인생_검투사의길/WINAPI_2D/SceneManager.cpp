@@ -28,7 +28,14 @@ void SceneManager::UnLoadResource()
 
 	DeleteObject(resPC_walk);
 	DeleteObject(resPC_shadow);
+
 	DeleteObject(resPC_battle);
+	DeleteObject(resBattle_btn_attack_on);
+	DeleteObject(resBattle_btn_attack_off);
+	DeleteObject(resBattle_btn_defense_on);
+	DeleteObject(resBattle_btn_defense_off);
+
+	DeleteObject(resWPN_shortsword);
 
 	DeleteObject(resMob_rat);
 
@@ -36,28 +43,38 @@ void SceneManager::UnLoadResource()
 
 void SceneManager::LoadResource()
 {
-	resTitle_bg = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\BG\\title.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	resTitle_txt1 = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\title_text1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	resTitle_txt2 = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\title_text2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	resTitle_btn1 = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_new.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	resTitle_btn2_on = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_load_on.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	resTitle_btn2_off = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_load_off.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	resTitle_btn3 = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\UI\\btn_quit.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_bg = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\BG\\title.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_txt1 = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\title_text1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_txt2 = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\title_text2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_btn1 = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\btn_new.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_btn2_on = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\btn_load_on.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_btn2_off = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\btn_load_off.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTitle_btn3 = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\btn_quit.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-	resTown_bg = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\BG\\town.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resTown_bg = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\BG\\town.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-	resBattle_bg = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\BG\\battle.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resBattle_bg = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\BG\\battle.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resBattle_btn_attack_on = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\btn_attack_on.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resBattle_btn_attack_off = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\btn_attack_off.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resBattle_btn_defense_on = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\btn_defense_on.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resBattle_btn_defense_off = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\btn_defense_off.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-	resPC_walk = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\Character\\PC_walk.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);	
-	resPC_shadow = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\Character\\PC_shadow.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	resPC_battle = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\Character\\PC_battle.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-	resMob_rat = (HBITMAP)LoadImage(GetModuleHandle(NULL), _T(".\\Resources\\Character\\Mob_rat.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+	resPC_walk = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\PC_walk.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resPC_shadow = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\PC_shadow.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resPC_battle = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\PC_battle.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+	resWPN_shortsword = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\weapon\\wpn_shortsword.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+	resMob_rat = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\Mob_rat.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 }
 
 void SceneManager::DrawScene(HDC hdc)
 {
+	//std::cout << GetCurMenu();
+
 	switch (GetCurScene())
 	{
 	case TitleScene:
@@ -68,6 +85,7 @@ void SceneManager::DrawScene(HDC hdc)
 		break;
 	case BattleScene:
 		DrawBattleScene(hdc);
+		//DoBattle(hdc);
 		break;
 	}
 
@@ -100,24 +118,25 @@ void SceneManager::ChangeScene(int destSceneidx)
 		SetPC_COORD_NEXT(7, 13);
 		SetDirection_PC(FacingLeft);
 		SetPC_State(Idle);
+		SetCurMenu(menuAttack);
 		break;
 	case GameOverScene:
-		this->SetCurScene(GameOverScene);
+		SetCurScene(GameOverScene);
 		break;
 	case ShopGym:
-		this->SetCurScene(ShopGym);
+		SetCurScene(ShopGym);
 		break;
 	case ShopChurch:
-		this->SetCurScene(ShopChurch);
+		SetCurScene(ShopChurch);
 		break;
 	case ShopBlacksmith:
-		this->SetCurScene(ShopBlacksmith);
+		SetCurScene(ShopBlacksmith);
 		break;
 	case ShopGuild:
-		this->SetCurScene(ShopGuild);
+		SetCurScene(ShopGuild);
 		break;
 	case House:
-		this->SetCurScene(House);
+		SetCurScene(House);
 		break;
 	}
 	 	
@@ -175,20 +194,37 @@ void SceneManager::DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP s
 	DeleteDC(hMemDC);
 
 }
+void SceneManager::DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber)
+{
+	HDC hMemDC;
+	HBITMAP hOldBitmap;
+
+	hMemDC = CreateCompatibleDC(destDC);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, resWPN_shortsword);
+
+	TransparentBlt(destDC, startX - FX_WPN_MOD_LEFT, startY - FX_WPN_MOD_UP, FX_WPN_WIDTH, FX_WPN_HEIGHT,
+		hMemDC, frameNumber * FX_WPN_WIDTH, 0, FX_WPN_WIDTH, FX_WPN_HEIGHT, RGB(255, 0, 255));
+
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteDC(hMemDC);
+}
 void SceneManager::DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
 
 	hMemDC = CreateCompatibleDC(destDC);
-	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
 
-	TransparentBlt(destDC, startX, startY, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, GetPC_State()%100 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
+	TransparentBlt(destDC, startX, startY, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, 
+		hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, GetBattleState_PC()%100 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteDC(hMemDC);
 
 }
+
+
 void SceneManager::DrawSpriteShadow(HDC destDC, int startX, int startY, HBITMAP src)
 {
 	HDC hMemDC;
@@ -204,6 +240,8 @@ void SceneManager::DrawSpriteShadow(HDC destDC, int startX, int startY, HBITMAP 
 
 }
 
+// not use. just for history
+/*
 void SceneManager::DrawToFront(HDC destDC, HDC srcDC)
 {
 
@@ -221,6 +259,7 @@ void SceneManager::DrawToFront(HDC destDC, HDC srcDC)
 	// Draw image on buffer DC onto front DC
 	TransparentBlt(destDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, srcDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
 }
+*/
 
 void SceneManager::DrawTitleScene(HDC hdc)
 {
@@ -275,7 +314,7 @@ void SceneManager::DrawTitleScene(HDC hdc)
 		characterFrame = (framecounter / 10) % 4;
 
 
-	DrawSpriteImage(BackMemDC, 550, 390 + this->GetCurMenu() * 60, resPC_walk, characterFrame);
+	DrawSpriteImage(BackMemDC, 550, 390 + GetCurMenu() * 60, resPC_walk, characterFrame);
 
 	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
 	// Draw backbuffer DC onto front DC
@@ -379,18 +418,7 @@ void SceneManager::DrawBattleScene(HDC hdc)
 		DeleteDC(hMemDC2);
 
 	}
-
-	static int framecounter = 0;
-	static int characterFrame = 0;
-	framecounter++;
-
-
-	if (framecounter > (CHARACTER_FRAME_MAX * 60))
-		framecounter = 0;
-	else
-		characterFrame = (framecounter / 10) % 4;
-
-
+	
 	//for Testing purpose
 	if (tmpflag == 1)
 	{
@@ -400,15 +428,9 @@ void SceneManager::DrawBattleScene(HDC hdc)
 					Rectangle(BackMemDC, col * MAPCHIP_SIZE, row * MAPCHIP_SIZE, col * MAPCHIP_SIZE + MAPCHIP_SIZE, row * MAPCHIP_SIZE + MAPCHIP_SIZE - 1);
 	}
 
-
-	DrawBattler_Mob(BackMemDC, PC_POS.x, PC_POS.y, resMob_rat);
-
-	DrawSpriteShadow(BackMemDC, PC_POS.x+8, PC_POS.y+18, resPC_shadow);
-	DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
-	
-
-	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
+	DoBattle(BackMemDC);
 	// Draw backbuffer DC onto front DC
+	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
 	
 	//std::cout << GetPC_COORD().y << " " << GetPC_COORD().x << " " << BattleMap[GetPC_COORD().y][GetPC_COORD().x] << " \n";
 	SelectObject(BackMemDC, hOldBitmap); // << : 
@@ -553,19 +575,47 @@ void SceneManager::KeyInput(WPARAM wParam)
 			break;
 		}
 		SetEventID(TownMap[PC_COORD.y][PC_COORD.x]);
-		std::cout << "Current PC Coord (row,col) : (" << PC_COORD.y << "," << PC_COORD.x << ")  EventID : " << EventId << "\n";
+		std::cout << "PC Coord (current, next) : (" << PC_COORD.y << "," << PC_COORD.x << "), (" << PC_COORD_NEXT.y << "," << PC_COORD_NEXT.y << "  EventID : " << EventId << "\n";
 		break;
 	case BattleScene:
-		switch (wParam)
-		{		
-		case VK_RETURN:	
+		if (GetBattleState_PC() == Ready)
+		{
+			switch (wParam)
+			{
+			case VK_LEFT:
+				SetCurMenu(menuAttack);
+				break;
+			case VK_RIGHT:
+				SetCurMenu(menuDefense);
+				break;
+			case VK_SPACE:
+				tmpflag *= -1;
+				break;
+			case VK_ESCAPE:
+				ChangeScene(TownScene);
+				SetEventID(1);
+				break;
+			case VK_RETURN:
+				SetBattleState_PC(AttackStart);
+				break;
+			}
 			break;
-		case VK_SPACE:
-			tmpflag *= -1;
+		}
+		else
+		{
+			switch (wParam)
+			{
+			case VK_RETURN:
+				SetBattleState_PC(AttackStart);
+				break;
+			case VK_SPACE:
+				tmpflag *= -1;
+				break;
+			case VK_ESCAPE:
+				ChangeScene(TownScene);
+				SetEventID(1);
+			}
 			break;
-		case VK_ESCAPE:
-			ChangeScene(TownScene);
-			SetEventID(1);
 		}
 		break;
 	}
@@ -728,4 +778,74 @@ void SceneManager::ShowEvent(int EventId)
 		SetEventID(1);
 		break;
 	}
+}
+
+
+void SceneManager::DoBattle(HDC BackMemDC)
+{
+
+	std::cout << "GetBattleState_PC : " << GetBattleState_PC() << " curMenu : " << GetCurMenu() << "\n";
+
+	static int framecounter = 0;
+	static int characterFrame = 0;
+	framecounter++;
+
+	// show battle Menu
+	if (GetBattleState_PC() == Ready)
+		ShowBattleMenu(BackMemDC);
+
+
+
+	// Sync PC sprite frame to action.
+	if (GetBattleState_PC() == AttackStart)
+	{
+		framecounter = 0;
+		SetBattleState_PC(Attacking);
+	}	
+	else if (GetBattleState_PC() == AttackEnd)
+	{
+		SetBattleState_PC(Ready);
+	}
+
+	if (framecounter > ((CHARACTER_FRAME_MAX - 1) * 10))
+	{
+		framecounter = 0;
+
+		if (GetBattleState_PC() == Attacking)
+			SetBattleState_PC(AttackEnd);
+	}
+	else
+		characterFrame = (framecounter / 10) % 4;
+
+	// Draw Mob
+	DrawBattler_Mob(BackMemDC, PC_POS.x, PC_POS.y, resMob_rat);
+
+	// Draw Player Character
+	DrawSpriteShadow(BackMemDC, PC_POS.x + 8, PC_POS.y + 18, resPC_shadow);
+
+	if (GetBattleState_PC() == Attacking)
+	{		
+		DrawFX_PC(BackMemDC, PC_POS.x, PC_POS.y, resWPN_shortsword, characterFrame);
+	}
+
+	DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+
+
+}
+
+void SceneManager::ShowBattleMenu(HDC BackMemDC)
+{
+
+	// PC position : 624, 336
+	if (GetCurMenu() == menuAttack)
+	{
+		DrawSpriteImage(BackMemDC, GetPC_POS().x - BATTLE_MENU_SIZE/2 , GetPC_POS().y - BATTLE_MENU_SIZE, resBattle_btn_attack_on);	// attack Menu : on
+		DrawSpriteImage(BackMemDC, GetPC_POS().x + BATTLE_MENU_SIZE/2, GetPC_POS().y - BATTLE_MENU_SIZE, resBattle_btn_defense_off);	// Defense Menu : off
+	}
+	else if (GetCurMenu() == menuDefense)
+	{
+		DrawSpriteImage(BackMemDC, GetPC_POS().x - BATTLE_MENU_SIZE/2, GetPC_POS().y - BATTLE_MENU_SIZE, resBattle_btn_attack_off);	// attack Menu : on
+		DrawSpriteImage(BackMemDC, GetPC_POS().x + BATTLE_MENU_SIZE/2, GetPC_POS().y - BATTLE_MENU_SIZE, resBattle_btn_defense_on);	// Defense Menu : off
+	}
+
 }

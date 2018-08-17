@@ -83,3 +83,23 @@ int cManager::GetPC_State()
 {
 	return PC_State;
 }
+
+int cManager::GetBattleState_PC()
+{
+	return BattleState_PC;
+}
+
+int cManager::GetBattleState_Mob()
+{
+	return BattleState_Mob;
+}
+
+void cManager::SetBattleState_PC(int state)
+{
+	BattleState_PC = state;
+}
+
+void cManager::SetBattleState_Mob(int state)
+{
+	BattleState_Mob = state;
+}

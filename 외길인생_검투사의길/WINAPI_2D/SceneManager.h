@@ -1,5 +1,6 @@
 #pragma once
 #include "cManager.h"
+#include "BattleManager.h"
 #include <vector>
 
 class SceneManager : public cManager
@@ -16,10 +17,14 @@ public:
 	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
 	void DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src);
 	void DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
-	void DrawToFront(HDC destDC, HDC srcDC);
+	void DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
+//	void DrawToFront(HDC destDC, HDC srcDC);
 	void DrawTitleScene(HDC hdc);
 	void DrawTownScene(HDC hdc);
+
 	void DrawBattleScene(HDC hdc);
+	void DoBattle(HDC BackMemDC);
+	void ShowBattleMenu(HDC BackMemDC);
 	void KeyInput(WPARAM wParam);
 	bool PeekNextCoord(POINT CurPos);
 	void MoveCharacter(POINT nextPoint);
@@ -90,7 +95,15 @@ private:
 	HBITMAP resPC_walk;
 	HBITMAP resPC_shadow;
 	HBITMAP resPC_battle;
+	HBITMAP resBattle_btn_attack_on;
+	HBITMAP resBattle_btn_attack_off;
+	HBITMAP resBattle_btn_defense_on;
+	HBITMAP resBattle_btn_defense_off;
+
+	HBITMAP resWPN_shortsword;
+
 	HBITMAP resMob_rat;
+
 	HBITMAP resBattle_bg;
 
 	BITMAP bm;

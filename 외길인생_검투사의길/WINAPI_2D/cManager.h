@@ -20,7 +20,12 @@ public:
 	void SetMyHWND(HWND hWnd);
 	int GetSpeed_PC();
 	void SetPC_State(int state);
+	
 	int GetPC_State();
+	int GetBattleState_PC();
+	int GetBattleState_Mob();
+	void SetBattleState_PC(int state);
+	void SetBattleState_Mob(int state);
 	HWND GetMyHWND();
 	~cManager();
 	
@@ -40,6 +45,8 @@ private:
 	int PC_Direction = FacingRight;
 	int PC_Speed = 4;
 	int PC_State = Idle;
+	int BattleState_PC = Ready;
+	int BattleState_Mob = Ready;
 	HWND MyHWND;
 	HINSTANCE hInst;
 	
