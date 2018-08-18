@@ -18,10 +18,10 @@ public:
 	void DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src);
 	void DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
 	void DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
+	void DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
 //	void DrawToFront(HDC destDC, HDC srcDC);
 	void DrawTitleScene(HDC hdc);
 	void DrawTownScene(HDC hdc);
-
 	void DrawBattleScene(HDC hdc);
 	void DoBattle(HDC BackMemDC);
 	void ShowBattleMenu(HDC BackMemDC);
@@ -101,6 +101,7 @@ private:
 	HBITMAP resBattle_btn_defense_off;
 
 	HBITMAP resWPN_shortsword;
+	HBITMAP resWPN_shortsword_fx;
 
 	HBITMAP resMob_rat;
 

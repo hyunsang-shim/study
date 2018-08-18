@@ -36,6 +36,7 @@ void SceneManager::UnLoadResource()
 	DeleteObject(resBattle_btn_defense_off);
 
 	DeleteObject(resWPN_shortsword);
+	DeleteObject(resWPN_shortsword_fx);
 
 	DeleteObject(resMob_rat);
 
@@ -66,6 +67,7 @@ void SceneManager::LoadResource()
 	resPC_battle = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\PC_battle.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	resWPN_shortsword = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\weapon\\wpn_shortsword.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resWPN_shortsword_fx = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\weapon\\wpn_shortsword_fx.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	resMob_rat = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\Mob_rat.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
@@ -188,7 +190,7 @@ void SceneManager::DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP s
 
 	GetObject(src, sizeof(BITMAP), &bm);
 
-	TransparentBlt(destDC, 96, 280, bm.bmWidth, bm.bmHeight - 1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight - 1, RGB(255, 0, 255));
+	TransparentBlt(destDC, startX, startY, bm.bmWidth, bm.bmHeight - 1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight - 1, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteDC(hMemDC);
@@ -200,10 +202,25 @@ void SceneManager::DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP src, in
 	HBITMAP hOldBitmap;
 
 	hMemDC = CreateCompatibleDC(destDC);
-	hOldBitmap = (HBITMAP)SelectObject(hMemDC, resWPN_shortsword);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
 
 	TransparentBlt(destDC, startX - FX_WPN_MOD_LEFT, startY - FX_WPN_MOD_UP, FX_WPN_WIDTH, FX_WPN_HEIGHT,
 		hMemDC, frameNumber * FX_WPN_WIDTH, 0, FX_WPN_WIDTH, FX_WPN_HEIGHT, RGB(255, 0, 255));
+
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteDC(hMemDC);
+}
+void SceneManager::DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber)
+{
+	HDC hMemDC;
+	HBITMAP hOldBitmap;
+
+	hMemDC = CreateCompatibleDC(destDC);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
+	GetObject(src, sizeof(BITMAP), &bm);		
+
+	TransparentBlt(destDC, startX, startY, FX_VFX_SIZE, FX_VFX_SIZE,
+		hMemDC, frameNumber * FX_VFX_SIZE, 0, FX_VFX_SIZE, FX_VFX_SIZE, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteDC(hMemDC);
@@ -794,8 +811,6 @@ void SceneManager::DoBattle(HDC BackMemDC)
 	if (GetBattleState_PC() == Ready)
 		ShowBattleMenu(BackMemDC);
 
-
-
 	// Sync PC sprite frame to action.
 	if (GetBattleState_PC() == AttackStart)
 	{
@@ -818,17 +833,19 @@ void SceneManager::DoBattle(HDC BackMemDC)
 		characterFrame = (framecounter / 10) % 4;
 
 	// Draw Mob
-	DrawBattler_Mob(BackMemDC, PC_POS.x, PC_POS.y, resMob_rat);
+	DrawBattler_Mob(BackMemDC, MOB_POS_X, MOB_POS_Y, resMob_rat);
 
 	// Draw Player Character
 	DrawSpriteShadow(BackMemDC, PC_POS.x + 8, PC_POS.y + 18, resPC_shadow);
 
 	if (GetBattleState_PC() == Attacking)
-	{		
+	{	
+		DrawATK_VFX(BackMemDC, MOB_POS_X, MOB_POS_Y, resWPN_shortsword_fx, characterFrame);
 		DrawFX_PC(BackMemDC, PC_POS.x, PC_POS.y, resWPN_shortsword, characterFrame);
 	}
 
 	DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+
 
 
 }
