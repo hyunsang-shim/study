@@ -1,5 +1,7 @@
 #pragma once
-#include "WINAPI_2D.h"
+
+#include "stdafx.h"
+
 
 
 
@@ -26,7 +28,16 @@ public:
 	int GetBattleState_Mob();
 	void SetBattleState_PC(int state);
 	void SetBattleState_Mob(int state);
+
+
+	int calcDamage(STATUS_PC *pc, STATUS_MOB *mob);
+	int calcDamage(STATUS_MOB *mob, STATUS_PC *pc);
 	HWND GetMyHWND();
+
+	STATUS_PC pc_stat;
+	STATUS_MOB mob_stat;
+
+
 	~cManager();
 	
 
@@ -49,6 +60,8 @@ private:
 	int BattleState_Mob = Ready;
 	HWND MyHWND;
 	HINSTANCE hInst;
+
+
 	
 };
 

@@ -1,3 +1,4 @@
+
 #include "stdafx.h"
 #include "cManager.h"
 
@@ -13,6 +14,22 @@ void cManager::SetCurScene(int SceneName)
 	this->CurScene = SceneName;
 }
 
+
+int cManager::calcDamage(STATUS_PC *pc, STATUS_MOB *mob)
+{
+	mob->hp -= pc->atk - mob->def;
+	
+	return pc->atk - mob->def;
+	
+}
+
+int cManager::calcDamage(STATUS_MOB *mob, STATUS_PC *pc)
+{
+	pc->hp -= mob->atk - pc->def;
+
+
+	return mob->atk - pc->def;
+}
 
 HWND cManager::GetMyHWND()
 {

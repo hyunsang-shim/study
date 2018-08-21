@@ -1,3 +1,5 @@
+#pragma once
+
 #include "stdafx.h"
 #include "SceneManager.h"
 
@@ -39,6 +41,8 @@ void SceneManager::UnLoadResource()
 	DeleteObject(resWPN_shortsword_fx);
 
 	DeleteObject(resMob_rat);
+	DeleteObject(resUI_numbers);
+
 
 }
 
@@ -70,6 +74,8 @@ void SceneManager::LoadResource()
 	resWPN_shortsword_fx = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\weapon\\wpn_shortsword_fx.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	resMob_rat = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\Mob_rat.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+	resUI_numbers = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\ui_numbers.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 }
 
@@ -115,12 +121,7 @@ void SceneManager::ChangeScene(int destSceneidx)
 		break;
 	case BattleScene:
 		SetCurScene(BattleScene);
-		SetPC_COORD(7, 13);
-		SetPC_POS(7, 13);
-		SetPC_COORD_NEXT(7, 13);
-		SetDirection_PC(FacingLeft);
-		SetPC_State(Idle);
-		SetCurMenu(menuAttack);
+		InitBattleScene();
 		break;
 	case GameOverScene:
 		SetCurScene(GameOverScene);
@@ -162,6 +163,7 @@ void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP s
 	TransparentBlt(destDC, startX, startY, bm.bmWidth, bm.bmHeight, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
 	DeleteDC(hMemDC);
 }
 
@@ -176,11 +178,12 @@ void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP s
 	TransparentBlt(destDC, startX, startY, CHARACTER_SIZE, CHARACTER_SIZE-1, hMemDC, frameNumber * CHARACTER_SIZE, GetDirection_PC() * CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE - 1, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
 	DeleteDC(hMemDC);	
 
 }
 
-void SceneManager::DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src)
+void SceneManager::DrawUIFont(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -188,9 +191,32 @@ void SceneManager::DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP s
 	hMemDC = CreateCompatibleDC(destDC);
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
 
+	TransparentBlt(destDC, startX, startY, UI_FONT_SIZE, UI_FONT_SIZE, hMemDC, frameNumber * UI_FONT_SIZE, 0, UI_FONT_SIZE, UI_FONT_SIZE, RGB(255, 0, 255));
+
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
+	DeleteDC(hMemDC);
+
+}
+
+
+void SceneManager::DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src)
+{
+	HDC hMemDC;
+	HBITMAP hOldBitmap;
+
+
+	hMemDC = CreateCompatibleDC(destDC);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
+
 	GetObject(src, sizeof(BITMAP), &bm);
 
-	TransparentBlt(destDC, startX, startY, bm.bmWidth, bm.bmHeight - 1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight - 1, RGB(255, 0, 255));
+	if (GetBattleState_PC() == Attacking)
+	{
+		TransparentBlt(destDC, startX, startY, bm.bmWidth, bm.bmHeight - 1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight - 1, RGB(255, 0, 255));
+	}
+	else 
+		TransparentBlt(destDC, startX, startY, bm.bmWidth, bm.bmHeight - 1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight - 1, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteDC(hMemDC);
@@ -233,10 +259,15 @@ void SceneManager::DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP sr
 	hMemDC = CreateCompatibleDC(destDC);
 
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
-	TransparentBlt(destDC, startX, startY, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, 
-		hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, GetBattleState_PC()%100 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
+	if (GetBattleState_PC() == Hit)
+	{
+		TransparentBlt(destDC, startX, startY, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, GetBattleState_PC() % 4 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
+	}
+	else
+		TransparentBlt(destDC, startX, startY, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, GetBattleState_PC()%4 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
 	DeleteDC(hMemDC);
 
 }
@@ -302,7 +333,7 @@ void SceneManager::DrawTitleScene(HDC hdc)
 		BitBlt(BackMemDC, 0, 0, bm.bmWidth, bm.bmHeight, hMemDC2, 0, 0, SRCCOPY);
 		SelectObject(hMemDC2, hOldBitmap2);
 		DeleteObject(hBit4);
-
+		DeleteObject(hOldBitmap2);
 		DeleteDC(hMemDC2);
 	}
 
@@ -332,6 +363,7 @@ void SceneManager::DrawTitleScene(HDC hdc)
 
 
 	DrawSpriteImage(BackMemDC, 550, 390 + GetCurMenu() * 60, resPC_walk, characterFrame);
+
 
 	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
 	// Draw backbuffer DC onto front DC
@@ -592,7 +624,7 @@ void SceneManager::KeyInput(WPARAM wParam)
 			break;
 		}
 		SetEventID(TownMap[PC_COORD.y][PC_COORD.x]);
-		std::cout << "PC Coord (current, next) : (" << PC_COORD.y << "," << PC_COORD.x << "), (" << PC_COORD_NEXT.y << "," << PC_COORD_NEXT.y << "  EventID : " << EventId << "\n";
+		//std::cout << "PC Coord (current, next) : (" << PC_COORD.y << "," << PC_COORD.x << "), (" << PC_COORD_NEXT.y << "," << PC_COORD_NEXT.y << "  EventID : " << EventId << "\n";
 		break;
 	case BattleScene:
 		if (GetBattleState_PC() == Ready)
@@ -618,12 +650,13 @@ void SceneManager::KeyInput(WPARAM wParam)
 			}
 			break;
 		}
-		else
+		else if (GetBattleState_PC() == Win)
 		{
 			switch (wParam)
 			{
 			case VK_RETURN:
-				SetBattleState_PC(AttackStart);
+				ChangeScene(TownScene);
+				SetEventID(1);
 				break;
 			case VK_SPACE:
 				tmpflag *= -1;
@@ -646,56 +679,58 @@ bool SceneManager::PeekNextCoord(POINT CurPos)
 	switch(GetCurScene())
 	{
 	case TownScene:
-	switch (GetDirection_PC())
-	{
-	case FacingLeft:
-		if (CurPos.x - 1 < 0)
-			return false;
-		else
-			return TownMap[CurPos.y][CurPos.x - 1];
-	case FacingRight:
-		if (CurPos.x + 1 >= MAP_COL)
-			return FALSE;
-		else
-			return TownMap[CurPos.y][CurPos.x + 1];
-	case FacingUp:
-		if (CurPos.y - 1 < 0)
-			return false;
-		else 
-			return TownMap[CurPos.y - 1][CurPos.x];
-	case FacingDown:
-		if (CurPos.y + 1 >= MAP_ROW)
-			return false;
-		else
-			return TownMap[CurPos.y + 1][CurPos.x];
-	}
+		switch (GetDirection_PC())
+		{
+		case FacingLeft:
+			if (CurPos.x - 1 < 0)
+				return false;
+			else
+				return TownMap[CurPos.y][CurPos.x - 1];
+		case FacingRight:
+			if (CurPos.x + 1 >= MAP_COL)
+				return false;
+			else
+				return TownMap[CurPos.y][CurPos.x + 1];
+		case FacingUp:
+			if (CurPos.y - 1 < 0)
+				return false;
+			else 
+				return TownMap[CurPos.y - 1][CurPos.x];
+		case FacingDown:
+			if (CurPos.y + 1 >= MAP_ROW)
+				return false;
+			else
+				return TownMap[CurPos.y + 1][CurPos.x];
+		}
 	break;
 	case BattleScene:
-	switch (GetDirection_PC())
-	{
-	case FacingLeft:
-		if (CurPos.x - 1 < 0)
-			return false;
-		else
-			return BattleMap[CurPos.y][CurPos.x - 1];
-	case FacingRight:
-		if (CurPos.x + 1 >= MAP_COL)
-			return FALSE;
-		else
-			return BattleMap[CurPos.y][CurPos.x + 1];
-	case FacingUp:
-		if (CurPos.y - 1 < 0)
-			return false;
-		else
-			return BattleMap[CurPos.y - 1][CurPos.x];
-	case FacingDown:
-		if (CurPos.y + 1 >= MAP_ROW)
-			return false;
-		else
-			return BattleMap[CurPos.y + 1][CurPos.x];
-	}
+		switch (GetDirection_PC())
+		{
+		case FacingLeft:
+			if (CurPos.x - 1 < 0)
+				return false;
+			else
+				return BattleMap[CurPos.y][CurPos.x - 1];
+		case FacingRight:
+			if (CurPos.x + 1 >= MAP_COL)
+				return false;
+			else
+				return BattleMap[CurPos.y][CurPos.x + 1];
+		case FacingUp:
+			if (CurPos.y - 1 < 0)
+				return false;
+			else
+				return BattleMap[CurPos.y - 1][CurPos.x];
+		case FacingDown:
+			if (CurPos.y + 1 >= MAP_ROW)
+				return false;
+			else
+				return BattleMap[CurPos.y + 1][CurPos.x];
+		}
 	break;
 	}
+
+	return false;
 }
 
 void SceneManager::MoveCharacter(POINT nextPos)
@@ -787,7 +822,7 @@ void SceneManager::ShowEvent(int EventId)
 	case 300://길드
 	case 400://체육관
 	case 500://숙소
-		std::cout << "이벤트 발생!" << std::endl;
+		//std::cout << "이벤트 발생!" << std::endl;
 		SetEventID(1);
 		break;
 	case 600://출구
@@ -797,31 +832,67 @@ void SceneManager::ShowEvent(int EventId)
 	}
 }
 
+void SceneManager::drawDamage(HDC destDC, POINT pos, int dmg)
+{
+	char dmg_to_string[64] = { '\0' };
+
+	_itoa_s(dmg, dmg_to_string, sizeof(dmg_to_string), 10);
+
+	if (damage_font.CurPos.x == damage_font.EndPos.x)
+	{
+		if (damage_font.CurPos.y == damage_font.EndPos.y)
+		{
+			dmg_to_string[0] = { '\0' };
+			if (GetBattleState_PC() == Hit)
+				SetBattleState_PC(Ready);			
+		}
+	}
+	else
+	{
+		damage_font.CurPos.x++;
+		damage_font.CurPos.y--;
+
+		/*printf("start X : %d start y : %d, cur X : %d, cur Y : %d, end X : %d, end Y : %d\n", 
+			damage_font.StartPos.x, damage_font.StartPos.y,
+			damage_font.CurPos.x, damage_font.CurPos.y,
+			damage_font.EndPos.x, damage_font.EndPos.y);
+*/
+
+		for (int i = 0; i < sizeof(dmg_to_string); i++)
+		{
+
+			//printf("%d : int - [ %d ],string - [ %s ]\n", i, 123, dmg_to_string);
+			DrawUIFont(destDC, damage_font.CurPos.x +i* UI_FONT_SIZE, damage_font.CurPos.y, resUI_numbers, dmg_to_string[i] - 48);
+		}
+
+	}
+
+}
+
+void SceneManager::InitBattleScene()
+{
+	SetPC_COORD(7, 13);
+	SetPC_POS(7, 13);
+	SetPC_COORD_NEXT(7, 13);
+	SetDirection_PC(FacingLeft);
+	SetPC_State(Idle);
+	SetCurMenu(menuAttack);
+	SetBattleState_PC(Ready);
+	pc_stat = { 10,0,10,10 };
+	mob_stat = { 1,1,0,25 };
+}
+
 
 void SceneManager::DoBattle(HDC BackMemDC)
 {
 
-	std::cout << "GetBattleState_PC : " << GetBattleState_PC() << " curMenu : " << GetCurMenu() << "\n";
+	//std::cout << "GetBattleState_PC : " << GetBattleState_PC() << " curMenu : " << GetCurMenu() << "\n";
 
 	static int framecounter = 0;
 	static int characterFrame = 0;
 	framecounter++;
 
-	// show battle Menu
-	if (GetBattleState_PC() == Ready)
-		ShowBattleMenu(BackMemDC);
-
-	// Sync PC sprite frame to action.
-	if (GetBattleState_PC() == AttackStart)
-	{
-		framecounter = 0;
-		SetBattleState_PC(Attacking);
-	}	
-	else if (GetBattleState_PC() == AttackEnd)
-	{
-		SetBattleState_PC(Ready);
-	}
-
+	// Sync PC sprite frame to current action.	
 	if (framecounter > ((CHARACTER_FRAME_MAX - 1) * 10))
 	{
 		framecounter = 0;
@@ -832,22 +903,101 @@ void SceneManager::DoBattle(HDC BackMemDC)
 	else
 		characterFrame = (framecounter / 10) % 4;
 
-	// Draw Mob
-	DrawBattler_Mob(BackMemDC, MOB_POS_X, MOB_POS_Y, resMob_rat);
 
-	// Draw Player Character
+	// variables for damage calculation
+	static int damage_to_monster = 0;
+	static int damage_to_pc = 0;
+
+	// Draw Player Character's shadow
 	DrawSpriteShadow(BackMemDC, PC_POS.x + 8, PC_POS.y + 18, resPC_shadow);
+	
+	//printf("mob_stat.hp : %d \n", mob_stat.hp);
+	DAMAGE_FONT tmp;
+	POINT tmp_next;
+	
+	switch (GetBattleState_PC())
+	{
+	case Ready:
+		// show battle Menu
+		ShowBattleMenu(BackMemDC);
+		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+		// Draw Mob action
+		if (mob_stat.hp >= 0)
+			DrawBattler_Mob(BackMemDC, MOB_POS.x, MOB_POS.y, resMob_rat);
+		break;
+	case AttackStart:
+		
+		framecounter = 0;
+		// Draw Damage
+		// add damage to ui list
+		
+		tmp_next.x = MOB_POS.x + 30;
+		tmp_next.y = MOB_POS.y - 30;
 
-	if (GetBattleState_PC() == Attacking)
-	{	
-		DrawATK_VFX(BackMemDC, MOB_POS_X, MOB_POS_Y, resWPN_shortsword_fx, characterFrame);
+		tmp.EndPos = tmp_next;
+		tmp.StartPos = MOB_POS;
+		tmp.CurPos = MOB_POS;
+		damage_font = tmp;
+
+		// calculate Damage in this turn.
+		damage_to_monster = calcDamage(&pc_stat, &mob_stat);
+		damage_to_pc = calcDamage(&mob_stat, &pc_stat);
+
+
+		// for testing
+		//printf("start X : %d start y : %d, cur X : %d, cur Y : %d, end X : %d, end Y : %d\n", tmp.StartPos.x, tmp.StartPos.y, tmp.CurPos.x, tmp.CurPos.y, tmp.EndPos.x, tmp.EndPos.y);
+		
+		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+		if (mob_stat.hp >= 0)
+			DrawBattler_Mob(BackMemDC, MOB_POS.x, MOB_POS.y, resMob_rat);
+		SetBattleState_PC(Attacking);
+		
+		break;
+	case Attacking:
+		DrawBattler_Mob(BackMemDC, MOB_POS.x + (-1 * (framecounter % shake_mid)), MOB_POS.y, resMob_rat);
+		DrawATK_VFX(BackMemDC, MOB_POS.x, MOB_POS.y, resWPN_shortsword_fx, characterFrame);
 		DrawFX_PC(BackMemDC, PC_POS.x, PC_POS.y, resWPN_shortsword, characterFrame);
+		drawDamage(BackMemDC, damage_font.StartPos, damage_to_monster);
+		
+		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);		
+		break;
+	case AttackEnd:
+		if (mob_stat.hp >= 0)
+			DrawBattler_Mob(BackMemDC, MOB_POS.x, MOB_POS.y, resMob_rat); 
+		DrawFX_PC(BackMemDC, PC_POS.x, PC_POS.y, resWPN_shortsword, characterFrame);
+		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+
+		// set damage font location for PC
+		tmp_next.x = PC_POS.x + 30;
+		tmp_next.y = PC_POS.y - 30;
+
+		tmp.EndPos = tmp_next;
+		tmp.StartPos = PC_POS;
+		tmp.CurPos = PC_POS;
+
+		damage_font = tmp; 
+		
+		if (mob_stat.hp <= 0)
+			SetBattleState_PC(Win);
+		else
+			SetBattleState_PC(Hit);
+
+		break;
+	case Hit:
+		DrawBattler_Mob(BackMemDC, MOB_POS.x, MOB_POS.y, resMob_rat);
+		DrawBattler_PC(BackMemDC, PC_POS.x + (-1 * (framecounter % shake_mid)), PC_POS.y, resPC_battle, characterFrame);
+		// temporal VFX. should be changed later.
+		DrawATK_VFX(BackMemDC, PC_POS.x-32, PC_POS.y-32, resWPN_shortsword_fx, characterFrame);		
+		drawDamage(BackMemDC, damage_font.StartPos, damage_to_pc);
+		break;
+	case Win:
+		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+		// temporal VFX. should be changed later.
+		TextOut(BackMemDC, 330, 230, _T("전투에서 승리 하였습니다!"), lstrlen(_T("전투에서 승리 하였습니다!")));
+		TextOut(BackMemDC, 290, 250, _T("Enter키를 누르면 마을로 돌아갑니다."), lstrlen(_T("Enter키를 누르면 마을로 돌아갑니다.")));
+		break;
 	}
-
-	DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
-
-
-
+	
 }
 
 void SceneManager::ShowBattleMenu(HDC BackMemDC)

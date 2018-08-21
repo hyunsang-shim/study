@@ -1,6 +1,6 @@
 #pragma once
+
 #include "cManager.h"
-#include "BattleManager.h"
 #include <vector>
 
 class SceneManager : public cManager
@@ -15,6 +15,7 @@ public:
 	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src);
 	void DrawSpriteShadow(HDC destDC, int startX, int startY, HBITMAP src);
 	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
+	void DrawUIFont(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
 	void DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src);
 	void DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
 	void DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
@@ -37,8 +38,11 @@ public:
 	void SetEventID(int eventID);
 	int GetEventID();
 	void ShowEvent(int EventId);
+	void drawDamage(HDC destDC, POINT pos, int damage);
 
-	std::vector<HBITMAP> resources;
+
+	void InitBattleScene();
+
 
 
 
@@ -46,6 +50,8 @@ private:
 	POINT PC_POS;
 	POINT PC_COORD;
 	POINT PC_COORD_NEXT;
+	POINT MOB_POS = { 96, 280 };
+
 	short TownMap[14][17] = {
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 		0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -106,9 +112,17 @@ private:
 	HBITMAP resMob_rat;
 
 	HBITMAP resBattle_bg;
+	HBITMAP resUI_numbers;
 
 	BITMAP bm;
 
+	DAMAGE_FONT damage_font;
 	int EventId;
+	int dmg;
+
+	// for shaking amount
+	int shake_fast = 5;
+	int shake_mid = 8;
+	int shake_slow = 15;
 };
 

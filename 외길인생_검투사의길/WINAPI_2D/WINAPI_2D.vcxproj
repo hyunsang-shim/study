@@ -31,6 +31,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -72,6 +73,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -147,9 +150,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BattleManager.h" />
     <ClInclude Include="cManager.h" />
-    <ClInclude Include="cTitleScene.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="cShopScene.h" />
@@ -158,9 +159,7 @@
     <ClInclude Include="WINAPI_2D.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BattleManager.cpp" />
     <ClCompile Include="cManager.cpp" />
-    <ClCompile Include="cTitleScene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="cShopScene.cpp" />
     <ClCompile Include="stdafx.cpp">
