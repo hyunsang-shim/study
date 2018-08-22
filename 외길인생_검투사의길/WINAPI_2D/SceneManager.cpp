@@ -32,6 +32,8 @@ void SceneManager::UnLoadResource()
 	DeleteObject(resPC_shadow);
 
 	DeleteObject(resPC_battle);
+	DeleteObject(resPC_face);
+	DeleteObject(resMob_face);
 	DeleteObject(resBattle_btn_attack_on);
 	DeleteObject(resBattle_btn_attack_off);
 	DeleteObject(resBattle_btn_defense_on);
@@ -42,6 +44,8 @@ void SceneManager::UnLoadResource()
 
 	DeleteObject(resMob_rat);
 	DeleteObject(resUI_numbers);
+	DeleteObject(resUI_hpbar_big);
+	DeleteObject(resUI_hpbar_small);
 
 
 }
@@ -69,13 +73,17 @@ void SceneManager::LoadResource()
 	resPC_walk = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\PC_walk.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	resPC_shadow = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\PC_shadow.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	resPC_battle = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\PC_battle.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resPC_face = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\PC_face.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	resWPN_shortsword = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\weapon\\wpn_shortsword.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	resWPN_shortsword_fx = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\weapon\\wpn_shortsword_fx.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	resMob_rat = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\Mob_rat.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resMob_face = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\Character\\PC_face.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	resUI_numbers = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\ui_numbers.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resUI_hpbar_big = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\ui_hpbar_big.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resUI_hpbar_small = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\ui_hpbar_small.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 }
 
@@ -106,7 +114,7 @@ void SceneManager::ChangeScene(int destSceneidx)
 	{
 	case TitleScene:
 		SetCurScene(TitleScene);
-		SetDirection_PC(FacingRight);
+		SetPC_Direction(FacingRight);
 		SetCurMenu(menuNew);
 		InvalidateRgn(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")), NULL, TRUE);
 		break;
@@ -115,7 +123,7 @@ void SceneManager::ChangeScene(int destSceneidx)
 		SetPC_COORD(11, 8);
 		SetPC_POS(11, 8);
 		SetPC_COORD_NEXT(11, 8);
-		SetDirection_PC(FacingUp);
+		SetPC_Direction(FacingUp);
 		SetPC_State(Idle);
 		InvalidateRgn(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")), NULL, TRUE);
 		break;
@@ -145,7 +153,7 @@ void SceneManager::ChangeScene(int destSceneidx)
 	 	
 }
 
-void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src)
+void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP &src)
 {
 	RECT tmpRect;
 	HWND myHwnd = FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길"));
@@ -166,8 +174,7 @@ void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP s
 	DeleteObject(hOldBitmap);
 	DeleteDC(hMemDC);
 }
-
-void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber)
+void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -182,8 +189,7 @@ void SceneManager::DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP s
 	DeleteDC(hMemDC);	
 
 }
-
-void SceneManager::DrawUIFont(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber)
+void SceneManager::DrawSpriteShadow(HDC destDC, int startX, int startY, HBITMAP &src)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -191,38 +197,169 @@ void SceneManager::DrawUIFont(HDC destDC, int startX, int startY, HBITMAP src, i
 	hMemDC = CreateCompatibleDC(destDC);
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
 
-	TransparentBlt(destDC, startX, startY, UI_FONT_SIZE, UI_FONT_SIZE, hMemDC, frameNumber * UI_FONT_SIZE, 0, UI_FONT_SIZE, UI_FONT_SIZE, RGB(255, 0, 255));
+	TransparentBlt(destDC, startX, startY + 2, CHARACTER_SIZE, CHARACTER_SIZE - 1, hMemDC, 0, 0, CHARACTER_SIZE, CHARACTER_SIZE, RGB(255, 0, 255));
+
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteDC(hMemDC);
+
+}
+
+void SceneManager::DrawUI_Font(HDC destDC, int startX, int startY, HBITMAP &src, int number)
+{
+	HDC hMemDC;
+	HBITMAP hOldBitmap;
+
+	hMemDC = CreateCompatibleDC(destDC);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
+
+	TransparentBlt(destDC, startX, startY, UI_FONT_SIZE, UI_FONT_SIZE, hMemDC, number * UI_FONT_SIZE, 0, UI_FONT_SIZE, UI_FONT_SIZE, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteObject(hOldBitmap);
 	DeleteDC(hMemDC);
 
 }
-
-
-void SceneManager::DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src)
+void SceneManager::DrawUI_Portrait(HDC destDC)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
+	int shake_cnt = CHARACTER_FRAME_MAX;
+	int shakerX;
+	int shakerY;
 
 
 	hMemDC = CreateCompatibleDC(destDC);
-	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
 
-	GetObject(src, sizeof(BITMAP), &bm);
-
-	if (GetBattleState_PC() == Attacking)
+	//draw PC's portrait
+	if (GetBattleState_PC() == Hit)
 	{
-		TransparentBlt(destDC, startX, startY, bm.bmWidth, bm.bmHeight - 1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight - 1, RGB(255, 0, 255));
+		// PC's portrait w/ shaking effect
+
+		shakerX = rand() % 2 * shake_mid;
+		shakerY = rand() % 2 * shake_mid;
+
+		if (!(shake_cnt % 4))
+		{
+			hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_face);
+			TransparentBlt(destDC, 450 + shakerX, 60 + shakerY, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, (GetBattleState_PC() % 5) * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+			shake_cnt--;
+
+			// Mob's portrait w/o shaking effect
+			SelectObject(hMemDC, resMob_face);
+			TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, GetBattleState_Mob() * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+		}
+		else
+		{
+			hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_face);
+			TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, (GetBattleState_PC() % 5) * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+			shake_cnt = CHARACTER_FRAME_MAX;
+
+			// Mob's portrait w/o shaking effect
+			SelectObject(hMemDC, resMob_face);
+			TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, GetBattleState_Mob() * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+		}		
+		
 	}
-	else 
-		TransparentBlt(destDC, startX, startY, bm.bmWidth, bm.bmHeight - 1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight - 1, RGB(255, 0, 255));
+	else if (GetBattleState_PC() == Attacking)
+	{
+		if (!(shake_cnt % 4))
+		{
+			// PC's portrait w/o shaking effect
+			hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_face);
+			TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, (GetBattleState_PC() % 5) * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+
+			// Mob's portrait w/o shaking effect
+			shakerX = rand() % 2 * shake_mid;
+			shakerY = rand() % 2 * shake_mid;
+
+			SelectObject(hMemDC, resMob_face);
+			TransparentBlt(destDC, 200 + shakerX, 60 + shakerY, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, GetBattleState_Mob() * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+			shake_cnt--;
+		}
+		else
+		{
+			// PC's portrait w/o shaking effect
+			hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_face);
+			TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, (GetBattleState_PC() % 5) * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+
+			// Mob's portrait w/o shaking effect
+			shakerX = rand() % 2 * shake_mid;
+			shakerY = rand() % 2 * shake_mid;
+
+			SelectObject(hMemDC, resMob_face);
+			TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, GetBattleState_Mob() * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE-1, RGB(255, 0, 255));
+			shake_cnt = CHARACTER_FRAME_MAX;
+		}
+	}
+	else
+	{
+		shake_cnt = CHARACTER_FRAME_MAX;
+		// PC's portrait w/o shaking effect
+
+		hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_face);
+		TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, (GetBattleState_PC() % 5) * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+
+		// Mob's portrait w/o shaking effect
+		SelectObject(hMemDC, resMob_face);
+		TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, GetBattleState_Mob() * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+	}
+
 
 	SelectObject(hMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
 	DeleteDC(hMemDC);
 
 }
-void SceneManager::DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber)
+void SceneManager::DrawUI_HPbar(HDC destDC)
+{
+	double pixelperhp_PC = 0;
+	double pixelperhp_MOB = 0;
+
+	pixelperhp_PC = PORTRAIT_SIZE / (double)pc_stat.hp_max;
+	pixelperhp_MOB = PORTRAIT_SIZE / (double)mob_stat.hp_max;
+
+	HDC hMemDC;
+	HBITMAP hOldBitmap;
+
+	hMemDC = CreateCompatibleDC(destDC);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, resUI_hpbar_big);
+
+	TransparentBlt(destDC, 450, 60 + PORTRAIT_SIZE + 5, UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG, hMemDC, 0, 0, UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG, RGB(255, 0, 255));	// hpbar bg for pc
+	TransparentBlt(destDC, 200, 60 + PORTRAIT_SIZE + 5, UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG, hMemDC, 0, 0, UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG, RGB(255, 0, 255));// hpbar bg for mob
+
+	//TransparentBlt(destDC, 450, 60 + PORTRAIT_SIZE + 5, UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG-1, hMemDC, 0, UI_HPBAR_HEIGHT_BIG, UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG-1, RGB(255, 0, 255));	// hpbar bg for pc
+	
+	// hpbar for pc
+	TransparentBlt(destDC, 
+		450, 60 + PORTRAIT_SIZE + 5, 
+		(int)(pixelperhp_PC * pc_stat.hp), UI_HPBAR_HEIGHT_BIG,
+		hMemDC, 0, UI_HPBAR_HEIGHT_BIG, 
+		UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG, 
+		RGB(255, 0, 255));	
+
+	// hpbar for mob
+	TransparentBlt(destDC, 
+		200 + (int)(pixelperhp_MOB * abs(mob_stat.hp_max - mob_stat.hp)), 60 + PORTRAIT_SIZE + 5, 
+		(int)(pixelperhp_MOB * mob_stat.hp), UI_HPBAR_HEIGHT_BIG, 
+		hMemDC, 0, UI_HPBAR_HEIGHT_BIG,
+		UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG,
+		RGB(255, 0, 255));
+
+
+	// for actor's hpbar
+	//SelectObject(hMemDC, resUI_hpbar_small);
+	//TransparentBlt(destDC, 450, 60 + PORTRAIT_SIZE + 5, UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG, hMemDC, 0, 0, UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG, RGB(255, 0, 255));	// hpbar bg for pc
+	//TransparentBlt(destDC, 200, 60 + PORTRAIT_SIZE + 5, UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG, hMemDC, 0, 0, UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG, RGB(255, 0, 255));// hpbar bg for mob
+
+	//TransparentBlt(destDC, 450, 60 + PORTRAIT_SIZE + 5, (int)(pixelperhp_PC * pc_stat.hp), 10, hMemDC, 0, 10, UI_HPBAR_WIDTH_BIG, 20, RGB(255, 0, 255));	// hpbar for pc
+	//TransparentBlt(destDC, 200 + (int)(pixelperhp_MOB * abs(mob_stat.hp_max - mob_stat.hp)), 60 + PORTRAIT_SIZE + 5, (int)(pixelperhp_MOB * mob_stat.hp), UI_HPBAR_HEIGHT_BIG, hMemDC, 0, 10, PORTRAIT_SIZE, 20, RGB(255, 0, 255));// hpbar for mob
+
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
+	DeleteDC(hMemDC);
+}
+
+void SceneManager::DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -236,7 +373,7 @@ void SceneManager::DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP src, in
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteDC(hMemDC);
 }
-void SceneManager::DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber)
+void SceneManager::DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -251,7 +388,8 @@ void SceneManager::DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP src, 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteDC(hMemDC);
 }
-void SceneManager::DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber)
+
+void SceneManager::DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -271,22 +409,30 @@ void SceneManager::DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP sr
 	DeleteDC(hMemDC);
 
 }
-
-
-void SceneManager::DrawSpriteShadow(HDC destDC, int startX, int startY, HBITMAP src)
+void SceneManager::DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP &src)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
 
+
 	hMemDC = CreateCompatibleDC(destDC);
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
 
-	TransparentBlt(destDC, startX, startY+2, CHARACTER_SIZE, CHARACTER_SIZE - 1, hMemDC, 0, 0, CHARACTER_SIZE, CHARACTER_SIZE, RGB(255, 0, 255));
+	GetObject(src, sizeof(BITMAP), &bm);
+
+	if (GetBattleState_PC() == Attacking)
+	{
+		TransparentBlt(destDC, startX, startY, bm.bmWidth, bm.bmHeight - 1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight - 1, RGB(255, 0, 255));
+	}
+	else
+		TransparentBlt(destDC, startX, startY, bm.bmWidth, bm.bmHeight - 1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight - 1, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
 	DeleteDC(hMemDC);
 
 }
+
 
 // not use. just for history
 /*
@@ -459,8 +605,8 @@ void SceneManager::DrawBattleScene(HDC hdc)
 		hOldBitmap2 = (HBITMAP)SelectObject(hMemDC2, resBattle_bg);
 
 		BitBlt(BackMemDC, 0, 0, bm.bmWidth, bm.bmHeight, hMemDC2, 0, 0, SRCCOPY);
-		SelectObject(hMemDC2, hOldBitmap2);
 
+		SelectObject(hMemDC2, hOldBitmap2);
 		DeleteObject(hOldBitmap2);
 		hOldBitmap = (HBITMAP)SelectObject(hMemDC2, hBit4);
 		DeleteObject(hBit4);
@@ -478,7 +624,7 @@ void SceneManager::DrawBattleScene(HDC hdc)
 	}
 
 	DoBattle(BackMemDC);
-	// Draw backbuffer DC onto front DC
+		// Draw backbuffer DC onto front DC
 	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
 	
 	//std::cout << GetPC_COORD().y << " " << GetPC_COORD().x << " " << BattleMap[GetPC_COORD().y][GetPC_COORD().x] << " \n";
@@ -513,7 +659,7 @@ void SceneManager::KeyInput(WPARAM wParam)
 			else
 				SetCurMenu(menuNew);
 
-			InvalidateRgn(GetMyHWND(), NULL, FALSE);
+			InvalidateRgn(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")), NULL, FALSE);
 
 			break;
 		case VK_DOWN:
@@ -527,7 +673,7 @@ void SceneManager::KeyInput(WPARAM wParam)
 			else
 				SetCurMenu(menuNew);
 
-			InvalidateRgn(GetMyHWND(), NULL, FALSE);
+			InvalidateRgn(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")), NULL, FALSE);
 			break;
 		case VK_RETURN:
 			switch (GetCurMenu())
@@ -555,7 +701,7 @@ void SceneManager::KeyInput(WPARAM wParam)
 			}
 			else
 			{
-				SetDirection_PC(FacingUp);
+				SetPC_Direction(FacingUp);
 				if (PeekNextCoord(PC_COORD))
 				{
 					SetPC_State(Moving);
@@ -573,7 +719,7 @@ void SceneManager::KeyInput(WPARAM wParam)
 			}
 			else
 			{
-				SetDirection_PC(FacingDown);
+				SetPC_Direction(FacingDown);
 				if (PeekNextCoord(PC_COORD))
 				{
 					SetPC_State(Moving);
@@ -591,7 +737,7 @@ void SceneManager::KeyInput(WPARAM wParam)
 			}
 			else
 			{
-				SetDirection_PC(FacingLeft);
+				SetPC_Direction(FacingLeft);
 				if (PeekNextCoord(PC_COORD))
 				{
 					SetPC_State(Moving);
@@ -609,7 +755,7 @@ void SceneManager::KeyInput(WPARAM wParam)
 			}
 			else
 			{
-				SetDirection_PC(FacingRight);
+				SetPC_Direction(FacingRight);
 				if (PeekNextCoord(PC_COORD))
 				{
 					SetPC_State(Moving);
@@ -633,9 +779,14 @@ void SceneManager::KeyInput(WPARAM wParam)
 			{
 			case VK_LEFT:
 				SetCurMenu(menuAttack);
+				mob_stat.atk = 1;
 				break;
 			case VK_RIGHT:
 				SetCurMenu(menuDefense);
+				mob_stat.atk = 20;
+				break;
+			case VK_UP:
+				pc_stat.hp = pc_stat.hp_max;
 				break;
 			case VK_SPACE:
 				tmpflag *= -1;
@@ -661,12 +812,11 @@ void SceneManager::KeyInput(WPARAM wParam)
 			case VK_SPACE:
 				tmpflag *= -1;
 				break;
-			case VK_ESCAPE:
-				ChangeScene(TownScene);
-				SetEventID(1);
 			}
 			break;
 		}
+		else if ((GetBattleState_PC() == Dead) && (wParam == VK_RETURN))			
+				ChangeScene(TitleScene);		
 		break;
 	}
 }
@@ -758,8 +908,23 @@ void SceneManager::MoveCharacter(POINT nextPos)
 	// change character status to Idle whel reaches target position.
 	if ((PC_POS.x == DestX) && (PC_POS.y == DestY))
 	{
-		SetPC_State(Idle);
-		SetPC_COORD_NEXT(GetPC_COORD().y, GetPC_COORD().x);
+		if (GetPC_State() == Moving)
+		{
+			SetPC_State(Idle);
+			SetPC_COORD_NEXT(GetPC_COORD().y, GetPC_COORD().x);
+		}
+		else if (GetBattleState_PC() == PrepareAttack)
+		{
+			SetPC_Direction(FacingLeft);
+			SetBattleState_PC(Attacking);
+			SetPC_COORD_NEXT(GetPC_COORD().y, GetPC_COORD().x);
+		}
+		else if (GetBattleState_PC() == FinishAttack)
+		{
+			SetBattleState_PC(AttackEnd);
+			SetPC_COORD_NEXT(GetPC_COORD().y, GetPC_COORD().x);
+			SetPC_Direction(FacingLeft);
+		}
 	}
 
 
@@ -860,26 +1025,30 @@ void SceneManager::drawDamage(HDC destDC, POINT pos, int dmg)
 
 		for (int i = 0; i < sizeof(dmg_to_string); i++)
 		{
-
 			//printf("%d : int - [ %d ],string - [ %s ]\n", i, 123, dmg_to_string);
-			DrawUIFont(destDC, damage_font.CurPos.x +i* UI_FONT_SIZE, damage_font.CurPos.y, resUI_numbers, dmg_to_string[i] - 48);
+			DrawUI_Font(destDC, damage_font.CurPos.x +i* UI_FONT_SIZE, damage_font.CurPos.y, resUI_numbers, dmg_to_string[i] - 48);
 		}
 
 	}
 
 }
 
-void SceneManager::InitBattleScene()
+void SceneManager::DrawUI(HDC hdc)
 {
-	SetPC_COORD(7, 13);
-	SetPC_POS(7, 13);
-	SetPC_COORD_NEXT(7, 13);
-	SetDirection_PC(FacingLeft);
-	SetPC_State(Idle);
-	SetCurMenu(menuAttack);
-	SetBattleState_PC(Ready);
-	pc_stat = { 10,0,10,10 };
-	mob_stat = { 1,1,0,25 };
+	switch (GetCurScene())
+	{
+	case TownScene:
+		break;
+	case BattleScene:
+		if (GetBattleState_PC() == Ready)
+			ShowBattleMenu(hdc);
+
+		//draw portraits;
+		DrawUI_Portrait(hdc);
+		DrawUI_HPbar(hdc);
+
+		break;
+	}
 }
 
 
@@ -893,12 +1062,23 @@ void SceneManager::DoBattle(HDC BackMemDC)
 	framecounter++;
 
 	// Sync PC sprite frame to current action.	
+	// if action ends -> change state.
 	if (framecounter > ((CHARACTER_FRAME_MAX - 1) * 10))
 	{
 		framecounter = 0;
 
-		if (GetBattleState_PC() == Attacking)
-			SetBattleState_PC(AttackEnd);
+		if (GetBattleState_PC() == FinishAttack)
+			SetBattleState_PC(AttackEnd); 
+		else if (GetBattleState_PC() == Attacking)
+		{
+			SetPC_COORD_NEXT(7, 13);
+			SetPC_COORD(7, 13);
+			SetBattleState_PC(FinishAttack);
+		}
+		else if (GetBattleState_PC() == Hit)
+		{
+			SetBattleState_PC(Ready);
+		}
 	}
 	else
 		characterFrame = (framecounter / 10) % 4;
@@ -919,14 +1099,19 @@ void SceneManager::DoBattle(HDC BackMemDC)
 	{
 	case Ready:
 		// show battle Menu
-		ShowBattleMenu(BackMemDC);
-		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+		if (pc_stat.hp >=0)
+			DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+		else
+		{
+			SetBattleState_PC(Dead);
+			DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+		}
+
 		// Draw Mob action
 		if (mob_stat.hp >= 0)
 			DrawBattler_Mob(BackMemDC, MOB_POS.x, MOB_POS.y, resMob_rat);
 		break;
-	case AttackStart:
-		
+	case AttackStart:		
 		framecounter = 0;
 		// Draw Damage
 		// add damage to ui list
@@ -943,24 +1128,38 @@ void SceneManager::DoBattle(HDC BackMemDC)
 		damage_to_monster = calcDamage(&pc_stat, &mob_stat);
 		damage_to_pc = calcDamage(&mob_stat, &pc_stat);
 
-
 		// for testing
 		//printf("start X : %d start y : %d, cur X : %d, cur Y : %d, end X : %d, end Y : %d\n", tmp.StartPos.x, tmp.StartPos.y, tmp.CurPos.x, tmp.CurPos.y, tmp.EndPos.x, tmp.EndPos.y);
 		
-		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
 		if (mob_stat.hp >= 0)
 			DrawBattler_Mob(BackMemDC, MOB_POS.x, MOB_POS.y, resMob_rat);
-		SetBattleState_PC(Attacking);
-		
+
+		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+
+		SetBattleState_PC(PrepareAttack);
+		SetPC_COORD_NEXT(GetPC_COORD().y, GetPC_COORD().x - 2);
+		SetPC_COORD(GetPC_COORD_NEXT().y, GetPC_COORD_NEXT().x);
+		break;
+	case PrepareAttack:
+		DrawBattler_Mob(BackMemDC, MOB_POS.x, MOB_POS.y, resMob_rat);
+		DrawSpriteShadow(BackMemDC, PC_POS.x, PC_POS.y, resPC_shadow);
+		MoveCharacter(GetPC_COORD_NEXT());
+		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
 		break;
 	case Attacking:
 		DrawBattler_Mob(BackMemDC, MOB_POS.x + (-1 * (framecounter % shake_mid)), MOB_POS.y, resMob_rat);
 		DrawATK_VFX(BackMemDC, MOB_POS.x, MOB_POS.y, resWPN_shortsword_fx, characterFrame);
 		DrawFX_PC(BackMemDC, PC_POS.x, PC_POS.y, resWPN_shortsword, characterFrame);
-		drawDamage(BackMemDC, damage_font.StartPos, damage_to_monster);
-		
-		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);		
+		drawDamage(BackMemDC, damage_font.StartPos, damage_to_monster);		
+		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
 		break;
+	case FinishAttack:
+		SetPC_Direction(FacingRight);
+		DrawBattler_Mob(BackMemDC, MOB_POS.x, MOB_POS.y, resMob_rat);
+		DrawSpriteShadow(BackMemDC, PC_POS.x, PC_POS.y, resPC_shadow);
+		MoveCharacter(GetPC_COORD_NEXT());
+		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);				
+		break; 
 	case AttackEnd:
 		if (mob_stat.hp >= 0)
 			DrawBattler_Mob(BackMemDC, MOB_POS.x, MOB_POS.y, resMob_rat); 
@@ -979,9 +1178,8 @@ void SceneManager::DoBattle(HDC BackMemDC)
 		
 		if (mob_stat.hp <= 0)
 			SetBattleState_PC(Win);
-		else
+		else if (mob_stat.hp > 0)		
 			SetBattleState_PC(Hit);
-
 		break;
 	case Hit:
 		DrawBattler_Mob(BackMemDC, MOB_POS.x, MOB_POS.y, resMob_rat);
@@ -996,7 +1194,15 @@ void SceneManager::DoBattle(HDC BackMemDC)
 		TextOut(BackMemDC, 330, 230, _T("전투에서 승리 하였습니다!"), lstrlen(_T("전투에서 승리 하였습니다!")));
 		TextOut(BackMemDC, 290, 250, _T("Enter키를 누르면 마을로 돌아갑니다."), lstrlen(_T("Enter키를 누르면 마을로 돌아갑니다.")));
 		break;
+	case Dead:
+		DrawBattler_Mob(BackMemDC, MOB_POS.x, MOB_POS.y, resMob_rat);
+		DrawBattler_PC(BackMemDC, PC_POS.x, PC_POS.y, resPC_battle, characterFrame);
+		TextOut(BackMemDC, 330, 230, _T("전투에서 패배 하였습니다..."), lstrlen(_T("전투에서 패배 하였습니다...")));
+		TextOut(BackMemDC, 265, 250, _T("Enter키를 누르면 타이틀 화면으로 돌아갑니다."), lstrlen(_T("Enter키를 누르면 타이틀 화면으로 돌아갑니다.")));
+		break;
 	}
+
+	DrawUI(BackMemDC);
 	
 }
 
@@ -1015,4 +1221,18 @@ void SceneManager::ShowBattleMenu(HDC BackMemDC)
 		DrawSpriteImage(BackMemDC, GetPC_POS().x + BATTLE_MENU_SIZE/2, GetPC_POS().y - BATTLE_MENU_SIZE, resBattle_btn_defense_on);	// Defense Menu : off
 	}
 
+}
+
+void SceneManager::InitBattleScene()
+{
+	SetPC_COORD(7, 13);
+	SetPC_POS(7, 13);
+	SetPC_COORD_NEXT(7, 13);
+	SetPC_Direction(FacingLeft);
+	SetPC_State(Idle);
+	SetCurMenu(menuAttack);
+	SetBattleState_PC(Ready);
+	pc_stat = { 10,0,10,20 };
+	//mob_stat = { 1,100,0,25, 25 };
+	mob_stat = { 1,1,0,25, 25 };
 }

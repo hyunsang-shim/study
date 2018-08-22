@@ -12,23 +12,35 @@ public:
 	void UnLoadResource();
 	void DrawScene(HDC hdc);
 	void ChangeScene(int destSceneidx);
-	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src);
-	void DrawSpriteShadow(HDC destDC, int startX, int startY, HBITMAP src);
-	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
-	void DrawUIFont(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
-	void DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src);
-	void DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
-	void DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
-	void DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
+	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP &src);
+	void DrawSpriteShadow(HDC destDC, int startX, int startY, HBITMAP &src);
+	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber);
+
+	void DrawUI(HDC hdc);
+	void DrawUI_Font(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber);
+	void DrawUI_HPbar(HDC destDC);
+	void DrawUI_Portrait(HDC destDC);
+	
+
+	void DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP &src);
+	void DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber);
+
+	void DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber);
+	void DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber);
+	void drawDamage(HDC destDC, POINT pos, int damage);
 //	void DrawToFront(HDC destDC, HDC srcDC);
+
 	void DrawTitleScene(HDC hdc);
 	void DrawTownScene(HDC hdc);
 	void DrawBattleScene(HDC hdc);
+
 	void DoBattle(HDC BackMemDC);
 	void ShowBattleMenu(HDC BackMemDC);
+
 	void KeyInput(WPARAM wParam);
 	bool PeekNextCoord(POINT CurPos);
 	void MoveCharacter(POINT nextPoint);
+
 	void SetPC_POS(int row, int col);
 	POINT GetPC_POS();
 	void SetPC_COORD(int row, int col);
@@ -38,7 +50,6 @@ public:
 	void SetEventID(int eventID);
 	int GetEventID();
 	void ShowEvent(int EventId);
-	void drawDamage(HDC destDC, POINT pos, int damage);
 
 
 	void InitBattleScene();
@@ -101,6 +112,8 @@ private:
 	HBITMAP resPC_walk;
 	HBITMAP resPC_shadow;
 	HBITMAP resPC_battle;
+	HBITMAP resPC_face;
+
 	HBITMAP resBattle_btn_attack_on;
 	HBITMAP resBattle_btn_attack_off;
 	HBITMAP resBattle_btn_defense_on;
@@ -110,9 +123,12 @@ private:
 	HBITMAP resWPN_shortsword_fx;
 
 	HBITMAP resMob_rat;
+	HBITMAP resMob_face;
 
 	HBITMAP resBattle_bg;
 	HBITMAP resUI_numbers;
+	HBITMAP resUI_hpbar_big;
+	HBITMAP resUI_hpbar_small;
 
 	BITMAP bm;
 

@@ -31,11 +31,6 @@ int cManager::calcDamage(STATUS_MOB *mob, STATUS_PC *pc)
 	return mob->atk - pc->def;
 }
 
-HWND cManager::GetMyHWND()
-{
-	return this->MyHWND;
-}
-
 cManager::~cManager()
 {
 }
@@ -75,15 +70,10 @@ int cManager::GetDirection_PC()
 	return PC_Direction;
 }
 
-void cManager::SetDirection_PC(int direction)
+void cManager::SetPC_Direction(int direction)
 {
 	//if (PC_Direction != direction)
 		PC_Direction = direction;
-}
-
-void cManager::SetMyHWND(HWND hWnd)
-{
-	MyHWND = hWnd;
 }
 
 int cManager::GetSpeed_PC()

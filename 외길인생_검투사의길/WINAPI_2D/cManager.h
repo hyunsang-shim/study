@@ -18,8 +18,7 @@ public:
 	int GetLastScene();
 	bool HaveSaveFile();
 	int GetDirection_PC();
-	void SetDirection_PC(int direction);
-	void SetMyHWND(HWND hWnd);
+	void SetPC_Direction(int direction);
 	int GetSpeed_PC();
 	void SetPC_State(int state);
 	
@@ -32,7 +31,6 @@ public:
 
 	int calcDamage(STATUS_PC *pc, STATUS_MOB *mob);
 	int calcDamage(STATUS_MOB *mob, STATUS_PC *pc);
-	HWND GetMyHWND();
 
 	STATUS_PC pc_stat;
 	STATUS_MOB mob_stat;
