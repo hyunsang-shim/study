@@ -1,104 +1,51 @@
 #pragma once
 
-#include "cManager.h"
-#include <vector>
+#include "stdafx.h"
 
-class SceneManager : public cManager
+class SceneManager
 {
 public:
 	SceneManager();
 	~SceneManager();
 	void LoadResource();
 	void UnLoadResource();
-	void DrawScene(HDC hdc);
-	void ChangeScene(int destSceneidx);
-	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP &src);
-	void DrawSpriteShadow(HDC destDC, int startX, int startY, HBITMAP &src);
-	void DrawSpriteImage(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber);
-
-	void DrawUI(HDC hdc);
-	void DrawUI_Font(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber);
-	void DrawUI_HPbar(HDC destDC);
-	void DrawUI_Portrait(HDC destDC);
 	
 
-	void DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP &src);
-	void DrawBattler_PC(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber);
+	void DrawUI(HDC hdc);
+	void DrawUI_Font(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
+	void DrawUI_HPbar(HDC destDC);
+	void DrawUI_Portrait(HDC destDC);
+	void DrawUI_Image(HDC destDC, POINT &point, HBITMAP &src);
+	void DrawUI_Selector(HDC destDC, POINT &point, HBITMAP &src, int &frameNumber, int &direction);
 
-	void DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber);
-	void DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP &src, int frameNumber);
+
+	void DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src);
+	void DrawBattler_PC(HDC destDC, int &startX, int &startY, HBITMAP src, int frameNumber);
+	void DrawActor_PC(HDC destDC, int &start_x, int &start_y, HBITMAP &src, int &frameNumber, int &PC_Direction);
+	void DrawActor_PC_Shadow(HDC destDC, int &start_x, int &start_y, HBITMAP src);
+
+	void DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
+	void DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
 	void drawDamage(HDC destDC, POINT pos, int damage);
 //	void DrawToFront(HDC destDC, HDC srcDC);
+	void DrawTitleScene(HDC hdc, int &CurMenu, int &PC_Direction);
+	void DrawTownScene(HDC hdc, STATUS_PC *status_pc);
+	void DrawBattleScene(HDC destDC, int &BattleState, STATUS_PC *status_pc, STATUS_MOB *status_mob);
+	//void DrawBattleScene(HDC hdc, int &BattleState_PC);
+	void DrawBG(HDC destDC, HBITMAP &src);
 
-	void DrawTitleScene(HDC hdc);
-	void DrawTownScene(HDC hdc);
-	void DrawBattleScene(HDC hdc);
 
 	void DoBattle(HDC BackMemDC);
 	void ShowBattleMenu(HDC BackMemDC);
 
-	void KeyInput(WPARAM wParam);
+	void KeyInput(WPARAM wParam, int &CurScene, int &CurMenu);
 	bool PeekNextCoord(POINT CurPos);
 	void MoveCharacter(POINT nextPoint);
 
-	void SetPC_POS(int row, int col);
-	POINT GetPC_POS();
-	void SetPC_COORD(int row, int col);
-	POINT GetPC_COORD();
-	void SetPC_COORD_NEXT(int row, int col);
-	POINT GetPC_COORD_NEXT();
-	void SetEventID(int eventID);
-	int GetEventID();
+	
 	void ShowEvent(int EventId);
+	void ShowMessage(HDC BackMemDC);
 
-
-	void InitBattleScene();
-
-
-
-
-private:	
-	POINT PC_POS;
-	POINT PC_COORD;
-	POINT PC_COORD_NEXT;
-	POINT MOB_POS = { 96, 280 };
-
-	short TownMap[14][17] = {
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-		0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-		1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-		0,1,1,0,0,0,0,0,200,0,0,0,0,0,0,0,0,
-		0,1,1,0,0,0,0,0,1,1,0,1,1,0,400,0,0,
-		0,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,
-		0,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,
-		0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,
-		0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,
-		0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,
-		0,0,300,0,1,1,1,1,1,0,1,1,1,0,500,0,0,
-		0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
-		0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
-		0,0,0,0,0,0,0,0,600,0,0,0,0,0,0,0,0
-	};
-	 
-	short BattleMap[14][17] = {
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
-		0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-		0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-		0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,		
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	};
-
-	//for town map movement test
-	int tmpflag = -1;
 
 	//resource Lists
 	HBITMAP resTitle_bg;
@@ -133,9 +80,21 @@ private:
 	BITMAP bm;
 
 	DAMAGE_FONT damage_font;
-	int EventId;
-	int dmg;
 
+	POINT title1 = { 210, 0 };
+	POINT title2 = { 210, 96 };
+	POINT btn1 = { 600, 400 };
+	POINT btn2 = { 600, 460 };
+	POINT btn3 = { 600, 520 };
+	POINT selector = { 550, 390 };
+	
+private:	
+	
+	//for town map movement test
+	int tmpflag = -1;
+
+	
+	
 	// for shaking amount
 	int shake_fast = 5;
 	int shake_mid = 8;
