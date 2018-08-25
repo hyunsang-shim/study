@@ -174,7 +174,7 @@ void SceneManager::DrawUI_Font(HDC destDC, int startX, int startY, HBITMAP src, 
 	DeleteDC(hMemDC);
 
 }
-void SceneManager::DrawUI_Portrait(HDC destDC)
+void SceneManager::DrawUI_Portrait(HDC destDC, int &player_battlestate, int &monster_battlestate)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -187,8 +187,9 @@ void SceneManager::DrawUI_Portrait(HDC destDC)
 
 	//draw PC's portrait
 	//if (GetBattleState_PC() == Hit)
-	if (1)
+	switch (player_battlestate)
 	{
+	case Player_Hit:
 		// PC's portrait w/ shaking effect
 
 		shakerX = rand() % 2 * shake_mid;
@@ -197,32 +198,25 @@ void SceneManager::DrawUI_Portrait(HDC destDC)
 		if (!(shake_cnt % 4))
 		{
 			hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_face);
-			//TransparentBlt(destDC, 450 + shakerX, 60 + shakerY, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, (GetBattleState_PC() % 5) * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 			TransparentBlt(destDC, 450 + shakerX, 60 + shakerY, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, 1 * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 			shake_cnt--;
 
 			// Mob's portrait w/o shaking effect
 			SelectObject(hMemDC, resMob_face);
-			//TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, GetBattleState_Mob() * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 			TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, 1 * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 		}
 		else
 		{
 			hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_face);
-			//TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, (GetBattleState_PC() % 5) * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 			TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, (1) * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 			shake_cnt = CHARACTER_FRAME_MAX;
 
 			// Mob's portrait w/o shaking effect
 			SelectObject(hMemDC, resMob_face);
-			//TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, GetBattleState_Mob() * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 			TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, 1 * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
-		}		
-		
-	}
-	//else if (GetBattleState_PC() == Attacking)
-	else if (2)
-	{
+		}
+		break;
+	case Player_Attacking:
 		if (!(shake_cnt % 4))
 		{
 			// PC's portrait w/o shaking effect
@@ -252,12 +246,11 @@ void SceneManager::DrawUI_Portrait(HDC destDC)
 
 			SelectObject(hMemDC, resMob_face);
 			//TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, GetBattleState_Mob() * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE-1, RGB(255, 0, 255));
-			TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, 1 * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE-1, RGB(255, 0, 255));
+			TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, 1 * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 			shake_cnt = CHARACTER_FRAME_MAX;
 		}
-	}
-	else
-	{
+		break;
+	default:
 		shake_cnt = CHARACTER_FRAME_MAX;
 		// PC's portrait w/o shaking effect
 
@@ -269,6 +262,7 @@ void SceneManager::DrawUI_Portrait(HDC destDC)
 		SelectObject(hMemDC, resMob_face);
 		//TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, GetBattleState_Mob() * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 		TransparentBlt(destDC, 200, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, 1 * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+		break;
 	}
 
 
@@ -350,7 +344,7 @@ void SceneManager::DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP src, 
 	DeleteDC(hMemDC);
 }
 
-void SceneManager::DrawBattler_PC(HDC destDC, int &start_x, int &start_y, HBITMAP src, int frameNumber)
+void SceneManager::DrawBattler_PC(HDC destDC, STATUS_PC *status_pc, HBITMAP src, int frameNumber)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -362,11 +356,11 @@ void SceneManager::DrawBattler_PC(HDC destDC, int &start_x, int &start_y, HBITMA
 	if (1)
 	{
 		//TransparentBlt(destDC, startX, startY, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, GetBattleState_PC() % 4 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
-		TransparentBlt(destDC, start_x, start_y, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
+		TransparentBlt(destDC, status_pc->pos_x, status_pc->pos_y, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, status_pc->battlestate%4 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
 	}
 	else
 		//TransparentBlt(destDC, startX, startY, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, GetBattleState_PC()%4 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
-		TransparentBlt(destDC, start_x, start_y, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
+		TransparentBlt(destDC, status_pc->pos_x, status_pc->pos_y, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteObject(hOldBitmap);
@@ -591,9 +585,13 @@ void SceneManager::DrawBattleScene(HDC hdc, int &battleState, STATUS_PC *status_
 	else
 		characterFrame = (framecounter / 10) % 4;
 
-	DrawBattler_PC(BackMemDC, status_pc->pos_x, status_pc->pos_y, resPC_battle, characterFrame);
+	DrawBattler_PC(BackMemDC, status_pc, resPC_battle, characterFrame);
 
-	DrawUI_Portrait(BackMemDC);
+	DrawUI_Portrait(BackMemDC, status_pc->battlestate, status_mob->battlestate);
+
+	if (status_pc->battlestate == Player_Ready && status_mob->battlestate == Monster_Ready)
+		ShowBattleMenu(BackMemDC, status_pc);
+
 
 	// Draw backbuffer DC onto front DC
 	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
@@ -933,21 +931,26 @@ void SceneManager::DrawUI(HDC hdc)
 }
 
 
-
-
-void SceneManager::ShowBattleMenu(HDC BackMemDC)
+void SceneManager::ShowBattleMenu(HDC BackMemDC, STATUS_PC *status_pc)
 {
+	POINT menu1, menu2;
+	menu1.x = status_pc->pos_x - BATTLE_MENU_SIZE/2;
+	menu1.y = status_pc->pos_y - BATTLE_MENU_SIZE;
+
+	menu2.x = status_pc->pos_x + BATTLE_MENU_SIZE / 2;
+	menu2.y = status_pc->pos_y - BATTLE_MENU_SIZE;
+
 
 	////// PC position : 624, 336
-	//if (CurMenu == menuAttack)
-	//{
-	//	DrawSpriteImage(BackMemDC, GetPC_POS().x - BATTLE_MENU_SIZE/2 , GetPC_POS().y - BATTLE_MENU_SIZE, resBattle_btn_attack_on);	// attack Menu : on
-	//	DrawSpriteImage(BackMemDC, GetPC_POS().x + BATTLE_MENU_SIZE/2, GetPC_POS().y - BATTLE_MENU_SIZE, resBattle_btn_defense_off);	// Defense Menu : off
-	//}
-	//else if (CurMenu == menuDefense)
-	//{
-	//	DrawSpriteImage(BackMemDC, GetPC_POS().x - BATTLE_MENU_SIZE/2, GetPC_POS().y - BATTLE_MENU_SIZE, resBattle_btn_attack_off);	// attack Menu : on
-	//	DrawSpriteImage(BackMemDC, GetPC_POS().x + BATTLE_MENU_SIZE/2, GetPC_POS().y - BATTLE_MENU_SIZE, resBattle_btn_defense_on);	// Defense Menu : off
-	//}
+	switch (GAME_MANAGER->GetCurMenu())
+	{
+	case menuAttack:		
+		DrawUI_Image(BackMemDC, menu1, resBattle_btn_attack_on);	// attack Menu : on
+			DrawUI_Image(BackMemDC, menu2, resBattle_btn_defense_off);	// Defense Menu : off
+			break;
+	case menuDefense:
+		DrawUI_Image(BackMemDC, menu1, resBattle_btn_attack_off);	// attack Menu : on
+		DrawUI_Image(BackMemDC, menu2, resBattle_btn_defense_on);	// Defense Menu : off
+	}
 }
 

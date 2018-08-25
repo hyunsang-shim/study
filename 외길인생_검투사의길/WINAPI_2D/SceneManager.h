@@ -14,13 +14,13 @@ public:
 	void DrawUI(HDC hdc);
 	void DrawUI_Font(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
 	void DrawUI_HPbar(HDC destDC);
-	void DrawUI_Portrait(HDC destDC);
+	void DrawUI_Portrait(HDC destDC, int &player_battlestate, int &monster_battlestate);
 	void DrawUI_Image(HDC destDC, POINT &point, HBITMAP &src);
 	void DrawUI_Selector(HDC destDC, POINT &point, HBITMAP &src, int &frameNumber, int &direction);
 
 
 	void DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src);
-	void DrawBattler_PC(HDC destDC, int &startX, int &startY, HBITMAP src, int frameNumber);
+	void DrawBattler_PC(HDC destDC, STATUS_PC *status_pc, HBITMAP src, int frameNumber);
 	void DrawActor_PC(HDC destDC, int &start_x, int &start_y, HBITMAP &src, int &frameNumber, int &PC_Direction);
 	void DrawActor_PC_Shadow(HDC destDC, int &start_x, int &start_y, HBITMAP src);
 
@@ -36,7 +36,7 @@ public:
 
 
 	void DoBattle(HDC BackMemDC);
-	void ShowBattleMenu(HDC BackMemDC);
+	void ShowBattleMenu(HDC BackMemDC, STATUS_PC *status_pc);
 
 	void KeyInput(WPARAM wParam, int &CurScene, int &CurMenu);
 	bool PeekNextCoord(POINT CurPos);

@@ -22,7 +22,7 @@ cManager::~cManager()
 void cManager::Test()
 {
 	HDC tmpDC = GetDC(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")));
-	scnManager->ShowBattleMenu(tmpDC);
+	scnManager->ShowBattleMenu(tmpDC, &status_pc);
 	ReleaseDC(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")), tmpDC);
 	
 }
@@ -84,7 +84,6 @@ void cManager::InitBattleScene()
 	status_mob.hp = 35;
 	status_mob.hp_max = 35;
 }
-
 
 
 //
@@ -218,7 +217,7 @@ void cManager::key(WPARAM wParam)
 					SendMessage(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")), WM_CLOSE, 0, 0);
 				break;
 			case menuNew:
-				ChangeScene(TownScene);				
+				ChangeScene(TownScene);
 				break;
 			}
 			break;
@@ -226,129 +225,137 @@ void cManager::key(WPARAM wParam)
 		break;
 	case TownScene:
 		switch (wParam)
+		{
+		case VK_ESCAPE:
+			ChangeScene(TitleScene);
+			break;
+		case VK_UP:
+			if (status_pc.movestate == Moving)
 			{
-			case VK_ESCAPE:
-				ChangeScene(TitleScene);
-				break;
-			case VK_UP:
-				if (status_pc.movestate == Moving)
-				{
-					MoveCharacter();
-					break;
-				}
-				else
-				{
-					status_pc.facing = FacingUp;
-					if (PeekNextCoord())
-					{
-						status_pc.movestate = Moving;
-						status_pc.coord_y -= 1;
-						status_pc.coord_next_y = status_pc.coord_y;
-						MoveCharacter();
-					}
-					break;
-				}
-			case VK_DOWN:
-				if (status_pc.movestate == Moving)
-				{
-					MoveCharacter();
-					break;
-				}
-				else
-				{
-					status_pc.facing = FacingDown;
-					if (PeekNextCoord())
-					{
-						status_pc.movestate = Moving;
-						status_pc.coord_y += 1;
-						status_pc.coord_next_y = status_pc.coord_y;
-						MoveCharacter();
-					}
-					break;
-				}
-			case VK_LEFT:
-				if (status_pc.movestate == Moving)
-				{
-					MoveCharacter();
-					break;
-				}
-				else
-				{
-					status_pc.facing = FacingLeft;
-					if (PeekNextCoord())
-					{
-						status_pc.movestate = Moving;
-						status_pc.coord_x -= 1;						
-						status_pc.coord_next_x = status_pc.coord_x;
-						MoveCharacter();
-					}
-					break;
-				}
-			case VK_RIGHT:
-				if (status_pc.movestate == Moving)
-				{
-					MoveCharacter();
-					break;
-				}
-				else
-				{
-					status_pc.facing = FacingRight;
-					if (PeekNextCoord())
-					{
-						status_pc.movestate = Moving;
-						status_pc.coord_x += 1;
-						status_pc.coord_next_x = status_pc.coord_x;
-						MoveCharacter();
-					}
-					break;
-				}
-			case VK_SPACE:	// for testing purpose
-				ChangeScene(BattleScene);
+				MoveCharacter();
 				break;
 			}
+			else
+			{
+				status_pc.facing = FacingUp;
+				if (PeekNextCoord())
+				{
+					status_pc.movestate = Moving;
+					status_pc.coord_y -= 1;
+					status_pc.coord_next_y = status_pc.coord_y;
+					MoveCharacter();
+				}
+				break;
+			}
+		case VK_DOWN:
+			if (status_pc.movestate == Moving)
+			{
+				MoveCharacter();
+				break;
+			}
+			else
+			{
+				status_pc.facing = FacingDown;
+				if (PeekNextCoord())
+				{
+					status_pc.movestate = Moving;
+					status_pc.coord_y += 1;
+					status_pc.coord_next_y = status_pc.coord_y;
+					MoveCharacter();
+				}
+				break;
+			}
+		case VK_LEFT:
+			if (status_pc.movestate == Moving)
+			{
+				MoveCharacter();
+				break;
+			}
+			else
+			{
+				status_pc.facing = FacingLeft;
+				if (PeekNextCoord())
+				{
+					status_pc.movestate = Moving;
+					status_pc.coord_x -= 1;
+					status_pc.coord_next_x = status_pc.coord_x;
+					MoveCharacter();
+				}
+				break;
+			}
+		case VK_RIGHT:
+			if (status_pc.movestate == Moving)
+			{
+				MoveCharacter();
+				break;
+			}
+			else
+			{
+				status_pc.facing = FacingRight;
+				if (PeekNextCoord())
+				{
+					status_pc.movestate = Moving;
+					status_pc.coord_x += 1;
+					status_pc.coord_next_x = status_pc.coord_x;
+					MoveCharacter();
+				}
+				break;
+			}
+		case VK_SPACE:	// for testing purpose
+			ChangeScene(BattleScene);
+			break;
+		}
 		EventId = TownMap[status_pc.coord_y][status_pc.coord_x];
-			//std::cout << "PC Coord (current, next) : (" << PC_COORD.y << "," << PC_COORD.x << "), (" << PC_COORD_NEXT.y << "," << PC_COORD_NEXT.y << "  EventID : " << EventId << "\n";
+		//std::cout << "PC Coord (current, next) : (" << PC_COORD.y << "," << PC_COORD.x << "), (" << PC_COORD_NEXT.y << "," << PC_COORD_NEXT.y << "  EventID : " << EventId << "\n";
 		break;
 	case BattleScene:
-		if (BattleState == Battle_Ready)
+		switch (BattleState)
+		{
+		case Battle_Ready:
+		{
+			switch (wParam)
 			{
-				switch (wParam)
-				{
-				case VK_LEFT:
-					CurMenu = menuAttack;
-					status_mob.atk = 1;
-					break;
-				case VK_RIGHT:
-					CurMenu = menuDefense;
-					status_mob.atk = 20;
-					break;
-				case VK_UP:
-					status_pc.hp = status_pc.hp_max;
-					break;
-				case VK_ESCAPE:
-					ChangeScene(TownScene);
-					EventId = 1;
-					break;
-				case VK_RETURN:
-					status_pc.battlestate = Battle_On;
-					BattleState_PC = Player_Attack_Move;					
-					break;
-				}
+			case VK_LEFT:
+				CurMenu = menuAttack;
+				status_mob.atk = 1;
+				break;
+			case VK_RIGHT:
+				CurMenu = menuDefense;
+				status_mob.atk = 20;
+				break;
+			case VK_UP:
+				status_pc.hp = status_pc.hp_max;
+				break;
+			case VK_ESCAPE:
+				ChangeScene(TownScene);
+				EventId = 1;
+				break;
+			case VK_RETURN:
+				status_pc.battlestate = Battle_On;
+				BattleState_PC = Player_Attack_Move;
 				break;
 			}
-		else if (BattleState_PC == Player_Win)
+			break;
+		}
+		case Battle_End:
+		{
+			switch (status_pc.battlestate)
 			{
-				switch (wParam)
-				{
-				case VK_RETURN:
-					ChangeScene(TownScene);
-					SetEventID(1);
-					break;
-				}
+			case Player_Win:
+
+				break;
+			case Player_Lose:
+				BattleState = Battle_End;
 				break;
 			}
-		else if (BattleState_PC == Player_Lose && wParam == VK_RETURN)
-			ChangeScene(TitleScene);
+		}
+		break;
+		case Battle_On:
+			if (status_pc.battlestate = Player_Attack_Move)
+				MoveCharacter();
+			break;
+
+		}
 		break;
 	}
 }
@@ -437,9 +444,21 @@ void cManager::MoveCharacter()
 			status_pc.facing = FacingLeft;
 			status_pc.battlestate = Player_Attacking;
 		}
+		else if (BattleState_PC == Player_Attacking)
+		{
+			status_pc.battlestate = Player_Return_Move;
+			//SetBattleState_PC(WaitForMessage);
+			status_pc.facing = FacingLeft;
+		}
 		else if (BattleState_PC == Player_Return_Move)
 		{
 			status_pc.battlestate = Player_Wait;
+			//SetBattleState_PC(WaitForMessage);
+			status_pc.facing = FacingLeft;
+		}
+		else if (BattleState_PC == Player_Attacking)
+		{
+			status_pc.battlestate = Player_Return_Move;
 			//SetBattleState_PC(WaitForMessage);
 			status_pc.facing = FacingLeft;
 		}
@@ -460,6 +479,32 @@ void cManager::DoBattle()
 		// show battle menu
 		break;
 	case Battle_On:
+		switch (status_pc.battlestate)
+		{
+		case Player_Attack_Move:
+			MoveCharacter();
+			break;
+		case Player_Attacking:
+			calcDamage(&status_pc, &status_mob);
+			break;
+		case Player_Return_Move:
+			break;
+		case Player_Wait:
+			break;
+			 
+
+				/*Player_Ready
+				Player_Attack_Move
+				Player_Attacking
+				Player_Wait
+				Player_Return_Move
+				Player_Wait
+				Player_Hit
+				Player_Hit
+				Player_Wait
+				Player_Ready*/
+
+		}
 		//Battle is On.
 		// do attack, move, hit, die or win
 		break;
