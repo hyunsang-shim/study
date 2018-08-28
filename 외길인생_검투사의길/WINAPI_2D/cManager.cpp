@@ -31,13 +31,14 @@ void cManager::Init()
 {
 	scnManager = new SceneManager;
 	scnManager->LoadResource();
-	CurScene = BattleScene;
+	CurScene = TitleScene;
+	status_pc.facing = FacingRight;
 }
 
 void cManager::InitTitleScene()
 {
 	CurScene = TitleScene;
-	PC_Direction = FacingRight;
+	status_pc.facing = FacingRight;
 	CurMenu = menuNew;
 }
 
@@ -63,13 +64,14 @@ void cManager::InitBattleScene()
 {
 	CurScene = BattleScene;	
 	CurMenu = menuAttack;
+	BattleState = Battle_Ready;
 
 	status_pc.atk = 10;
 	status_pc.def = 1;
 	status_pc.hp = 15;
 	status_pc.hp_max = 15; 
-	status_pc.coord_x = status_pc.coord_next_x = 13;
-	status_pc.coord_y = status_pc.coord_next_y = 8;
+	status_pc.coord_x = status_pc.coord_next_x = BATTLE_POS_PC_DEFAULT_X;
+	status_pc.coord_y = status_pc.coord_next_y = BATTLE_POS_PC_DEFAULT_Y;
 	status_pc.pos_x = status_pc.coord_next_x * 48;
 	status_pc.pos_y = status_pc.coord_next_y * 48;
 	status_pc.pos_shadow_x = status_pc.pos_x + 8;
@@ -83,6 +85,8 @@ void cManager::InitBattleScene()
 	status_mob.def = 1;
 	status_mob.hp = 35;
 	status_mob.hp_max = 35;
+	status_mob.battlestate = Monster_Ready;
+
 }
 
 
@@ -102,6 +106,14 @@ void cManager::UpdateScene(HDC hdc)
 	case TownScene:
 		if (status_pc.movestate == Moving)
 			MoveCharacter();
+
+		if (EventId > 1)
+			switch (EventId)
+			{
+			case Exit:
+				ChangeScene(BattleScene);
+				break;
+			}
 		break;
 	}
 }
@@ -138,22 +150,7 @@ void cManager::ChangeScene(int destSceneidx)
 		break;
 	case GameOverScene:
 		CurScene = GameOverScene;
-		break;
-	case ShopGym:
-		CurScene = ShopGym;
-		break;
-	case ShopChurch:
-		CurScene = ShopChurch;
-		break;
-	case ShopBlacksmith:
-		CurScene = ShopBlacksmith;
-		break;
-	case ShopGuild:
-		CurScene = ShopGuild;
-		break;
-	case House:
-		CurScene = House;
-		break;
+		break;	
 	}
 
 }
@@ -181,10 +178,12 @@ bool cManager::HaveSaveFile()
 //
 void cManager::key(WPARAM wParam)
 {
+
+
 	switch (CurScene)
 	{
 	case TitleScene:
-		PC_Direction = FacingRight;
+		status_pc.facing = FacingRight;
 		switch (wParam)
 		{
 		case VK_UP:
@@ -311,50 +310,61 @@ void cManager::key(WPARAM wParam)
 	case BattleScene:
 		switch (BattleState)
 		{
-		case Battle_Ready:
-		{
-			switch (wParam)
+			case Battle_Ready:
 			{
-			case VK_LEFT:
-				CurMenu = menuAttack;
-				status_mob.atk = 1;
-				break;
-			case VK_RIGHT:
-				CurMenu = menuDefense;
-				status_mob.atk = 20;
-				break;
-			case VK_UP:
-				status_pc.hp = status_pc.hp_max;
-				break;
-			case VK_ESCAPE:
-				ChangeScene(TownScene);
-				EventId = 1;
-				break;
-			case VK_RETURN:
-				status_pc.battlestate = Battle_On;
-				BattleState_PC = Player_Attack_Move;
+				switch (wParam)
+				{
+				case VK_LEFT:
+					CurMenu = menuAttack;
+					status_mob.atk = 1;
+					break;
+				case VK_RIGHT:
+					CurMenu = menuDefense;
+					status_mob.atk = 20;
+					break;
+				case VK_UP:
+					status_pc.hp = status_pc.hp_max;
+					break;
+				case VK_ESCAPE:
+					ChangeScene(TownScene);
+					EventId = 1;
+					break;
+				case VK_RETURN:
+					BattleState = Battle_On;
+					if (CurMenu == menuAttack)
+					{
+						status_pc.battlestate = Player_Attack_Move;
+						status_pc.movestate = Moving;
+						status_pc.coord_next_x = BATTLE_POS_PC_ATTACK_X;
+					}
+					else if (CurMenu == menuDefense)
+					{
+						status_pc.battlestate = Player_Wait;
+					}
+					break;
+				}
 				break;
 			}
 			break;
-		}
-		case Battle_End:
-		{
-			switch (status_pc.battlestate)
+			case Battle_End:
 			{
-			case Player_Win:
+				switch (status_pc.battlestate)
+				{
+				case Player_Win:
 
-				break;
-			case Player_Lose:
-				BattleState = Battle_End;
-				break;
+					break;
+				case Player_Lose:
+					BattleState = Battle_End;
+					break;
+				}
 			}
-		}
-		break;
-		case Battle_On:
-			if (status_pc.battlestate = Player_Attack_Move)
-				MoveCharacter();
 			break;
-
+			case Battle_On:
+			{
+				if (wParam == VK_ESCAPE)
+					ChangeScene(TownScene);
+			}
+			break;
 		}
 		break;
 	}
@@ -366,15 +376,12 @@ void cManager::key(WPARAM wParam)
 //
 int cManager::calcDamage(STATUS_PC * pc, STATUS_MOB * mob)
 {
-	mob->hp -= pc->atk - mob->def;
-
+	
 	return pc->atk - mob->def;
 }
 
 int cManager::calcDamage(STATUS_MOB * mob, STATUS_PC * pc)
 {
-	pc->hp -= mob->atk - pc->def;
-
 	return mob->atk - pc->def;
 }
 
@@ -427,7 +434,7 @@ void cManager::MoveCharacter()
 	else if (DestY - status_pc.pos_y < 0)
 		status_pc.pos_y -= status_pc.speed;
 
-	printf("Moving : row %d(%d) col %d(%d) \n", status_pc.pos_x, status_pc.coord_x, status_pc.pos_y, status_pc.coord_y);
+	printf("posx : %d ( %d )  Cur coord : %d %d, Next coord : %d %d\n", status_pc.pos_x, status_pc.pos_x/48, status_pc.coord_x, status_pc.coord_y, status_pc.coord_next_x, status_pc.coord_next_y);
 
 	// change character status to Idle whel reaches target position.
 	if ((status_pc.pos_x == DestX) && (status_pc.pos_y == DestY))
@@ -437,31 +444,19 @@ void cManager::MoveCharacter()
 			status_pc.movestate = Idle;
 			status_pc.coord_next_x = status_pc.coord_x;
 			status_pc.coord_next_y = status_pc.coord_y;
-
-		}
-		else if (BattleState_PC == Player_Attack_Move)
-		{
-			status_pc.facing = FacingLeft;
-			status_pc.battlestate = Player_Attacking;
-		}
-		else if (BattleState_PC == Player_Attacking)
-		{
-			status_pc.battlestate = Player_Return_Move;
-			//SetBattleState_PC(WaitForMessage);
-			status_pc.facing = FacingLeft;
-		}
-		else if (BattleState_PC == Player_Return_Move)
-		{
-			status_pc.battlestate = Player_Wait;
-			//SetBattleState_PC(WaitForMessage);
-			status_pc.facing = FacingLeft;
-		}
-		else if (BattleState_PC == Player_Attacking)
-		{
-			status_pc.battlestate = Player_Return_Move;
-			//SetBattleState_PC(WaitForMessage);
-			status_pc.facing = FacingLeft;
-		}
+			
+			if (status_pc.battlestate == Player_Attack_Move)
+			{
+				status_pc.battlestate = Player_Attacking;
+				calcDamage(&status_pc, &status_mob);
+			}
+			else if (status_pc.battlestate == Player_Return_Move)
+			{				
+				status_pc.battlestate = Player_Wait;				
+				status_mob.battlestate = Monster_Attack_Move;
+				status_pc.facing = FacingLeft;
+			}
+		}		
 	}
 
 
@@ -478,41 +473,87 @@ void cManager::DoBattle()
 		// battle is ready
 		// show battle menu
 		break;
-	case Battle_On:
+	case Battle_On:		
+		//Battle is On.
+		// do attack, move, hit, die or win
 		switch (status_pc.battlestate)
 		{
+		case Player_Ready:
+			if (status_pc.hp <= 0)
+				status_pc.battlestate = Player_Lose;
+			else if (status_mob.hp <= 0)
+				status_pc.battlestate = Player_Win;
+			break;
 		case Player_Attack_Move:
 			MoveCharacter();
 			break;
 		case Player_Attacking:
-			calcDamage(&status_pc, &status_mob);
-			break;
-		case Player_Return_Move:
+			status_mob.battlestate = Monster_Hit;	
 			break;
 		case Player_Wait:
+			if (status_mob.battlestate = Monster_Ready);
+			// scnManager()->ShowBattleMessage(MSG_Battle);
+			else if (status_mob.battlestate = Monster_Attacking)
+				status_pc.battlestate = Player_Hit;
+			else if (status_mob.battlestate = Monster_Return_Move)
+				status_pc.battlestate = Player_Ready;
 			break;
-			 
-
-				/*Player_Ready
-				Player_Attack_Move
-				Player_Attacking
-				Player_Wait
-				Player_Return_Move
-				Player_Wait
-				Player_Hit
-				Player_Hit
-				Player_Wait
-				Player_Ready*/
-
+		case Player_Return_Move:
+			status_mob.battlestate = status_mob.battlestate = Monster_Ready;
+			break;
+			
 		}
-		//Battle is On.
-		// do attack, move, hit, die or win
-		break;
+	break;
 	case Battle_Wait:
 		//Wait for Battle Message to be shown
+		if (status_pc.battlestate == Player_WaitAttackMessage)
+		{
+			SetBattleMessage(&status_pc, &status_mob);
+			calcDamage(&status_pc, &status_mob);
+			BattleState = Battle_PlayerAttackResult;
+
+		}
+		else if (status_mob.battlestate == Monster_WaitAttackMessage)
+		{
+			SetBattleMessage(&status_mob, &status_pc);
+			calcDamage(&status_mob, &status_pc);
+			BattleState = Battle_MonsterAttackResult;
+		}
+		break;
+	case Battle_PlayerAttackResult:
+		if (!UI_state_MSGW)
+		{
+			/*BattleState = Battle_On;
+			status_pc.battlestate = Player_Ready;
+			status_mob.battlestate = Monster_Ready;*/
+		}
+		break;
+	case Battle_MonsterAttackResult:
+		if (MSG_Battle.damage-- > 0)
+		{
+			ApplyDamage(&status_pc, 1);
+			std::cout<<"MSG_Battle.damage : 공격자 [" << *status_mob.NAME << "] 데미지 [" << MSG_Battle.damage << "]";
+			std::cout << "전투 상태 : " << BattleState << " 몬스터 상태 : " << status_pc.battlestate << "\n";
+		}
+		else
+		{
+			BattleState = Battle_On;
+			status_mob.battlestate = Monster_WaitAttackMessage;
+		}
+
 		break;
 	}
 
+}
+
+void cManager::ApplyDamage(STATUS_PC * pc, int damage)
+{
+	status_pc.hp -= damage;
+}
+
+void cManager::ApplyDamage(STATUS_MOB * mob, int damage)
+{
+	status_mob.hp -= damage;
 }
 
 //
@@ -528,51 +569,37 @@ void cManager::SetCurMenu(int menu)
 	CurMenu = menu;
 }
 
-void cManager::SetPC_Direction(int direction)
-{
-	if (PC_Direction != direction)
-		PC_Direction = direction;
-}
-
-void cManager::SetPC_State(int state)
-{
-	PC_State = state;
-}
-
-void cManager::SetBattleState_PC(int state)
-{
-	BattleState_PC = state;
-}
-
-void cManager::SetBattleState_Mob(int state)
-{
-	BattleState_Mob = state;
-}
-
-void cManager::SetPC_COORD(int row, int col)
-{
-
-	PC_COORD.x = col;
-	PC_COORD.y = row;
-}
-
-void cManager::SetPC_XY(int row, int col)
-{
-	PC_XY.x = col * 48;
-	PC_XY.y = row * 48;
-}
-
-void cManager::SetPC_COORD_NEXT(int row, int col)
-{
-	PC_COORD_NEXT.x = col;
-	PC_COORD_NEXT.y = row;
-}
 
 void cManager::SetEventID(int eventID)
 {
 	this->EventId = eventID;
 }
 
+void cManager::SetUI_state_MSGW(bool val)
+{
+	UI_state_MSGW = val;
+}
+
+void cManager::SetBattleState(int battleState)
+{
+	BattleState = battleState;
+}
+
+void cManager::SetBattleMessage(STATUS_PC *pc, STATUS_MOB *mob)
+{
+	MSG_Battle.damage = calcDamage(&status_pc, &status_mob);
+
+	wsprintf(MSG_Battle.AttackMessage, _T("%s의 공격!\n"), status_pc.NAME);
+	wsprintf(MSG_Battle.AttackResultMessage, _T("%s에게 %d의 피해를 주었다."), status_mob.NAME, MSG_Battle.damage);
+	wsprintf(MSG_Battle.BattleResultMessage, _T("%s를 쓰러뜨렸다!"), status_mob.NAME);
+}
+void cManager::SetBattleMessage(STATUS_MOB *mob, STATUS_PC *pc)
+{
+	MSG_Battle.damage = calcDamage(&status_mob, &status_pc);
+	wsprintf(MSG_Battle.AttackMessage, _T("%s의 공격!\n"), status_mob.NAME);
+	wsprintf(MSG_Battle.AttackResultMessage, _T("%s에게 %d의 피해를 주었다."), status_pc.NAME, MSG_Battle.damage);
+	wsprintf(MSG_Battle.BattleResultMessage, _T("%s를 쓰러뜨렸다!"), status_pc.NAME);
+}
 
 
 //
@@ -588,49 +615,20 @@ int cManager::GetCurMenu()
 	return CurMenu;;
 }
 
-int cManager::GetDirection_PC()
+int cManager::GetBattleState()
 {
-	return PC_Direction;;
+	return BattleState;;
 }
 
-int cManager::GetSpeed_PC()
-{
-	return PC_Speed;;
-}
-
-int cManager::GetPC_State()
-{
-	return PC_State;;
-}
-
-int cManager::GetBattleState_PC()
-{
-	return BattleState_PC;;
-}
-
-int cManager::GetBattleState_Mob()
-{
-	return BattleState_Mob;;
-}
-
-POINT cManager::GetPC_XY()
-{
-	return PC_XY;
-}
-
-POINT cManager::GetPC_COORD()
-{
-	return PC_COORD;;
-}
-
-POINT cManager::GetPC_COORD_NEXT()
-{
-	return PC_COORD_NEXT;
-}
 
 int cManager::GetEventID()
 {
 	return EventId;;
+}
+
+bool cManager::GetUI_state_MSGW()
+{
+	return UI_state_MSGW;
 }
 
 STATUS_PC cManager::GetStatus_PC()
@@ -641,6 +639,11 @@ STATUS_PC cManager::GetStatus_PC()
 STATUS_MOB cManager::GetStatus_MOB()
 {
 	return status_mob;
+}
+
+BATTLE_MSG cManager::GetBattleMessage()
+{
+	return MSG_Battle;
 }
 
 

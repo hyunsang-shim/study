@@ -13,9 +13,10 @@ public:
 
 	void DrawUI(HDC hdc);
 	void DrawUI_Font(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
-	void DrawUI_HPbar(HDC destDC);
+	void DrawUI_HPbar(HDC destDC, STATUS_PC *PC, STATUS_MOB *MOB);
 	void DrawUI_Portrait(HDC destDC, int &player_battlestate, int &monster_battlestate);
 	void DrawUI_Image(HDC destDC, POINT &point, HBITMAP &src);
+	void DrawUI_SpriteImage(HDC destDC, POINT &point, HBITMAP &src, int width, int height, int frameNumber, bool isVertical);
 	void DrawUI_Selector(HDC destDC, POINT &point, HBITMAP &src, int &frameNumber, int &direction);
 
 
@@ -35,11 +36,8 @@ public:
 	void DrawBG(HDC destDC, HBITMAP &src);
 
 
-	void DoBattle(HDC BackMemDC);
 	void ShowBattleMenu(HDC BackMemDC, STATUS_PC *status_pc);
 
-	void KeyInput(WPARAM wParam, int &CurScene, int &CurMenu);
-	bool PeekNextCoord(POINT CurPos);
 	void MoveCharacter(POINT nextPoint);
 
 	
@@ -76,6 +74,7 @@ public:
 	HBITMAP resUI_numbers;
 	HBITMAP resUI_hpbar_big;
 	HBITMAP resUI_hpbar_small;
+	HBITMAP resUI_Battlemsg;
 
 	BITMAP bm;
 

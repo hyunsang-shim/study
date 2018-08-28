@@ -52,20 +52,20 @@ public:
 	bool PeekNextCoord();
 	void MoveCharacter();
 	void DoBattle();
+	void ApplyDamage(STATUS_PC *pc, int damage);
+	void ApplyDamage(STATUS_MOB *mob, int damage);
+
 
 	//
 	// methods for set variables
 	//
 	void SetCurScene(int SceneName);
 	void SetCurMenu(int menu);
-	void SetPC_Direction(int direction);
-	void SetPC_State(int state);
-	void SetBattleState_PC(int state);
-	void SetBattleState_Mob(int state);
-	void SetPC_COORD(int row, int col);
-	void SetPC_XY(int row, int col);
-	void SetPC_COORD_NEXT(int row, int col);
 	void SetEventID(int eventID);
+	void SetUI_state_MSGW(bool val);
+	void SetBattleState(int battleState);
+	void SetBattleMessage(STATUS_PC *status_pc, STATUS_MOB *status_mob);
+	void SetBattleMessage(STATUS_MOB *status_mob, STATUS_PC *status_pc);
 
 	
 	//
@@ -73,20 +73,13 @@ public:
 	//
 	int GetCurScene();
 	int GetCurMenu();
-	int GetDirection_PC();
-	int GetSpeed_PC();
-	int GetPC_State();
-	int GetBattleState_PC();
-	int GetBattleState_Mob();
-	POINT GetPC_XY();
-	POINT GetPC_COORD();
-	POINT GetPC_COORD_NEXT();
+	int GetBattleState();
 	int GetEventID();
+	bool GetUI_state_MSGW();
 	STATUS_PC GetStatus_PC();
 	STATUS_MOB GetStatus_MOB();
-
-
-
+	BATTLE_MSG GetBattleMessage();
+	
 public:
 	static cManager* GetInstance()
 	{
@@ -108,26 +101,18 @@ private:
 	int CurScene;
 	int CurMenu = menuNew;
 	int lastScene = TitleScene;	
+	bool UI_state_MSGW = FALSE;
 
 	//
 	// position and character statuses
 	//
-	int PC_Direction = FacingRight;
-	int PC_Speed = 4;
-	int PC_State = Idle;
-	
-	int BattleState_PC = Player_Ready;
-	int BattleState_Mob = Monster_Ready;
+	//
 	int BattleState = Battle_Ready;
 
 	STATUS_PC status_pc;
 	STATUS_MOB status_mob;
+	BATTLE_MSG MSG_Battle;
 
-	POINT PC_XY;
-	POINT PC_XY_SHADOW;
-
-	POINT PC_COORD;
-	POINT PC_COORD_NEXT;
 	POINT MOB_XY = { 96, 280 };
 
 	//

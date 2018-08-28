@@ -48,6 +48,7 @@ void SceneManager::UnLoadResource()
 	DeleteObject(resUI_numbers);
 	DeleteObject(resUI_hpbar_big);
 	DeleteObject(resUI_hpbar_small);
+	DeleteObject(resUI_Battlemsg);
 
 
 }
@@ -86,6 +87,7 @@ void SceneManager::LoadResource()
 	resUI_numbers = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\ui_numbers.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	resUI_hpbar_big = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\ui_hpbar_big.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	resUI_hpbar_small = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\ui_hpbar_small.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resUI_Battlemsg = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\ui_msgbox.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 }
 
@@ -127,6 +129,26 @@ void SceneManager::DrawUI_Image(HDC destDC, POINT &point, HBITMAP &src)
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteObject(hOldBitmap);
 	DeleteDC(hMemDC);
+}
+void SceneManager::DrawUI_SpriteImage(HDC destDC, POINT &point, HBITMAP &src, int width, int height, int frameNumber, bool isVertical)
+{
+	HDC hMemDC;
+	HBITMAP hOldBitmap;
+	GetObject(resUI_Battlemsg, sizeof(BITMAP), &bm);
+
+	hMemDC = CreateCompatibleDC(destDC);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
+
+	if (isVertical)
+		TransparentBlt(destDC, point.x, point.y, width, height - 1, hMemDC, 0, frameNumber * height, width, height - 1, RGB(255, 0, 255));	
+	else
+		TransparentBlt(destDC, point.x, point.y, width, height - 1, hMemDC, frameNumber * width, 0, width, height - 1, RGB(255, 0, 255));
+	//TransparentBlt(destDC, startX, startY, CHARACTER_SIZE, CHARACTER_SIZE-1, hMemDC, frameNumber * CHARACTER_SIZE, 1 * CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE - 1, RGB(255, 0, 255));
+
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
+	DeleteDC(hMemDC);
+
 }
 void SceneManager::DrawUI_Selector(HDC destDC, POINT &point, HBITMAP &src, int &frameNumber, int &direction)
 {
@@ -198,7 +220,7 @@ void SceneManager::DrawUI_Portrait(HDC destDC, int &player_battlestate, int &mon
 		if (!(shake_cnt % 4))
 		{
 			hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_face);
-			TransparentBlt(destDC, 450 + shakerX, 60 + shakerY, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, 1 * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+			TransparentBlt(destDC, 450 + shakerX, 60 + shakerY, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, player_battlestate * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 			shake_cnt--;
 
 			// Mob's portrait w/o shaking effect
@@ -208,7 +230,7 @@ void SceneManager::DrawUI_Portrait(HDC destDC, int &player_battlestate, int &mon
 		else
 		{
 			hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_face);
-			TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, (1) * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+			TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, player_battlestate * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 			shake_cnt = CHARACTER_FRAME_MAX;
 
 			// Mob's portrait w/o shaking effect
@@ -222,7 +244,7 @@ void SceneManager::DrawUI_Portrait(HDC destDC, int &player_battlestate, int &mon
 			// PC's portrait w/o shaking effect
 			hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_face);
 			//TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, (GetBattleState_PC() % 5) * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
-			TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, 2 * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+			TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, player_battlestate * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 
 			// Mob's portrait w/o shaking effect
 			shakerX = rand() % 2 * shake_mid;
@@ -256,7 +278,7 @@ void SceneManager::DrawUI_Portrait(HDC destDC, int &player_battlestate, int &mon
 
 		hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_face);
 		//TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, (GetBattleState_PC() % 5) * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
-		TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, 1 * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
+		TransparentBlt(destDC, 450, 60, PORTRAIT_SIZE, PORTRAIT_SIZE, hMemDC, player_battlestate * PORTRAIT_SIZE, 0, PORTRAIT_SIZE, PORTRAIT_SIZE - 1, RGB(255, 0, 255));
 
 		// Mob's portrait w/o shaking effect
 		SelectObject(hMemDC, resMob_face);
@@ -271,15 +293,15 @@ void SceneManager::DrawUI_Portrait(HDC destDC, int &player_battlestate, int &mon
 	DeleteDC(hMemDC);
 
 }
-void SceneManager::DrawUI_HPbar(HDC destDC)
+void SceneManager::DrawUI_HPbar(HDC destDC, STATUS_PC *PC, STATUS_MOB *MOB)
 {
 	double pixelperhp_PC = 0;
 	double pixelperhp_MOB = 0;
 
 	//pixelperhp_PC = PORTRAIT_SIZE / (double)pc_stat.hp_max);
 	//pixelperhp_MOB = PORTRAIT_SIZE / (double)mob_stat.hp_max;
-	pixelperhp_PC = PORTRAIT_SIZE / (double)100;
-	pixelperhp_MOB = PORTRAIT_SIZE / (double)100;
+	pixelperhp_PC = PORTRAIT_SIZE / (double)PC->hp_max;
+	pixelperhp_MOB = PORTRAIT_SIZE / (double)MOB->hp_max;
 
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -294,12 +316,34 @@ void SceneManager::DrawUI_HPbar(HDC destDC)
 	
 	// hpbar for pc
 	//TransparentBlt(destDC, 		450, 60 + PORTRAIT_SIZE + 5, 		(int)(pixelperhp_PC * pc_stat.hp), UI_HPBAR_HEIGHT_BIG,		hMemDC, 0, UI_HPBAR_HEIGHT_BIG, 		UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG, 		RGB(255, 0, 255));	
-	TransparentBlt(destDC, 		450, 60 + PORTRAIT_SIZE + 5, 		(int)(pixelperhp_PC * 100), UI_HPBAR_HEIGHT_BIG,		hMemDC, 0, UI_HPBAR_HEIGHT_BIG, 		UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG, 		RGB(255, 0, 255));	
+	TransparentBlt(destDC,
+		450, 60 + PORTRAIT_SIZE + 5,
+		(int)(pixelperhp_PC * PC->hp_max), UI_HPBAR_HEIGHT_BIG,
+		hMemDC, 
+		0, UI_HPBAR_HEIGHT_BIG,
+		UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG,
+		RGB(255, 0, 255));	
+
+	TCHAR tmp[64] = { '\0' };
+
+	wsprintf(tmp, _T("HP : %d / %d"), PC->hp, PC->hp_max );
+
+	TextOut(destDC, 450, 60 + PORTRAIT_SIZE + UI_HPBAR_HEIGHT_BIG + 10, tmp, lstrlen(tmp));
+
 
 	// hpbar for mob
 	//TransparentBlt(destDC, 		200 + (int)(pixelperhp_MOB * abs(mob_stat.hp_max - mob_stat.hp)), 60 + PORTRAIT_SIZE + 5, 		(int)(pixelperhp_MOB * mob_stat.hp), UI_HPBAR_HEIGHT_BIG, 		hMemDC, 0, UI_HPBAR_HEIGHT_BIG,		UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG,		RGB(255, 0, 255));
-	TransparentBlt(destDC, 		200 + (int)(pixelperhp_MOB * 100), 60 + PORTRAIT_SIZE + 5, 		100, UI_HPBAR_HEIGHT_BIG, 		hMemDC, 0, UI_HPBAR_HEIGHT_BIG,		UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG,		RGB(255, 0, 255));
+	TransparentBlt(destDC,
+		200 + PORTRAIT_SIZE - (int)(pixelperhp_MOB * MOB->hp),	60 + PORTRAIT_SIZE + 5, 
+		(int)(pixelperhp_MOB * MOB->hp), UI_HPBAR_HEIGHT_BIG,
+		hMemDC,
+		0, UI_HPBAR_HEIGHT_BIG,		
+		UI_HPBAR_WIDTH_BIG, UI_HPBAR_HEIGHT_BIG,
+		RGB(255, 0, 255));
 
+	wsprintf(tmp, _T("HP : %d / %d"), MOB->hp, MOB->hp_max);
+
+	TextOut(destDC, 200, 60 + PORTRAIT_SIZE + UI_HPBAR_HEIGHT_BIG + 10, tmp, lstrlen(tmp));
 
 	// for actor's hpbar
 	//SelectObject(hMemDC, resUI_hpbar_small);
@@ -343,7 +387,6 @@ void SceneManager::DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP src, 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteDC(hMemDC);
 }
-
 void SceneManager::DrawBattler_PC(HDC destDC, STATUS_PC *status_pc, HBITMAP src, int frameNumber)
 {
 	HDC hMemDC;
@@ -353,14 +396,12 @@ void SceneManager::DrawBattler_PC(HDC destDC, STATUS_PC *status_pc, HBITMAP src,
 
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
 	//if (GetBattleState_PC() == Hit)
-	if (1)
+	if (status_pc->battlestate == Player_Hit)
 	{
-		//TransparentBlt(destDC, startX, startY, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, GetBattleState_PC() % 4 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
 		TransparentBlt(destDC, status_pc->pos_x, status_pc->pos_y, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, status_pc->battlestate%4 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
 	}
 	else
-		//TransparentBlt(destDC, startX, startY, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, GetBattleState_PC()%4 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
-		TransparentBlt(destDC, status_pc->pos_x, status_pc->pos_y, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
+		TransparentBlt(destDC, status_pc->pos_x, status_pc->pos_y, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, hMemDC, frameNumber * CHARACTER_SIZE_BATTLE, status_pc->battlestate % 4 * CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteObject(hOldBitmap);
@@ -395,7 +436,7 @@ void SceneManager::DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP s
 	GetObject(src, sizeof(BITMAP), &bm);
 
 	//if (GetBattleState_PC() == Attacking)
-	if (1)
+	if (GAME_MANAGER->GetStatus_MOB().battlestate == Monster_Attack_Move)
 	{
 		TransparentBlt(destDC, startX, startY, bm.bmWidth, bm.bmHeight - 1, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight - 1, RGB(255, 0, 255));
 	}
@@ -553,9 +594,11 @@ void SceneManager::DrawBattleScene(HDC hdc, int &battleState, STATUS_PC *status_
 
 	DeleteObject(hBit4);
 
+	// Draw Background Image
 	DrawBG(BackMemDC, resBattle_bg);
 
 
+	// for resource's frame
 	static int framecounter = 0;
 	static int characterFrame = 0;
 	framecounter++;
@@ -571,28 +614,62 @@ void SceneManager::DrawBattleScene(HDC hdc, int &battleState, STATUS_PC *status_
 			status_pc->battlestate = Player_Wait;
 		else if (status_pc->battlestate == Player_Attacking)
 		{
-	
-			status_pc->coord_x = status_pc->coord_next_x = 7;
-			status_pc->coord_x = status_pc->coord_next_x = 8;
-
-			status_pc->battlestate = Player_Return_Move;
+			GAME_MANAGER->SetBattleState(Battle_Wait);
+			GAME_MANAGER->ApplyDamage(status_mob, GAME_MANAGER->GetBattleMessage().damage);
+			status_pc->battlestate = Player_WaitAttackMessage;
 		}
 		else if (status_pc->battlestate == Player_Hit)
 		{
 			status_pc->battlestate = Player_Ready;
 		}
+		else if (status_pc->battlestate == Player_Attack_Move)
+			status_pc->battlestate = Player_Attacking;
 	}
 	else
 		characterFrame = (framecounter / 10) % 4;
 
+
+	// Draw Player Character
 	DrawBattler_PC(BackMemDC, status_pc, resPC_battle, characterFrame);
 
+	// Draw Portraits
 	DrawUI_Portrait(BackMemDC, status_pc->battlestate, status_mob->battlestate);
 
-	if (status_pc->battlestate == Player_Ready && status_mob->battlestate == Monster_Ready)
-		ShowBattleMenu(BackMemDC, status_pc);
+	// Draw HP_Bars
+	DrawUI_HPbar(BackMemDC, status_pc, status_mob);
 
 
+	// Draw Battle Message Box
+	if (GAME_MANAGER->GetBattleState() == Battle_PlayerAttackResult)
+	{
+		
+
+		POINT MSGBOX_startpos = { 42,460 };
+
+		static int frame = 0;
+		// Sync PC sprite frame to current action.	
+		// if action ends -> change state.
+		if (frame/2 < 4)
+		{			
+			DrawUI_SpriteImage(BackMemDC, MSGBOX_startpos, resUI_Battlemsg, MSG_BOX_WIDTH, MSG_BOX_HEIGHT, frame/2, true);
+			frame++;
+		}
+		else
+		{
+			DrawUI_SpriteImage(BackMemDC, MSGBOX_startpos, resUI_Battlemsg, MSG_BOX_WIDTH, MSG_BOX_HEIGHT, frame/2, true);
+			GAME_MANAGER->SetUI_state_MSGW(TRUE);			
+		}
+
+		if (GAME_MANAGER->GetUI_state_MSGW())
+			ShowMessage(BackMemDC);
+
+	}
+
+	if (GAME_MANAGER->GetBattleMessage().damage != 0)
+	{
+		int damage = GAME_MANAGER->GetBattleMessage().damage;
+		drawDamage(BackMemDC, damage_font, damage);
+	}
 	// Draw backbuffer DC onto front DC
 	TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
 
@@ -876,44 +953,92 @@ void SceneManager::ShowEvent(int EventId)
 	//}
 }
 
-void SceneManager::drawDamage(HDC destDC, POINT pos, int dmg)
+void SceneManager::ShowMessage(HDC BackMemDC)
 {
-//	char dmg_to_string[64] = { '\0' };
-//
-//	_itoa_s(dmg, dmg_to_string, sizeof(dmg_to_string), 10);
-//
-//	if (damage_font.CurPos.x == damage_font.EndPos.x)
-//	{
-//		if (damage_font.CurPos.y == damage_font.EndPos.y)
-//		{
-//			dmg_to_string[0] = { '\0' };
-//			if (GetBattleState_PC() == Hit)
-//				SetBattleState_PC(Ready);			
-//		}
-//	}
-//	else
-//	{
-//		damage_font.CurPos.x++;
-//		damage_font.CurPos.y--;
-//
-//		/*printf("start X : %d start y : %d, cur X : %d, cur Y : %d, end X : %d, end Y : %d\n", 
-//			damage_font.StartPos.x, damage_font.StartPos.y,
-//			damage_font.CurPos.x, damage_font.CurPos.y,
-//			damage_font.EndPos.x, damage_font.EndPos.y);
-//*/
-//
-//		for (int i = 0; i < sizeof(dmg_to_string); i++)
-//		{
-//			//printf("%d : int - [ %d ],string - [ %s ]\n", i, 123, dmg_to_string);
-//			DrawUI_Font(destDC, damage_font.CurPos.x +i* UI_FONT_SIZE, damage_font.CurPos.y, resUI_numbers, dmg_to_string[i] - 48);
-//		}
-//
-//	}
+
+	static int nLen_AttackMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage);
+	static int nLen_AttackResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage);
+	static int nLen_BattleResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage);
+
+
+	if (nLen_AttackMessage-- >= 0)
+		TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage) - nLen_AttackMessage);
+	else if (nLen_AttackResultMessage-- >= 0)
+	{
+		TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
+		TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage) - nLen_AttackResultMessage);
+	}
+	else if (nLen_BattleResultMessage-- >= 0 && GAME_MANAGER->GetStatus_MOB().hp <= 0)
+	{
+		TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
+		TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
+		TextOut(BackMemDC, 58, 504, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage) - nLen_BattleResultMessage);
+	}
+	else
+	{
+		TextOut(BackMemDC, 58, 472,_T("ÀÕÈþ?"), lstrlen(_T("ÀÕÈþ?")));
+
+	}
 
 }
 
-void SceneManager::DrawUI(HDC hdc)
+void SceneManager::drawDamage(HDC destDC, POINT pos, int dmg)
 {
+	char dmg_to_string[64] = { '\0' };
+
+	_itoa_s(dmg, dmg_to_string, sizeof(dmg_to_string), 10);
+
+	if (damage_font.CurPos.x == damage_font.EndPos.x)
+	{
+		if (damage_font.CurPos.y == damage_font.EndPos.y)
+		{
+			dmg_to_string[0] = { '\0' };
+			if (GetBattleState_PC() == Hit)
+				SetBattleState_PC(Ready);			
+		}
+	}
+	else
+	{
+		damage_font.CurPos.x++;
+		damage_font.CurPos.y--;
+
+		/*printf("start X : %d start y : %d, cur X : %d, cur Y : %d, end X : %d, end Y : %d\n", 
+			damage_font.StartPos.x, damage_font.StartPos.y,
+			damage_font.CurPos.x, damage_font.CurPos.y,
+			damage_font.EndPos.x, damage_font.EndPos.y);
+*/
+
+		for (int i = 0; i < sizeof(dmg_to_string); i++)
+		{
+			//printf("%d : int - [ %d ],string - [ %s ]\n", i, 123, dmg_to_string);
+			DrawUI_Font(destDC, damage_font.CurPos.x +i* UI_FONT_SIZE, damage_font.CurPos.y, resUI_numbers, dmg_to_string[i] - 48);
+		}
+
+	}
+
+}
+
+void SceneManager::DrawUI(HDC destDc)
+{
+
+	if (GAME_MANAGER->GetStatus_PC().battlestate == Player_Wait)
+	{
+
+
+		static int framecounter = 0;
+		static int frame = 0;
+
+		POINT MSGBOX_startpos = { 42,483 };
+
+		frame = framecounter % 3;
+		// Sync PC sprite frame to current action.	
+		// if action ends -> change state.
+		if (frame == 0)
+		{
+			framecounter++;
+			DrawUI_SpriteImage(destDc, MSGBOX_startpos, resUI_Battlemsg, MSG_BOX_WIDTH, MSG_BOX_HEIGHT, frame, true);
+		}
+	}
 	//switch (GetCurScene())
 	//{
 	//case TownScene:
