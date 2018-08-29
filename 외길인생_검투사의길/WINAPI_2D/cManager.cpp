@@ -1,4 +1,4 @@
-
+ï»¿
 #include "stdafx.h"
 #include "cManager.h"
 #include "SceneManager.h"
@@ -19,20 +19,13 @@ cManager::~cManager()
 //
 // prepare and initialize
 //
-void cManager::Test()
-{
-	HDC tmpDC = GetDC(FindWindow(_T("Oneway_Life"), _T("¿Ü±æÀÎ»ı : °ËÅõ»çÀÇ ±æ")));
-	scnManager->ShowBattleMenu(tmpDC, &status_pc);
-	ReleaseDC(FindWindow(_T("Oneway_Life"), _T("¿Ü±æÀÎ»ı : °ËÅõ»çÀÇ ±æ")), tmpDC);
-	
-}
 
 void cManager::Init()
 {
 	scnManager = new SceneManager;
 	scnManager->LoadResource();
 	CurScene = TitleScene;
-	status_pc.facing = FacingRight;
+	status_pc.facing = FacingUp;
 }
 
 void cManager::InitTitleScene()
@@ -64,7 +57,7 @@ void cManager::InitBattleScene()
 {
 	CurScene = BattleScene;	
 	CurMenu = menuAttack;
-	BattleState = Battle_Ready;
+	BattleStep = ShowBattleMenu;
 
 	status_pc.atk = 10;
 	status_pc.def = 1;
@@ -93,43 +86,38 @@ void cManager::InitBattleScene()
 //
 // Scene Update and draw
 //
-
-void cManager::UpdateScene(HDC hdc)
+void cManager::UpdateScene(HDC FrontDC)
 {
 	switch (CurScene)
 	{
-	case TitleScene:
-		break;
+	//case TitleScene:
+	//	UpdateTitle();
+	//	break;
 	case BattleScene:
-		DoBattle();
+		UpdateBattle();
 		break;
 	case TownScene:
-		if (status_pc.movestate == Moving)
-			MoveCharacter();
-
-		if (EventId > 1)
-			switch (EventId)
-			{
-			case Exit:
-				ChangeScene(BattleScene);
-				break;
-			}
+		UpdateTown();	
 		break;
 	}
 }
 
-void cManager::DrawScene(HDC hdc)
+void cManager::DrawScene(HDC FrontDC)
 {
 	switch (CurScene)
 	{
 	case TitleScene:
-		scnManager->DrawTitleScene(hdc, CurMenu, status_pc.facing);
+		scnManager->DrawTitleScene(FrontDC);
+		TextOut(FrontDC, 100, 100, _T("TitleScene"), lstrlen(_T("TitleScene")));
 		break;
 	case TownScene:
-		scnManager->DrawTownScene(hdc, &status_pc);
+		scnManager->DrawTownScene(FrontDC);
 		break;
 	case BattleScene:
-		scnManager->DrawBattleScene(hdc, BattleState, &status_pc, &status_mob);
+		scnManager->DrawBattleScene(FrontDC, &status_pc, &status_mob);
+		TCHAR tmp[64];
+		wsprintf(tmp, _T("BattleStep : %d"), BattleStep);
+		TextOut(FrontDC, 100, 100, tmp, lstrlen(tmp));
 		break;
 	}
 }
@@ -160,6 +148,116 @@ bool cManager::HaveSaveFile()
 	return false;
 }
 
+void cManager::UpdateTitle()
+{
+}
+
+void cManager::UpdateTown()
+{	
+	EventId = TownMap[status_pc.coord_y][status_pc.coord_x];
+
+	if (status_pc.movestate == Moving)
+		MoveCharacter();
+
+	// Draw Event Scene
+
+		// Town
+			// Draw BG
+			// Draw PC
+		// Shop
+	switch (EventId)
+	{
+		printf("Event id : [ %03d ]\n", EventId);
+	case Exit:
+		ChangeScene(BattleScene);
+		break;
+	}
+			// Draw BlackBG
+			// Draw ShopBG
+			// Draw TownMenu(ShopID);
+			// Draw Selector(CurMenu);
+			// Draw MessageBox_Town	
+	
+}
+
+void cManager::UpdateBattle()
+{
+
+	switch (BattleStep)
+	{
+		// 1	ì „íˆ¬ ë©”ë‰´ í‘œì‹œ	show battle menu for player	
+		// 2	í”Œë ˆì´ì–´ ìºë¦­í„° ì´ë™	move player character
+	case PC_Move:
+		switch (CurMenu)
+		{
+		case menuAttack:			
+			status_pc.facing = FacingLeft;
+			break;
+		case menuDefense:			
+			break;
+		default:
+			status_pc.facing = FacingRight;
+			break;
+		}
+
+		MoveCharacter();
+		break;
+		// 3	í”Œë ˆì´ì–´ ìºë¦­í„° í–‰ë™	do player character's action
+	case PC_Action:
+		SetBattleMessage(&status_pc, &status_mob);
+		dmg = calcDamage(&status_pc, &status_mob);
+		break;
+		// 4	í”Œë ˆì´ì–´ ìºë¦­í„° í–‰ë™ ê²°ê³¼ ì¶œë ¥	show result of PC action
+	case PC_Action_Result:
+		
+	break;
+		// 5	ëª¬ìŠ¤í„° ì‚¬ë§ í™•ì¸	check whether mob die or not
+	case Check_Mob_Die:
+		break;
+		// 6	ëª¬ìŠ¤í„° ì‚¬ë§ ì²˜ë¦¬	kill monster
+	case Kill_Mob:
+		break;
+		// 7	ê²½í—˜ì¹˜ íšë“	loot XP.
+	case Loot_XP:
+		break;
+		// 8	ê³¨ë“œ íšë“	loot Gold.
+	case Loot_Gold:
+		break;
+		// 9	ì „ë¦¬í’ˆ íšë“	loot etc.
+	case Loot_etc:
+		break;
+		// 10	ì „íˆ¬ ì¢…ë£Œ->ë§ˆì„ ì”¬ ë³µê·€	end battle.Return to town scene
+	case Return_To_Town:
+		break;
+		// 11	í”Œë ˆì´ì–´ ìºë¦­í„° ë³µê·€	return PC to start position
+	case PC_Return:
+		status_pc.facing = FacingRight;
+		status_pc.coord_next_x = BATTLE_POS_PC_DEFAULT_X;
+		MoveCharacter();
+		break;
+		// 12	ëª¬ìŠ¤í„° ìºë¦­í„° ì´ë™	move mob
+	case MOB_Move:
+		break;
+		// 13	ëª¬ìŠ¤í„° ìºë¦­í„° í–‰ë™	mob action
+	case MOB_Action:
+		break;
+		// 14	ëª¬ìŠ¤í„° ìºë¦­í„° í–‰ë™ ê²°ê³¼ ì¶œë ¥	show result of mob action
+	case MOB_Atcion_Result:
+		//		ë©”ì‹œì§€ ë¼ì¸ 1
+		//		ë©”ì‹œì§€ ë¼ì¸ 2
+		//		ë©”ì‹œì§€ ë¼ì¸ 3
+		break;
+		// 15	ìºë¦­í„° ì‚¬ë§ í™•ì¸	check whether PC die or not
+	case Check_PC_Die:
+		break;
+		// 16	ìºë¦­í„° ì‚¬ë§ ì²˜ë¦¬	kill PC
+	case Kill_PC:
+		break;
+		// 17	ì „íˆ¬ ì¢…ë£Œ->ê²Œì„ì˜¤ë²„ ì”¬	end battle.Go to gameover scene.
+	case Goto_Gameover:
+		break;
+	}
+}
 
 //
 // resource related
@@ -213,7 +311,7 @@ void cManager::key(WPARAM wParam)
 			{
 			case menuQuit:
 				if (wParam == VK_RETURN)
-					SendMessage(FindWindow(_T("Oneway_Life"), _T("¿Ü±æÀÎ»ı : °ËÅõ»çÀÇ ±æ")), WM_CLOSE, 0, 0);
+					SendMessage(FindWindow(_T("Oneway_Life"), _T("ì™¸ê¸¸ì¸ìƒ : ê²€íˆ¬ì‚¬ì˜ ê¸¸")), WM_CLOSE, 0, 0);
 				break;
 			case menuNew:
 				ChangeScene(TownScene);
@@ -308,9 +406,9 @@ void cManager::key(WPARAM wParam)
 		//std::cout << "PC Coord (current, next) : (" << PC_COORD.y << "," << PC_COORD.x << "), (" << PC_COORD_NEXT.y << "," << PC_COORD_NEXT.y << "  EventID : " << EventId << "\n";
 		break;
 	case BattleScene:
-		switch (BattleState)
+		switch (BattleStep)
 		{
-			case Battle_Ready:
+			case ShowBattleMenu:
 			{
 				switch (wParam)
 				{
@@ -330,39 +428,22 @@ void cManager::key(WPARAM wParam)
 					EventId = 1;
 					break;
 				case VK_RETURN:
-					BattleState = Battle_On;
+					BattleStep = ShowBattleMenu;
 					if (CurMenu == menuAttack)
 					{
 						status_pc.battlestate = Player_Attack_Move;
 						status_pc.movestate = Moving;
 						status_pc.coord_next_x = BATTLE_POS_PC_ATTACK_X;
+						BattleStep = PC_Move;
 					}
 					else if (CurMenu == menuDefense)
 					{
 						status_pc.battlestate = Player_Wait;
+						BattleStep = MOB_Move;
 					}
 					break;
 				}
 				break;
-			}
-			break;
-			case Battle_End:
-			{
-				switch (status_pc.battlestate)
-				{
-				case Player_Win:
-
-					break;
-				case Player_Lose:
-					BattleState = Battle_End;
-					break;
-				}
-			}
-			break;
-			case Battle_On:
-			{
-				if (wParam == VK_ESCAPE)
-					ChangeScene(TownScene);
 			}
 			break;
 		}
@@ -439,24 +520,26 @@ void cManager::MoveCharacter()
 	// change character status to Idle whel reaches target position.
 	if ((status_pc.pos_x == DestX) && (status_pc.pos_y == DestY))
 	{
-		if (status_pc.movestate == Moving)
+		if (BattleStep == PC_Move)
 		{
 			status_pc.movestate = Idle;
 			status_pc.coord_next_x = status_pc.coord_x;
 			status_pc.coord_next_y = status_pc.coord_y;
-			
-			if (status_pc.battlestate == Player_Attack_Move)
-			{
-				status_pc.battlestate = Player_Attacking;
-				calcDamage(&status_pc, &status_mob);
-			}
-			else if (status_pc.battlestate == Player_Return_Move)
-			{				
-				status_pc.battlestate = Player_Wait;				
-				status_mob.battlestate = Monster_Attack_Move;
-				status_pc.facing = FacingLeft;
-			}
-		}		
+			BattleStep = PC_Action;
+			status_pc.battlestate = Player_Attacking;
+			scnManager->frameCounter = 0;
+			scnManager->frameNumber = 0;
+		}
+		else if (BattleStep == PC_Return)
+		{
+			status_pc.movestate = Idle;
+			status_pc.coord_next_x = status_pc.coord_x;
+			status_pc.coord_next_y = status_pc.coord_y;
+			BattleStep = ShowBattleMenu;
+			status_pc.battlestate = Player_Ready;
+			scnManager->frameCounter = 0;
+			scnManager->frameNumber = 0;
+		}
 	}
 
 
@@ -465,86 +548,6 @@ void cManager::MoveCharacter()
 		ChangeScene(EventId);
 }
 
-void cManager::DoBattle()
-{
-	switch (BattleState)
-	{
-	case Battle_Ready:
-		// battle is ready
-		// show battle menu
-		break;
-	case Battle_On:		
-		//Battle is On.
-		// do attack, move, hit, die or win
-		switch (status_pc.battlestate)
-		{
-		case Player_Ready:
-			if (status_pc.hp <= 0)
-				status_pc.battlestate = Player_Lose;
-			else if (status_mob.hp <= 0)
-				status_pc.battlestate = Player_Win;
-			break;
-		case Player_Attack_Move:
-			MoveCharacter();
-			break;
-		case Player_Attacking:
-			status_mob.battlestate = Monster_Hit;	
-			break;
-		case Player_Wait:
-			if (status_mob.battlestate = Monster_Ready);
-			// scnManager()->ShowBattleMessage(MSG_Battle);
-			else if (status_mob.battlestate = Monster_Attacking)
-				status_pc.battlestate = Player_Hit;
-			else if (status_mob.battlestate = Monster_Return_Move)
-				status_pc.battlestate = Player_Ready;
-			break;
-		case Player_Return_Move:
-			status_mob.battlestate = status_mob.battlestate = Monster_Ready;
-			break;
-			
-		}
-	break;
-	case Battle_Wait:
-		//Wait for Battle Message to be shown
-		if (status_pc.battlestate == Player_WaitAttackMessage)
-		{
-			SetBattleMessage(&status_pc, &status_mob);
-			calcDamage(&status_pc, &status_mob);
-			BattleState = Battle_PlayerAttackResult;
-
-		}
-		else if (status_mob.battlestate == Monster_WaitAttackMessage)
-		{
-			SetBattleMessage(&status_mob, &status_pc);
-			calcDamage(&status_mob, &status_pc);
-			BattleState = Battle_MonsterAttackResult;
-		}
-		break;
-	case Battle_PlayerAttackResult:
-		if (!UI_state_MSGW)
-		{
-			/*BattleState = Battle_On;
-			status_pc.battlestate = Player_Ready;
-			status_mob.battlestate = Monster_Ready;*/
-		}
-		break;
-	case Battle_MonsterAttackResult:
-		if (MSG_Battle.damage-- > 0)
-		{
-			ApplyDamage(&status_pc, 1);
-			std::cout<<"MSG_Battle.damage : °ø°İÀÚ [" << *status_mob.NAME << "] µ¥¹ÌÁö [" << MSG_Battle.damage << "]";
-			std::cout << "ÀüÅõ »óÅÂ : " << BattleState << " ¸ó½ºÅÍ »óÅÂ : " << status_pc.battlestate << "\n";
-		}
-		else
-		{
-			BattleState = Battle_On;
-			status_mob.battlestate = Monster_WaitAttackMessage;
-		}
-
-		break;
-	}
-
-}
 
 void cManager::ApplyDamage(STATUS_PC * pc, int damage)
 {
@@ -575,31 +578,56 @@ void cManager::SetEventID(int eventID)
 	this->EventId = eventID;
 }
 
-void cManager::SetUI_state_MSGW(bool val)
+void cManager::SetUiState_BattleMessageBox(bool val)
 {
 	UI_state_MSGW = val;
-}
-
-void cManager::SetBattleState(int battleState)
-{
-	BattleState = battleState;
 }
 
 void cManager::SetBattleMessage(STATUS_PC *pc, STATUS_MOB *mob)
 {
 	MSG_Battle.damage = calcDamage(&status_pc, &status_mob);
 
-	wsprintf(MSG_Battle.AttackMessage, _T("%sÀÇ °ø°İ!\n"), status_pc.NAME);
-	wsprintf(MSG_Battle.AttackResultMessage, _T("%s¿¡°Ô %dÀÇ ÇÇÇØ¸¦ ÁÖ¾ú´Ù."), status_mob.NAME, MSG_Battle.damage);
-	wsprintf(MSG_Battle.BattleResultMessage, _T("%s¸¦ ¾²·¯¶ß·È´Ù!"), status_mob.NAME);
+	// reset message buffers
+	memset(MSG_Battle.AttackMessage, 0, sizeof(MSG_Battle.AttackMessage));
+	memset(MSG_Battle.AttackResultMessage, 0, sizeof(MSG_Battle.AttackResultMessage));
+	memset(MSG_Battle.BattleResultMessage, 0, sizeof(MSG_Battle.BattleResultMessage));
+
+	// set message buffers
+	wsprintf(MSG_Battle.AttackMessage, _T("%sì˜ ê³µê²©!"), status_pc.NAME);
+	wsprintf(MSG_Battle.AttackResultMessage, _T("%sì—ê²Œ %dì˜ í”¼í•´ë¥¼ ì£¼ì—ˆë‹¤."), status_mob.NAME, MSG_Battle.damage);
+	wsprintf(MSG_Battle.BattleResultMessage, _T("%së¥¼ ì“°ëŸ¬ëœ¨ë ¸ë‹¤!"), status_mob.NAME);
 }
 void cManager::SetBattleMessage(STATUS_MOB *mob, STATUS_PC *pc)
 {
 	MSG_Battle.damage = calcDamage(&status_mob, &status_pc);
-	wsprintf(MSG_Battle.AttackMessage, _T("%sÀÇ °ø°İ!\n"), status_mob.NAME);
-	wsprintf(MSG_Battle.AttackResultMessage, _T("%s¿¡°Ô %dÀÇ ÇÇÇØ¸¦ ÁÖ¾ú´Ù."), status_pc.NAME, MSG_Battle.damage);
-	wsprintf(MSG_Battle.BattleResultMessage, _T("%s¸¦ ¾²·¯¶ß·È´Ù!"), status_pc.NAME);
+
+
+	// reset message buffers
+	memset(MSG_Battle.AttackMessage, 0, sizeof(MSG_Battle.AttackMessage));
+	memset(MSG_Battle.AttackResultMessage, 0, sizeof(MSG_Battle.AttackResultMessage));
+	memset(MSG_Battle.BattleResultMessage, 0, sizeof(MSG_Battle.BattleResultMessage));
+
+	// set message buffers
+	wsprintf(MSG_Battle.AttackMessage, _T("%sì˜ ê³µê²©!"), status_mob.NAME);
+	wsprintf(MSG_Battle.AttackResultMessage, _T("%sì—ê²Œ %dì˜ í”¼í•´ë¥¼ ì£¼ì—ˆë‹¤."), status_pc.NAME, MSG_Battle.damage);
+	wsprintf(MSG_Battle.BattleResultMessage, _T("%së¥¼ ì“°ëŸ¬ëœ¨ë ¸ë‹¤!"), status_pc.NAME);
 }
+
+void cManager::NextBattleStep()
+{
+	BattleStep++;
+}
+
+void cManager::SetBattleStep(int nextstep)
+{
+	BattleStep = nextstep;
+}
+
+void cManager::SetCurMsgLine(short newline)
+{
+	CurMsgLine = newline;
+}
+
 
 
 //
@@ -615,9 +643,10 @@ int cManager::GetCurMenu()
 	return CurMenu;;
 }
 
-int cManager::GetBattleState()
+
+int cManager::GetBattleStep()
 {
-	return BattleState;;
+	return BattleStep;
 }
 
 
@@ -626,9 +655,14 @@ int cManager::GetEventID()
 	return EventId;;
 }
 
-bool cManager::GetUI_state_MSGW()
+bool cManager::GetUiState_BattleMessageBox()
 {
 	return UI_state_MSGW;
+}
+
+short cManager::GetCurMsgLine()
+{
+	return CurMsgLine;
 }
 
 STATUS_PC cManager::GetStatus_PC()

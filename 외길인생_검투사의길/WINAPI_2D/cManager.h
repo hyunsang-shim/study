@@ -15,7 +15,6 @@ public:
 	//
 	// prepare and initialize
 	//
-	void Test();
 	void Init();
 	void InitTitleScene();
 	void InitTownScene();
@@ -25,10 +24,15 @@ public:
 	//
 	// Scene Update and draw
 	//
-	void UpdateScene(HDC hdc);
-	void DrawScene(HDC hdc);
+	void UpdateScene(HDC FrontDC);
+	void DrawScene(HDC FrontDC);
 	void ChangeScene(int destSceneidx);
 	bool HaveSaveFile();
+	void UpdateTitle();
+	void UpdateTown();
+	void UpdateBattle();
+
+	
 	
 
 
@@ -51,7 +55,6 @@ public:
 	int calcDamage(STATUS_MOB *mob, STATUS_PC *pc);
 	bool PeekNextCoord();
 	void MoveCharacter();
-	void DoBattle();
 	void ApplyDamage(STATUS_PC *pc, int damage);
 	void ApplyDamage(STATUS_MOB *mob, int damage);
 
@@ -62,10 +65,12 @@ public:
 	void SetCurScene(int SceneName);
 	void SetCurMenu(int menu);
 	void SetEventID(int eventID);
-	void SetUI_state_MSGW(bool val);
-	void SetBattleState(int battleState);
-	void SetBattleMessage(STATUS_PC *status_pc, STATUS_MOB *status_mob);
-	void SetBattleMessage(STATUS_MOB *status_mob, STATUS_PC *status_pc);
+	void SetUiState_BattleMessageBox(bool val);
+	void SetBattleMessage(STATUS_PC *attacker, STATUS_MOB *defender);
+	void SetBattleMessage(STATUS_MOB *attacker, STATUS_PC *defender);
+	void NextBattleStep();
+	void SetBattleStep(int nextstep);
+	void SetCurMsgLine(short newline);
 
 	
 	//
@@ -73,9 +78,10 @@ public:
 	//
 	int GetCurScene();
 	int GetCurMenu();
-	int GetBattleState();
+	int GetBattleStep();
 	int GetEventID();
-	bool GetUI_state_MSGW();
+	bool GetUiState_BattleMessageBox();
+	short GetCurMsgLine();
 	STATUS_PC GetStatus_PC();
 	STATUS_MOB GetStatus_MOB();
 	BATTLE_MSG GetBattleMessage();
@@ -102,6 +108,8 @@ private:
 	int CurMenu = menuNew;
 	int lastScene = TitleScene;	
 	bool UI_state_MSGW = FALSE;
+	int BattleStep = 0;
+	short CurMsgLine = 0;
 
 	//
 	// position and character statuses

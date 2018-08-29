@@ -9,40 +9,38 @@ public:
 	~SceneManager();
 	void LoadResource();
 	void UnLoadResource();
-	
-
-	void DrawUI(HDC hdc);
-	void DrawUI_Font(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
-	void DrawUI_HPbar(HDC destDC, STATUS_PC *PC, STATUS_MOB *MOB);
-	void DrawUI_Portrait(HDC destDC, int &player_battlestate, int &monster_battlestate);
-	void DrawUI_Image(HDC destDC, POINT &point, HBITMAP &src);
-	void DrawUI_SpriteImage(HDC destDC, POINT &point, HBITMAP &src, int width, int height, int frameNumber, bool isVertical);
-	void DrawUI_Selector(HDC destDC, POINT &point, HBITMAP &src, int &frameNumber, int &direction);
 
 
-	void DrawBattler_Mob(HDC destDC, int startX, int startY, HBITMAP src);
-	void DrawBattler_PC(HDC destDC, STATUS_PC *status_pc, HBITMAP src, int frameNumber);
-	void DrawActor_PC(HDC destDC, int &start_x, int &start_y, HBITMAP &src, int &frameNumber, int &PC_Direction);
-	void DrawActor_PC_Shadow(HDC destDC, int &start_x, int &start_y, HBITMAP src);
+	// character Animation Frame management
+	int frameNumber = 0;
+	int frameCounter = 0;
 
-	void DrawFX_PC(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
-	void DrawATK_VFX(HDC destDC, int startX, int startY, HBITMAP src, int frameNumber);
-	void drawDamage(HDC destDC, POINT pos, int damage);
-//	void DrawToFront(HDC destDC, HDC srcDC);
-	void DrawTitleScene(HDC hdc, int &CurMenu, int &PC_Direction);
-	void DrawTownScene(HDC hdc, STATUS_PC *status_pc);
-	void DrawBattleScene(HDC destDC, int &BattleState, STATUS_PC *status_pc, STATUS_MOB *status_mob);
-	//void DrawBattleScene(HDC hdc, int &BattleState_PC);
+	// Draw BG
 	void DrawBG(HDC destDC, HBITMAP &src);
 
+	// Draw Scene Parts. Characters, shadows, shop and etc
+	void DrawPC_Town(HDC BackMemDC);
+	void DrawPC_Battle(HDC BackMemDC, STATUS_PC *status_pc);
+	void DrawPC_Town_Shadow(HDC BackMEmDC);
+	void Draw_Selector(HDC BackMemDC);
 
-	void ShowBattleMenu(HDC BackMemDC, STATUS_PC *status_pc);
+	// Draw Common things
+	void Draw_Image(HDC BackMemDC, POINT &position, HBITMAP &src);
 
-	void MoveCharacter(POINT nextPoint);
+	//Battle Related
+	void Battle_ShowMenu(HDC BackMemDC);
+	void Battle_ShowMessageBox(HDC BackMemDC);
+	void Battle_ShowMessageText(HDC BackMemDC);
+	void Battle_DrawFX(HDC BackMemDC, POINT &position, bool SrcIsVertical, HBITMAP &src);
+	void Battle_DrawWPN(HDC BackMemDC, POINT &position, bool SrcIsVertical, HBITMAP &src);
+	void Battle_DrawMonster(HDC BackMemDC, POINT &position, HBITMAP &src);
 
-	
-	void ShowEvent(int EventId);
-	void ShowMessage(HDC BackMemDC);
+
+	// Draw Whole Scenes
+	void DrawTitleScene(HDC FrontDC);
+	void DrawTownScene(HDC FrontDC);
+	void DrawBattleScene(HDC FrontDC, STATUS_PC *status_pc, STATUS_MOB *status_mob);
+
 
 
 	//resource Lists
@@ -59,10 +57,10 @@ public:
 	HBITMAP resPC_battle;
 	HBITMAP resPC_face;
 
-	HBITMAP resBattle_btn_attack_on;
-	HBITMAP resBattle_btn_attack_off;
-	HBITMAP resBattle_btn_defense_on;
-	HBITMAP resBattle_btn_defense_off;
+	HBITMAP resUI_btnAttack_on;
+	HBITMAP resUI_btnAttack_off;
+	HBITMAP resUI_btnDefense_on;
+	HBITMAP resUI_btnDefense_off;
 
 	HBITMAP resWPN_shortsword;
 	HBITMAP resWPN_shortsword_fx;
@@ -80,17 +78,19 @@ public:
 
 	DAMAGE_FONT damage_font;
 
-	POINT title1 = { 210, 0 };
-	POINT title2 = { 210, 96 };
-	POINT btn1 = { 600, 400 };
-	POINT btn2 = { 600, 460 };
-	POINT btn3 = { 600, 520 };
-	POINT selector = { 550, 390 };
+	POINT posTitle1 = { 210, 0 };
+	POINT posTitle2 = { 210, 96 };
+	POINT posBtn1 = { 600, 400 };
+	POINT posBtn2 = { 600, 460 };
+	POINT posBtn3 = { 600, 520 };
+	POINT posSelector = { 550, 390 };
 	
 private:	
 	
 	//for town map movement test
 	int tmpflag = -1;
+
+	RECT Battle_MSG_Label = { 58, 472, 760, 600 };
 
 	
 	
