@@ -3,17 +3,15 @@
 #include "stdafx.h"
 
 class SceneManager
-{
+{	
 public:
 	SceneManager();
 	~SceneManager();
 	void LoadResource();
 	void UnLoadResource();
 
-
-	// character Animation Frame management
-	int frameNumber = 0;
-	int frameCounter = 0;
+	// for Debug
+	void ShowDebugMessageOnScreen(HDC BackMemDC);
 
 	// Draw BG
 	void DrawBG(HDC destDC, HBITMAP &src);
@@ -31,9 +29,11 @@ public:
 	void Battle_ShowMenu(HDC BackMemDC);
 	void Battle_ShowMessageBox(HDC BackMemDC);
 	void Battle_ShowMessageText(HDC BackMemDC);
+	void Battle_ShowMessageText_marker(HDC BackMemDC, POINT &startPos, SIZE &tmpSize);
 	void Battle_DrawFX(HDC BackMemDC, POINT &position, bool SrcIsVertical, HBITMAP &src);
 	void Battle_DrawWPN(HDC BackMemDC, POINT &position, bool SrcIsVertical, HBITMAP &src);
 	void Battle_DrawMonster(HDC BackMemDC, POINT &position, HBITMAP &src);
+	void Battle_DrawHP_bar(HDC BackMemDC);
 
 
 	// Draw Whole Scenes
@@ -41,7 +41,15 @@ public:
 	void DrawTownScene(HDC FrontDC);
 	void DrawBattleScene(HDC FrontDC, STATUS_PC *status_pc, STATUS_MOB *status_mob);
 
+	// frame related
+	void AddFrameCounter(int amount);
+	void SetFramecounter(int value);
+	void AddMsgBox_frameNumber();
+	void ResetMsgBox_FrameNumber();
+	void SetAnimationFrame(int animationFrame);
 
+	int GetFrameCounter();
+	int GetAnimationFrameNumber();
 
 	//resource Lists
 	HBITMAP resTitle_bg;
@@ -73,6 +81,9 @@ public:
 	HBITMAP resUI_hpbar_big;
 	HBITMAP resUI_hpbar_small;
 	HBITMAP resUI_Battlemsg;
+	HBITMAP resUI_Battlemsg_marker;
+
+	HBITMAP resUItrans_horizontal_lones;
 
 	BITMAP bm;
 
@@ -92,7 +103,10 @@ private:
 
 	RECT Battle_MSG_Label = { 58, 472, 760, 600 };
 
-	
+	// for Animation Frame management
+	int frameNumber = 0;
+	int frameCounter = 0;
+	int msg_Box_frame = 0;
 	
 	// for shaking amount
 	int shake_fast = 5;

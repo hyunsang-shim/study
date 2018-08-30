@@ -32,10 +32,6 @@ public:
 	void UpdateTown();
 	void UpdateBattle();
 
-	
-	
-
-
 	//
 	// UI related
 	//
@@ -68,9 +64,12 @@ public:
 	void SetUiState_BattleMessageBox(bool val);
 	void SetBattleMessage(STATUS_PC *attacker, STATUS_MOB *defender);
 	void SetBattleMessage(STATUS_MOB *attacker, STATUS_PC *defender);
+	void SetBattleMessage_Loot(STATUS_PC *attacker, STATUS_MOB *defender);
 	void NextBattleStep();
 	void SetBattleStep(int nextstep);
 	void SetCurMsgLine(short newline);
+	void SetCurMsgLine_state(short idx, bool value);
+	void GainLoot();
 
 	
 	//
@@ -82,17 +81,16 @@ public:
 	int GetEventID();
 	bool GetUiState_BattleMessageBox();
 	short GetCurMsgLine();
+	bool GetCurMsgLine_state(short idx);
 	STATUS_PC GetStatus_PC();
 	STATUS_MOB GetStatus_MOB();
 	BATTLE_MSG GetBattleMessage();
+	LOOT_MSG GetBattleMessage_Loot();
 	
 public:
 	static cManager* GetInstance()
 	{
 		static cManager instance;
-		
-		
-
 		return &instance;
 	}
 
@@ -108,18 +106,22 @@ private:
 	int CurMenu = menuNew;
 	int lastScene = TitleScene;	
 	bool UI_state_MSGW = FALSE;
+	bool UI_state_MSGW_Loot = FALSE;
 	int BattleStep = 0;
 	short CurMsgLine = 0;
+	bool CurMsgLine_State[3] = { FALSE, FALSE, FALSE };
 
 	//
 	// position and character statuses
 	//
 	//
-	int BattleState = Battle_Ready;
+	//int BattleState = Battle_Ready;
 
 	STATUS_PC status_pc;
 	STATUS_MOB status_mob;
 	BATTLE_MSG MSG_Battle;
+	LOOT_MSG MSG_Battle_Loot;
+
 
 	POINT MOB_XY = { 96, 280 };
 
@@ -164,7 +166,7 @@ private:
 	//
 	//
 	
-	int dmg;
+	int dmg_counter;
 
 
 	
