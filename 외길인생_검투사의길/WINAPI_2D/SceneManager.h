@@ -34,7 +34,7 @@ public:
 	void Battle_DrawWPN(HDC BackMemDC, POINT &position, bool SrcIsVertical, HBITMAP &src);
 	void Battle_DrawMonster(HDC BackMemDC, POINT &position, HBITMAP &src);
 	void Battle_DrawHP_bar(HDC BackMemDC);
-
+	void Battle_DrawDamageNumber(HDC BackMemDC);
 
 	// Draw Whole Scenes
 	void DrawTitleScene(HDC FrontDC);

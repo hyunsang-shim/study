@@ -118,6 +118,23 @@ void SceneManager::ShowDebugMessageOnScreen(HDC BackMemDC)
 			GAME_MANAGER->GetBattleStep());
 		TextOut(BackMemDC, 10, 40, c, lstrlen(c));
 
+
+		TCHAR d[128];
+		wsprintf(d, _T("Cur damage Numbers : %d"), GAME_MANAGER->GetBattleMessage().damage);			
+		TextOut(BackMemDC, 10, 55, d, lstrlen(d));
+
+		TCHAR e[128];
+		wsprintf(e, _T("Line1 - %d Line2 - %d, Line3 - %d"), 
+			GAME_MANAGER->GetCurMsgLine_state(1), GAME_MANAGER->GetCurMsgLine_state(2), GAME_MANAGER->GetCurMsgLine_state(3));
+		TextOut(BackMemDC, 10, 70, e, lstrlen(e));
+
+	}
+	break;
+	case TownScene:
+	{
+		TCHAR a[128];
+		wsprintf(a, _T("Current Battle Message Line : %d"), GAME_MANAGER->GetCurMsgLine());
+		TextOut(BackMemDC, 10, 10, a, lstrlen(a));
 	}
 	break;
 	}
@@ -256,6 +273,10 @@ void SceneManager::DrawBattleScene(HDC FrontDC, STATUS_PC *status_pc, STATUS_MOB
 		Battle_DrawHP_bar(BackMemDC);
 
 
+	if (GAME_MANAGER->GetBattleStep() == PC_Action_Result || GAME_MANAGER->GetBattleStep() == MOB_Atcion_Result)
+		Battle_DrawDamageNumber(BackMemDC);
+
+
 #ifdef _DEBUG
 	ShowDebugMessageOnScreen(BackMemDC);
 #endif
@@ -295,6 +316,27 @@ void SceneManager::DrawBG(HDC destDC, HBITMAP &src)
 
 }
 
+void SceneManager::Draw_Selector(HDC BackMemDC)
+{
+	HDC hMemDC;
+	HBITMAP hOldBitmap;
+
+	hMemDC = CreateCompatibleDC(BackMemDC);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_walk);
+
+	frameCounter++;
+	frameNumber = (frameCounter / CHARACTER_FRAME_MAX) % CHARACTER_FRAME_MAX;
+
+	if (frameCounter > CHARACTER_FRAME_MAX * CHARACTER_FRAME_MAX - 1) frameCounter = 0;
+
+	TransparentBlt(BackMemDC, posSelector.x, posSelector.y + 60 * GAME_MANAGER->GetCurMenu(), CHARACTER_SIZE, CHARACTER_SIZE - 1, hMemDC, frameNumber * CHARACTER_SIZE, 2 * CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE - 1, RGB(255, 0, 255));
+	//TransparentBlt(destDC, startX, startY, CHARACTER_SIZE, CHARACTER_SIZE-1, hMemDC, frameNumber * CHARACTER_SIZE, 1 * CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE - 1, RGB(255, 0, 255));
+
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
+	DeleteDC(hMemDC);
+}
+
 void SceneManager::DrawPC_Town(HDC BackMemDC)
 {	
 
@@ -306,41 +348,6 @@ void SceneManager::DrawPC_Town(HDC BackMemDC)
 	// Draw PC
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_walk);
 	TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_PC().pos_x, GAME_MANAGER->GetStatus_PC().pos_y, CHARACTER_SIZE, CHARACTER_SIZE - 1, hMemDC, frameNumber * CHARACTER_SIZE, GAME_MANAGER->GetStatus_PC().facing * CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE - 1, RGB(255, 0, 255));
-
-	SelectObject(hMemDC, hOldBitmap);
-	DeleteObject(hOldBitmap);
-	DeleteDC(hMemDC);
-}
-
-void SceneManager::DrawPC_Battle(HDC BackMemDC, STATUS_PC *status_pc)
-{		
-	if (frameCounter == 0)
-	{
-		switch (GAME_MANAGER->GetBattleStep())
-		{
-		case PC_Action:
-			status_pc->battlestate = Player_Wait;
-			GAME_MANAGER->NextBattleStep();
-			GAME_MANAGER->SetCurMsgLine(1);
-			ResetMsgBox_FrameNumber();
-			break;
-		}
-	}
-
-	HDC hMemDC;
-	HBITMAP hOldBitmap;
-
-	hMemDC = CreateCompatibleDC(BackMemDC);
-
-	// Draw PC	
-	hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_battle);
-	TransparentBlt(BackMemDC, 
-		status_pc->pos_x, status_pc->pos_y,
-		CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, 
-		hMemDC, 
-		frameNumber * CHARACTER_SIZE_BATTLE, (status_pc->battlestate % 4) * CHARACTER_SIZE_BATTLE,
-		CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1, 
-		RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteObject(hOldBitmap);
@@ -362,21 +369,35 @@ void SceneManager::DrawPC_Town_Shadow(HDC BackMemDC)
 	DeleteDC(hMemDC);
 }
 
-void SceneManager::Draw_Selector(HDC BackMemDC)
+void SceneManager::DrawPC_Battle(HDC BackMemDC, STATUS_PC *status_pc)
 {
+	if (frameCounter == 0)
+	{
+		switch (GAME_MANAGER->GetBattleStep())
+		{
+		case PC_Action:
+			status_pc->battlestate = Player_Wait;
+			GAME_MANAGER->NextBattleStep();
+			GAME_MANAGER->SetCurMsgLine(1);
+			ResetMsgBox_FrameNumber();
+			break;
+		}
+	}
+
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
 
 	hMemDC = CreateCompatibleDC(BackMemDC);
-	hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_walk);
 
-	frameCounter++;
-	frameNumber = (frameCounter / CHARACTER_FRAME_MAX) % CHARACTER_FRAME_MAX;
-
-	if (frameCounter > CHARACTER_FRAME_MAX * CHARACTER_FRAME_MAX - 1) frameCounter = 0;
-
-	TransparentBlt(BackMemDC, posSelector.x, posSelector.y + 60 * GAME_MANAGER->GetCurMenu() , CHARACTER_SIZE, CHARACTER_SIZE - 1, hMemDC, frameNumber * CHARACTER_SIZE, 2 * CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE - 1, RGB(255, 0, 255));
-	//TransparentBlt(destDC, startX, startY, CHARACTER_SIZE, CHARACTER_SIZE-1, hMemDC, frameNumber * CHARACTER_SIZE, 1 * CHARACTER_SIZE, CHARACTER_SIZE, CHARACTER_SIZE - 1, RGB(255, 0, 255));
+	// Draw PC	
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, resPC_battle);
+	TransparentBlt(BackMemDC,
+		status_pc->pos_x, status_pc->pos_y,
+		CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1,
+		hMemDC,
+		frameNumber * CHARACTER_SIZE_BATTLE, (status_pc->battlestate % 4) * CHARACTER_SIZE_BATTLE,
+		CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1,
+		RGB(255, 0, 255));
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteObject(hOldBitmap);
@@ -873,6 +894,56 @@ void SceneManager::Battle_DrawHP_bar(HDC BackMemDC)
 
 	
 }
+
+void SceneManager::Battle_DrawDamageNumber(HDC BackMemDC)
+{
+	TCHAR numbers[8];
+	wsprintf(numbers, _T("%d"), GAME_MANAGER->GetBattleMessage().damage);
+
+
+	// Create Back Memory DC
+	HDC hMemDC = CreateCompatibleDC(BackMemDC);
+	HBITMAP hOldBitmap;
+
+	//make BackMemDC's size properly and select source image onto BackMemDC
+	HDC tmpDC = GetDC(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")));
+	HBITMAP hBit = CreateCompatibleBitmap(tmpDC, SCREEN_WIDTH, SCREEN_HEIGHT);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBit);
+	ReleaseDC(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")), tmpDC);
+	DeleteObject(hBit);
+
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, resUI_numbers);
+
+	if (lstrlen(numbers) > 0)
+	{
+		switch (GAME_MANAGER->GetBattleStep())
+		{
+		case PC_Action_Result:
+			if (GAME_MANAGER->GetCurMsgLine_state(1))
+			{
+				for (int i = 0; i < lstrlen(numbers); i++)
+				{
+					TransparentBlt(BackMemDC,
+						GAME_MANAGER->GetStatus_MOB().pos_x + 35 + i * 18 , GAME_MANAGER->GetStatus_MOB().pos_y + 32 -3,
+						UI_FONT_SIZE, UI_FONT_SIZE,
+						hMemDC,
+						(numbers[i] - 48) * UI_FONT_SIZE, 0,
+						UI_FONT_SIZE, UI_FONT_SIZE,
+						RGB(255, 0, 255));
+				}
+			}
+			break;
+		}
+	}
+
+
+	SelectObject(hMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
+	DeleteDC(hMemDC);
+
+}
+
+
 
 void SceneManager::AddFrameCounter(int amount)
 {

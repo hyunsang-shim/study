@@ -54,6 +54,11 @@ void cManager::InitTownScene()
 	status_pc.battlestate = Player_Wait;
 	status_pc.speed = 4;
 
+	CurMsgLine_State[0] = FALSE;
+	CurMsgLine_State[1] = FALSE;
+	CurMsgLine_State[2] = FALSE;
+
+
 
 }
 
@@ -90,6 +95,27 @@ void cManager::InitBattleScene()
 //
 // Scene Update and draw
 //
+void cManager::ChangeScene(int destSceneidx)
+{
+
+	switch (destSceneidx)
+	{
+	case TitleScene:
+		InitTitleScene();
+		break;
+	case TownScene:
+		InitTownScene();
+		break;
+	case BattleScene:
+		InitBattleScene();
+		break;
+	case GameOverScene:
+		CurScene = GameOverScene;
+		break;
+	}
+
+}
+
 void cManager::UpdateScene(HDC FrontDC)
 {	
 	switch (CurScene)
@@ -119,26 +145,6 @@ void cManager::DrawScene(HDC FrontDC)
 	}
 }
 
-void cManager::ChangeScene(int destSceneidx)
-{
-
-	switch (destSceneidx)
-	{
-	case TitleScene:
-		InitTitleScene();
-		break;
-	case TownScene:
-		InitTownScene();
-		break;
-	case BattleScene:
-		InitBattleScene();
-		break;
-	case GameOverScene:
-		CurScene = GameOverScene;
-		break;	
-	}
-
-}
 
 bool cManager::HaveSaveFile()
 {
@@ -151,17 +157,17 @@ void cManager::UpdateTitle()
 
 void cManager::UpdateTown()
 {	
+	
+	scnManager->AddFrameCounter(1);
+	scnManager->SetAnimationFrame((scnManager->GetFrameCounter() / CHARACTER_FRAME_MAX) % CHARACTER_FRAME_MAX);
+
+
 	EventId = TownMap[status_pc.coord_y][status_pc.coord_x];
 
 	if (status_pc.movestate == Moving)
 		MoveCharacter();
 
 	// Draw Event Scene
-
-		// Town
-			// Draw BG
-			// Draw PC
-		// Shop
 	switch (EventId)
 	{
 		printf("Event id : [ %03d ]\n", EventId);
@@ -209,14 +215,14 @@ void cManager::UpdateBattle()
 	case PC_Action_Result:
 		scnManager->AddMsgBox_frameNumber();
 
-		if (CurMsgLine_State[0] == TRUE)
+		if (CurMsgLine == 1 && CurMsgLine_State[0] == TRUE)
 			CurMsgLine = 2;
-		else if (CurMsgLine_State[1] == TRUE)
+		else if (CurMsgLine == 2 && CurMsgLine_State[1] == TRUE)
 			if (MSG_Battle.damage >= status_mob.hp)
 				CurMsgLine = 3;
 			else
 				CurMsgLine = 200;
-		else if (CurMsgLine_State[2] == TRUE)
+		else if (CurMsgLine == 2 && CurMsgLine_State[2] == TRUE)
 			CurMsgLine = 100;
 
 		if (CurMsgLine >= 2 && dmg_counter > 0)
@@ -266,6 +272,15 @@ void cManager::UpdateBattle()
 		scnManager->AddMsgBox_frameNumber();
 		status_mob.battlestate = Monster_Dead;
 		status_pc.battlestate = Player_Win;
+
+		if (CurMsgLine == 1 && CurMsgLine_State[0] == TRUE)
+			CurMsgLine = 2;
+		else if (CurMsgLine == 2 && CurMsgLine_State[1] == TRUE)
+			if (MSG_Battle.damage >= status_mob.hp)
+				CurMsgLine = 3;
+		else if (CurMsgLine == 3 && CurMsgLine_State[2] == TRUE)
+			CurMsgLine = 100;
+
 		break;
 		// 8	전투 종료->마을 씬 복귀	end battle.Return to town scene
 	case Return_To_Town:
@@ -488,6 +503,12 @@ void cManager::key(WPARAM wParam)
 					{
 						CurMsgLine = 100;
 						status_mob.battlestate = Monster_Dying;
+						InitBattleMessage();						
+						CurMsgLine = 1;
+						CurMsgLine_State[0] = FALSE;
+						CurMsgLine_State[1] = FALSE;
+						CurMsgLine_State[2] = FALSE;
+						BattleStep = Kill_Mob;
 					}
 					else if (CurMsgLine_State[2] == TRUE && lstrlen(MSG_Battle.BattleResultMessage) == 0)
 					{
@@ -498,20 +519,14 @@ void cManager::key(WPARAM wParam)
 			case Loot:
 				if (wParam)
 				{
-					if (CurMsgLine == 1 && lstrlen(MSG_Battle_Loot.Gold) > 1)
+					if (CurMsgLine == 100 && CurMsgLine_State[2] == TRUE)
 					{
-						CurMsgLine = 2;
-					}
-					else if (CurMsgLine == 2 && lstrlen(MSG_Battle_Loot.Fame) > 1)
-					{
-						CurMsgLine = 3;
-					}
-					else if (CurMsgLine == 3)
-					{
-						CurMsgLine = 100;					
-					}
-					else if (CurMsgLine == 100)
-					{
+						InitBattleMessage();
+						InitBattleMessage_Loot();
+						CurMsgLine = 1;
+						CurMsgLine_State[0] = FALSE;
+						CurMsgLine_State[1] = FALSE;
+						CurMsgLine_State[2] = FALSE; 
 						BattleStep = Return_To_Town;
 					}
 				}
@@ -681,9 +696,7 @@ void cManager::SetBattleMessage(STATUS_PC *pc, STATUS_MOB *mob)
 	MSG_Battle.damage = calcDamage(&status_pc, &status_mob);
 
 	// reset message buffers
-	memset(MSG_Battle.AttackMessage, 0, sizeof(MSG_Battle.AttackMessage));
-	memset(MSG_Battle.AttackResultMessage, 0, sizeof(MSG_Battle.AttackResultMessage));
-	memset(MSG_Battle.BattleResultMessage, 0, sizeof(MSG_Battle.BattleResultMessage));
+	InitBattleMessage();
 
 	// set message buffers
 	wsprintf(MSG_Battle.AttackMessage, _T("%s의 공격!"), status_pc.NAME);
@@ -702,12 +715,10 @@ void cManager::SetBattleMessage(STATUS_PC *pc, STATUS_MOB *mob)
 void cManager::SetBattleMessage(STATUS_MOB *mob, STATUS_PC *pc)
 {
 	MSG_Battle.damage = calcDamage(&status_mob, &status_pc);
-
-
+	
 	// reset message buffers
-	memset(MSG_Battle.AttackMessage, 0, sizeof(MSG_Battle.AttackMessage));
-	memset(MSG_Battle.AttackResultMessage, 0, sizeof(MSG_Battle.AttackResultMessage));
-	memset(MSG_Battle.BattleResultMessage, 0, sizeof(MSG_Battle.BattleResultMessage));
+	InitBattleMessage();
+
 
 	// set message buffers
 	wsprintf(MSG_Battle.AttackMessage, _T("%s의 공격!"), status_mob.NAME);
@@ -723,20 +734,29 @@ void cManager::SetBattleMessage(STATUS_MOB *mob, STATUS_PC *pc)
 		wsprintf(MSG_Battle.BattleResultMessage, _T("당신을 %s에게 쓰러졌다!"), status_mob.NAME);
 	}
 }
+void cManager::InitBattleMessage()
+{
+	memset(MSG_Battle.AttackMessage, 0, sizeof(MSG_Battle.AttackMessage));
+	memset(MSG_Battle.AttackResultMessage, 0, sizeof(MSG_Battle.AttackResultMessage));
+	memset(MSG_Battle.BattleResultMessage, 0, sizeof(MSG_Battle.BattleResultMessage));
+}
 
 void cManager::SetBattleMessage_Loot(STATUS_PC * attacker, STATUS_MOB * defender)
 {
-	MSG_Battle.damage = calcDamage(&status_pc, &status_mob);
-
 	// reset message buffers
-	memset(MSG_Battle_Loot.Exp, 0, sizeof(MSG_Battle.AttackMessage));
-	memset(MSG_Battle_Loot.Gold, 0, sizeof(MSG_Battle.AttackResultMessage));
-	memset(MSG_Battle_Loot.Fame, 0, sizeof(MSG_Battle.BattleResultMessage));
+	InitBattleMessage_Loot();
 
 	// set message buffers
 	wsprintf(MSG_Battle_Loot.Exp, _T("%d의 경험치를 얻었다!"), status_mob.hp_max);
 	wsprintf(MSG_Battle_Loot.Gold, _T("%d의 골드를 얻었다!"), status_mob.hp_max / 3);
 	wsprintf(MSG_Battle_Loot.Fame, _T("%d의 명성을 얻었다!"), (status_mob.hp_max / 10) > 1 ? status_mob.hp_max / 10 : 1);
+}
+
+void cManager::InitBattleMessage_Loot()
+{
+	memset(MSG_Battle_Loot.Exp, 0, sizeof(MSG_Battle_Loot.Exp));
+	memset(MSG_Battle_Loot.Gold, 0, sizeof(MSG_Battle_Loot.Gold));
+	memset(MSG_Battle_Loot.Fame, 0, sizeof(MSG_Battle_Loot.Fame));
 }
 
 void cManager::NextBattleStep()

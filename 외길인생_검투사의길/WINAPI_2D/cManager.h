@@ -24,9 +24,10 @@ public:
 	//
 	// Scene Update and draw
 	//
+	void ChangeScene(int destSceneidx); 
 	void UpdateScene(HDC FrontDC);
 	void DrawScene(HDC FrontDC);
-	void ChangeScene(int destSceneidx);
+
 	bool HaveSaveFile();
 	void UpdateTitle();
 	void UpdateTown();
@@ -64,7 +65,9 @@ public:
 	void SetUiState_BattleMessageBox(bool val);
 	void SetBattleMessage(STATUS_PC *attacker, STATUS_MOB *defender);
 	void SetBattleMessage(STATUS_MOB *attacker, STATUS_PC *defender);
+	void InitBattleMessage();
 	void SetBattleMessage_Loot(STATUS_PC *attacker, STATUS_MOB *defender);
+	void InitBattleMessage_Loot();
 	void NextBattleStep();
 	void SetBattleStep(int nextstep);
 	void SetCurMsgLine(short newline);
