@@ -19,6 +19,7 @@ public:
 	void InitTitleScene();
 	void InitTownScene();
 	void InitBattleScene();
+	void InitGameOverScene();
 
 	
 	//
@@ -52,6 +53,7 @@ public:
 	int calcDamage(STATUS_MOB *mob, STATUS_PC *pc);
 	bool PeekNextCoord();
 	void MoveCharacter();
+	void MoveCharacter(STATUS_MOB *mob);
 	void ApplyDamage(STATUS_PC *pc, int damage);
 	void ApplyDamage(STATUS_MOB *mob, int damage);
 
@@ -63,11 +65,14 @@ public:
 	void SetCurMenu(int menu);
 	void SetEventID(int eventID);
 	void SetUiState_BattleMessageBox(bool val);
-	void SetBattleMessage(STATUS_PC *attacker, STATUS_MOB *defender);
-	void SetBattleMessage(STATUS_MOB *attacker, STATUS_PC *defender);
+	void SetBattleMessage(STATUS_PC *pc);
+	void SetBattleMessage(STATUS_MOB *mob);
 	void InitBattleMessage();
-	void SetBattleMessage_Loot(STATUS_PC *attacker, STATUS_MOB *defender);
-	void InitBattleMessage_Loot();
+	void SetBattleMessage_Loot();
+	void InitBattleMessage_Loot();	
+	void SetBattleMessage_Result(short PlayerBattleState);
+	void InitBattleMessage_Result();
+
 	void NextBattleStep();
 	void SetBattleStep(int nextstep);
 	void SetCurMsgLine(short newline);
@@ -89,6 +94,7 @@ public:
 	STATUS_MOB GetStatus_MOB();
 	BATTLE_MSG GetBattleMessage();
 	LOOT_MSG GetBattleMessage_Loot();
+	RESULT_MSG GetBattleMessage_Result();
 	
 public:
 	static cManager* GetInstance()
@@ -124,6 +130,7 @@ private:
 	STATUS_MOB status_mob;
 	BATTLE_MSG MSG_Battle;
 	LOOT_MSG MSG_Battle_Loot;
+	RESULT_MSG MSG_Battle_Result;
 
 
 	POINT MOB_XY = { 96, 280 };

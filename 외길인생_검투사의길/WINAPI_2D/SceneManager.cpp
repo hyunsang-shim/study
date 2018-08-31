@@ -27,6 +27,7 @@ void SceneManager::UnLoadResource()
 	DeleteObject(resTitle_btn3);
 	
 	DeleteObject(resTown_bg);
+	DeleteObject(resGameover_bg);
 	
 	DeleteObject(resBattle_bg);
 
@@ -67,6 +68,7 @@ void SceneManager::LoadResource()
 	resTitle_btn3 = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\btn_quit.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	resTown_bg = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\BG\\town.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	resGameover_bg = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\BG\\gameover.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	resBattle_bg = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\BG\\battle.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	resUI_btnAttack_on = (HBITMAP)LoadImage(GetModuleHandle(_T("OneWay_Life")), _T(".\\Resources\\UI\\btn_attack_on.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
@@ -104,38 +106,45 @@ void SceneManager::ShowDebugMessageOnScreen(HDC BackMemDC)
 	{
 	case BattleScene:
 	{
+		TCHAR c[128];
+		wsprintf(c, _T("Cur Battle Step : %d"),	GAME_MANAGER->GetBattleStep());
+		TextOut(BackMemDC, 10, 10, c, lstrlen(c));
+
+		
 		TCHAR a[128];
 		wsprintf(a, _T("Current Battle Message Line : %d"), GAME_MANAGER->GetCurMsgLine());
-		TextOut(BackMemDC, 10, 10, a, lstrlen(a));
+		TextOut(BackMemDC, 10, 50, a, lstrlen(a));
 
 		TCHAR b[128];
-		wsprintf(b, _T("Exp : %d / Gold : %d / Fame : %d"),
-			GAME_MANAGER->GetStatus_PC().Exp, GAME_MANAGER->GetStatus_PC().Gold, GAME_MANAGER->GetStatus_PC().Fame);
-		TextOut(BackMemDC, 10, 25, b, lstrlen(b));
-
-		TCHAR c[128];
-		wsprintf(c, _T("Cur Battle Step : %d"),
-			GAME_MANAGER->GetBattleStep());
-		TextOut(BackMemDC, 10, 40, c, lstrlen(c));
-
-
+		wsprintf(b, _T("Mob HP %d / %d  PC HP %d / %d"), GAME_MANAGER->GetStatus_MOB().hp, GAME_MANAGER->GetStatus_MOB().hp_max, GAME_MANAGER->GetStatus_PC().hp, GAME_MANAGER->GetStatus_PC().hp_max);
+		TextOut(BackMemDC, 10, 90, b, lstrlen(b));
+		
 		TCHAR d[128];
 		wsprintf(d, _T("Cur damage Numbers : %d"), GAME_MANAGER->GetBattleMessage().damage);			
-		TextOut(BackMemDC, 10, 55, d, lstrlen(d));
+		TextOut(BackMemDC, 10, 130, d, lstrlen(d));
 
 		TCHAR e[128];
 		wsprintf(e, _T("Line1 - %d Line2 - %d, Line3 - %d"), 
 			GAME_MANAGER->GetCurMsgLine_state(1), GAME_MANAGER->GetCurMsgLine_state(2), GAME_MANAGER->GetCurMsgLine_state(3));
-		TextOut(BackMemDC, 10, 70, e, lstrlen(e));
+		TextOut(BackMemDC, 10, 170, e, lstrlen(e));
 
+		TCHAR f[128];
+		wsprintf(f, _T("DamageFont Start : %d %d  Cur : %d, %d  End : %d %d"), damage_font.StartPos.x, damage_font.StartPos.y, damage_font.CurPos.x, damage_font.CurPos.y, damage_font.EndPos.x, damage_font.EndPos.y);
+		TextOut(BackMemDC, 10, 210, f, lstrlen(f));
 	}
 	break;
 	case TownScene:
 	{
+
+		
+		char aaa[123] = { "¸¸¤·¸Ó¤Ç¤¤¤·¤©" };
+
 		TCHAR a[128];
-		wsprintf(a, _T("Current Battle Message Line : %d"), GAME_MANAGER->GetCurMsgLine());
+		wsprintf(a, _T("%s CurFrameNumber : %d FrameCounter : %d"), (wchar_t)aaa, frameNumber, frameCounter);
 		TextOut(BackMemDC, 10, 10, a, lstrlen(a));
 	}
+
+
 	break;
 	}
 }
@@ -197,8 +206,11 @@ void SceneManager::DrawTownScene(HDC FrontDC)
 	DrawPC_Town_Shadow(BackMemDC);
 	DrawPC_Town(BackMemDC);
 
-	// Town (Inside)
 
+	// Town (Inside)
+	
+	
+	ShowDebugMessageOnScreen(BackMemDC);
 
 
 	// Draw BackDC onto FrontDC
@@ -224,32 +236,37 @@ void SceneManager::DrawBattleScene(HDC FrontDC, STATUS_PC *status_pc, STATUS_MOB
 	// Draw BG
 	DrawBG(BackMemDC, resBattle_bg);
 
-	// Set Monster position
-	POINT mob_pos = { GAME_MANAGER->GetStatus_MOB().pos_x, GAME_MANAGER->GetStatus_MOB().pos_y };
-	POINT pc_pos = { status_pc->pos_x, status_pc->pos_y };
-
-
-
 	// Draw Hit VFX for Monster
 	if (GAME_MANAGER->GetBattleStep() == PC_Action)
 	{
 		// Draw Monster
-		Battle_DrawMonster(BackMemDC, mob_pos, resMob_rat);
-		Battle_DrawFX(BackMemDC, mob_pos, FALSE, resWPN_shortsword_fx);
+		Battle_DrawMonster(BackMemDC,status_mob, resMob_rat);
+		Battle_DrawFX(BackMemDC, FALSE, resWPN_shortsword_fx);
 	}
-	else if (status_mob->battlestate != Monster_Dead)
-		Battle_DrawMonster(BackMemDC, mob_pos, resMob_rat);
-
-
+	else if (GAME_MANAGER->GetBattleStep() != PC_Action && status_mob->battlestate != Monster_Dead)
+		Battle_DrawMonster(BackMemDC, status_mob, resMob_rat);
+	
 	// Draw Attack Weapon for PC
 	if (GAME_MANAGER->GetBattleStep() == PC_Action)
 	{
-		Battle_DrawWPN(BackMemDC, pc_pos, FALSE, resWPN_shortsword);
+		Battle_DrawWPN(BackMemDC, FALSE, resWPN_shortsword);
 	}
 
 	// Draw PC
-	DrawPC_Battle(BackMemDC, status_pc);
+	if (GAME_MANAGER->GetBattleStep() == MOB_Action)
+	{
+		// Draw PC
+		DrawPC_Battle(BackMemDC, status_pc);
+		Battle_DrawFX(BackMemDC, FALSE, resWPN_shortsword_fx);
+	}
+	else
+		DrawPC_Battle(BackMemDC, status_pc);
 
+	HFONT myFont = CreateFont(FONT_SIZE_NORMAL, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, _T("µ¸¿òÃ¼"));
+	HFONT oldFont = (HFONT)SelectObject(BackMemDC, myFont);
+	SetBkMode(BackMemDC, TRANSPARENT);
+	SetTextColor(BackMemDC, RGB(255, 255, 255));
+	
 	// Showbattle Messages
 	switch (GAME_MANAGER->GetBattleStep())
 	{
@@ -257,11 +274,11 @@ void SceneManager::DrawBattleScene(HDC FrontDC, STATUS_PC *status_pc, STATUS_MOB
 		Battle_ShowMenu(BackMemDC);
 		break;
 	case PC_Action_Result:
-		Battle_ShowMessageBox(BackMemDC);
-		if (GAME_MANAGER->GetUiState_BattleMessageBox())
-			Battle_ShowMessageText(BackMemDC);
-		break;
 	case Loot:
+	case Return_To_Town:
+	case MOB_Action_Result:
+	case Kill_PC:
+	case Goto_Gameover:
 		Battle_ShowMessageBox(BackMemDC);
 		if (GAME_MANAGER->GetUiState_BattleMessageBox())
 			Battle_ShowMessageText(BackMemDC);
@@ -273,7 +290,7 @@ void SceneManager::DrawBattleScene(HDC FrontDC, STATUS_PC *status_pc, STATUS_MOB
 		Battle_DrawHP_bar(BackMemDC);
 
 
-	if (GAME_MANAGER->GetBattleStep() == PC_Action_Result || GAME_MANAGER->GetBattleStep() == MOB_Atcion_Result)
+	if (GAME_MANAGER->GetBattleStep() == PC_Action_Result || GAME_MANAGER->GetBattleStep() == MOB_Action_Result)
 		Battle_DrawDamageNumber(BackMemDC);
 
 
@@ -292,6 +309,10 @@ void SceneManager::DrawBattleScene(HDC FrontDC, STATUS_PC *status_pc, STATUS_MOB
 
 
 
+}
+void SceneManager::DrawGameOverScene(HDC FrontDC) 
+{
+	DrawBG(FrontDC, resGameover_bg);
 }
 
 
@@ -370,19 +391,7 @@ void SceneManager::DrawPC_Town_Shadow(HDC BackMemDC)
 }
 
 void SceneManager::DrawPC_Battle(HDC BackMemDC, STATUS_PC *status_pc)
-{
-	if (frameCounter == 0)
-	{
-		switch (GAME_MANAGER->GetBattleStep())
-		{
-		case PC_Action:
-			status_pc->battlestate = Player_Wait;
-			GAME_MANAGER->NextBattleStep();
-			GAME_MANAGER->SetCurMsgLine(1);
-			ResetMsgBox_FrameNumber();
-			break;
-		}
-	}
+{	
 
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -398,6 +407,25 @@ void SceneManager::DrawPC_Battle(HDC BackMemDC, STATUS_PC *status_pc)
 		frameNumber * CHARACTER_SIZE_BATTLE, (status_pc->battlestate % 4) * CHARACTER_SIZE_BATTLE,
 		CHARACTER_SIZE_BATTLE, CHARACTER_SIZE_BATTLE - 1,
 		RGB(255, 0, 255));
+
+
+
+	if (frameNumber == CHARACTER_FRAME_MAX-1)
+	{
+		switch (GAME_MANAGER->GetBattleStep())
+		{
+		case PC_Action:
+			status_pc->battlestate = Player_Wait;
+			GAME_MANAGER->NextBattleStep();
+			GAME_MANAGER->SetCurMsgLine(1);
+			ResetMsgBox_FrameNumber();
+			damage_font.CurPos.x = damage_font.StartPos.x = GAME_MANAGER->GetStatus_MOB().pos_x + UI_FONT_SIZE;
+			damage_font.CurPos.y = damage_font.StartPos.y = GAME_MANAGER->GetStatus_MOB().pos_y - UI_FONT_SIZE;
+			damage_font.EndPos.x = damage_font.CurPos.x + UI_FONT_SIZE * 2;
+			damage_font.EndPos.y = damage_font.CurPos.y - UI_FONT_SIZE * 2;
+			break;
+		}
+	}
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteObject(hOldBitmap);
@@ -482,8 +510,55 @@ void SceneManager::Battle_ShowMessageText(HDC BackMemDC)
 	static int nLen_ExpMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Exp);
 	static int nLen_GoldMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold);
 	static int nLen_FameMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Fame);
-	
-	if (GAME_MANAGER->GetBattleStep() == Loot)
+
+	static int nLen_ResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Result().Result);
+	static int nLen_MoveMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Result().Move);
+
+	if (GAME_MANAGER->GetBattleStep() == Return_To_Town || GAME_MANAGER->GetBattleStep() == Kill_PC)
+	{
+		switch (GAME_MANAGER->GetCurMsgLine())
+		{
+		case 1:
+			if (nLen_ResultMessage > 0)
+			{
+				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage_Result().Result, lstrlen(GAME_MANAGER->GetBattleMessage_Result().Result) - nLen_ResultMessage);
+				nLen_ResultMessage--;
+			}
+			else
+			{
+				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage_Result().Result, lstrlen(GAME_MANAGER->GetBattleMessage_Result().Result));
+				SIZE tmpSize;
+				POINT startPos = { 58, 472 };
+				GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage_Result().Result, lstrlen(GAME_MANAGER->GetBattleMessage_Result().Result), &tmpSize);
+
+				nLen_MoveMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Result().Move);
+				GAME_MANAGER->SetCurMsgLine_state(1, TRUE);
+				Battle_ShowMessageText_marker(BackMemDC, startPos, tmpSize);
+			}
+			break;
+		case 2:
+			if (nLen_MoveMessage > 0)
+			{
+				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage_Result().Result, lstrlen(GAME_MANAGER->GetBattleMessage_Result().Result));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage_Result().Move, lstrlen(GAME_MANAGER->GetBattleMessage_Result().Move) - nLen_MoveMessage);
+				nLen_MoveMessage--;
+			}
+			else
+			{
+				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage_Result().Result, lstrlen(GAME_MANAGER->GetBattleMessage_Result().Result));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage_Result().Move, lstrlen(GAME_MANAGER->GetBattleMessage_Result().Move));
+
+				SIZE tmpSize;
+				POINT startPos = { 58, 472 + FONT_SIZE_NORMAL };
+				GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage_Result().Move, lstrlen(GAME_MANAGER->GetBattleMessage_Result().Move), &tmpSize);
+
+				GAME_MANAGER->SetCurMsgLine_state(2, TRUE);
+				Battle_ShowMessageText_marker(BackMemDC, startPos, tmpSize);
+			}
+			break;
+		}
+	}
+	else if (GAME_MANAGER->GetBattleStep() == Loot)
 	{
 		switch (GAME_MANAGER->GetCurMsgLine())
 		{
@@ -509,21 +584,21 @@ void SceneManager::Battle_ShowMessageText(HDC BackMemDC)
 			if (nLen_GoldMessage > 0)
 			{
 				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage_Loot().Exp, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Exp));
-				TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage_Loot().Gold, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold) - (nLen_GoldMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage_Loot().Gold, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold) - (nLen_GoldMessage));
 				nLen_GoldMessage--;
 			}
 			else
 			{
 				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage_Loot().Exp, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Exp));
-				TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage_Loot().Gold, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage_Loot().Gold, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold));
 
 				SIZE tmpSize;
-				POINT startPos = { 58, 488 };
+				POINT startPos = { 58, 472 + FONT_SIZE_NORMAL };
 				GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage_Loot().Gold, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold), &tmpSize);
 
 				nLen_ExpMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Exp);
 				nLen_FameMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Fame);
-				
+
 				GAME_MANAGER->SetCurMsgLine_state(1, TRUE);
 				GAME_MANAGER->SetCurMsgLine_state(2, TRUE);
 
@@ -534,18 +609,18 @@ void SceneManager::Battle_ShowMessageText(HDC BackMemDC)
 			if (nLen_FameMessage > 0)
 			{
 				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage_Loot().Exp, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Exp));
-				TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage_Loot().Gold, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold));
-				TextOut(BackMemDC, 58, 504, GAME_MANAGER->GetBattleMessage_Loot().Fame, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Fame) - (nLen_FameMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage_Loot().Gold, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL * 2, GAME_MANAGER->GetBattleMessage_Loot().Fame, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Fame) - (nLen_FameMessage));
 				nLen_FameMessage--;
 			}
 			else
 			{
 				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage_Loot().Exp, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Exp));
-				TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage_Loot().Gold, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold));
-				TextOut(BackMemDC, 58, 504, GAME_MANAGER->GetBattleMessage_Loot().Fame, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Fame));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage_Loot().Gold, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL * 2, GAME_MANAGER->GetBattleMessage_Loot().Fame, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Fame));
 
 				SIZE tmpSize;
-				POINT startPos = { 58, 504 };
+				POINT startPos = { 58, 472 + FONT_SIZE_NORMAL * 2 };
 				GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage_Loot().Fame, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Fame), &tmpSize);
 
 				nLen_ExpMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Exp);
@@ -559,35 +634,9 @@ void SceneManager::Battle_ShowMessageText(HDC BackMemDC)
 				Battle_ShowMessageText_marker(BackMemDC, startPos, tmpSize);
 			}
 			break;
-		case 100:
-		{
-			//	// reset text count variables.
-		
-
-			TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage_Loot().Exp, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Exp));
-			TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage_Loot().Gold, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold));
-			TextOut(BackMemDC, 58, 504, GAME_MANAGER->GetBattleMessage_Loot().Fame, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Fame));
-
-
-			nLen_ExpMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Exp);
-			nLen_GoldMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Gold);
-			nLen_FameMessage = lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Fame);
-
-
-			SIZE tmpSize;
-			POINT startPos = { 58, 504 };
-			GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage_Loot().Fame, lstrlen(GAME_MANAGER->GetBattleMessage_Loot().Fame), &tmpSize);
-
-			GAME_MANAGER->SetCurMsgLine_state(1, TRUE);
-			GAME_MANAGER->SetCurMsgLine_state(2, TRUE);
-			GAME_MANAGER->SetCurMsgLine_state(3, TRUE);
-
-			Battle_ShowMessageText_marker(BackMemDC, startPos, tmpSize);
-		}
-		break;
 		}
 	}
-	else if (GAME_MANAGER->GetBattleStep() == PC_Action_Result)
+	else
 	{
 		switch (GAME_MANAGER->GetCurMsgLine())
 		{
@@ -615,23 +664,23 @@ void SceneManager::Battle_ShowMessageText(HDC BackMemDC)
 			if (nLen_AttackResultMessage > 0)
 			{
 				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
-				TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage) - (nLen_AttackResultMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage) - (nLen_AttackResultMessage));
 				nLen_AttackResultMessage--;
 			}
 			else
 			{
 				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
-				TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
 
 				SIZE tmpSize;
-				POINT startPos = { 58, 488 };
+				POINT startPos = { 58, 472 + FONT_SIZE_NORMAL };
 				GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage), &tmpSize);
-				
+
 				nLen_AttackMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage);
 				nLen_BattleResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage);
 
 				GAME_MANAGER->SetCurMsgLine_state(1, TRUE);
-				GAME_MANAGER->SetCurMsgLine_state(2, TRUE);				
+				GAME_MANAGER->SetCurMsgLine_state(2, TRUE);
 
 				Battle_ShowMessageText_marker(BackMemDC, startPos, tmpSize);
 			}
@@ -640,18 +689,18 @@ void SceneManager::Battle_ShowMessageText(HDC BackMemDC)
 			if (nLen_BattleResultMessage > 0)
 			{
 				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
-				TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
-				TextOut(BackMemDC, 58, 504, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage) - (nLen_BattleResultMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL * 2, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage) - (nLen_BattleResultMessage));
 				nLen_BattleResultMessage--;
 			}
 			else
 			{
 				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
-				TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
-				TextOut(BackMemDC, 58, 504, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL * 2, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage));
 
 				SIZE tmpSize;
-				POINT startPos = { 58, 504 };
+				POINT startPos = { 58, 472 + FONT_SIZE_NORMAL * 2 };
 				GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage), &tmpSize);
 
 				nLen_AttackMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage);
@@ -672,15 +721,15 @@ void SceneManager::Battle_ShowMessageText(HDC BackMemDC)
 			//	nLen_BattleResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage);
 
 			TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
-			TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
-			TextOut(BackMemDC, 58, 504, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage));
+			TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
+			TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL * 2, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage));
 
 
 			nLen_AttackMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage);
 			nLen_AttackResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage);
 			nLen_BattleResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage);
 			SIZE tmpSize;
-			POINT startPos = { 58, 504 };
+			POINT startPos = { 58, 472 + FONT_SIZE_NORMAL * 2 };
 			GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage), &tmpSize);
 
 			GAME_MANAGER->SetCurMsgLine_state(1, TRUE);
@@ -697,10 +746,129 @@ void SceneManager::Battle_ShowMessageText(HDC BackMemDC)
 			nLen_AttackResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage);
 
 			TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
-			TextOut(BackMemDC, 58, 488, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
+			TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
 
 			SIZE tmpSize;
-			POINT startPos = { 58, 488 };
+			POINT startPos = { 58, 472 + FONT_SIZE_NORMAL };
+			GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage), &tmpSize);
+
+			GAME_MANAGER->SetCurMsgLine_state(1, TRUE);
+			GAME_MANAGER->SetCurMsgLine_state(2, TRUE);
+			Battle_ShowMessageText_marker(BackMemDC, startPos, tmpSize);
+		}
+		break;
+		}
+	}
+	/*
+	else if (GAME_MANAGER->GetBattleStep() == MOB_Action_Result)
+	{
+		switch (GAME_MANAGER->GetCurMsgLine())
+		{
+		case 1:
+			if (nLen_AttackMessage > 0)
+			{
+				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage) - (nLen_AttackMessage));
+				nLen_AttackMessage--;
+			}
+			else
+			{
+				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
+				SIZE tmpSize;
+				POINT startPos = { 58, 472 };
+				GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage), &tmpSize);
+
+				nLen_AttackResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage);
+
+				GAME_MANAGER->SetCurMsgLine_state(1, TRUE);
+
+				Battle_ShowMessageText_marker(BackMemDC, startPos, tmpSize);
+			}
+			break;
+		case 2:
+			if (nLen_AttackResultMessage > 0)
+			{
+				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage) - (nLen_AttackResultMessage));
+				nLen_AttackResultMessage--;
+			}
+			else
+			{
+				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
+
+				SIZE tmpSize;
+				POINT startPos = { 58, 472 + FONT_SIZE_NORMAL };
+				GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage), &tmpSize);
+
+				nLen_AttackMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage);
+				nLen_BattleResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage);
+
+				GAME_MANAGER->SetCurMsgLine_state(1, TRUE);
+				GAME_MANAGER->SetCurMsgLine_state(2, TRUE);
+
+				Battle_ShowMessageText_marker(BackMemDC, startPos, tmpSize);
+			}
+			break;
+		case 3:
+			if (nLen_BattleResultMessage > 0)
+			{
+				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL * 2, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage) - (nLen_BattleResultMessage));
+				nLen_BattleResultMessage--;
+			}
+			else
+			{
+				TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
+				TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL * 2, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage));
+
+				SIZE tmpSize;
+				POINT startPos = { 58, 472 + FONT_SIZE_NORMAL * 2 };
+				GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage), &tmpSize);
+
+				nLen_AttackMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage);
+				nLen_AttackResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage);
+
+				GAME_MANAGER->SetCurMsgLine_state(1, TRUE);
+				GAME_MANAGER->SetCurMsgLine_state(2, TRUE);
+				GAME_MANAGER->SetCurMsgLine_state(3, TRUE);
+
+				Battle_ShowMessageText_marker(BackMemDC, startPos, tmpSize);
+			}
+			break; 
+		case 100:
+		{
+			TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
+			TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
+			TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL * 2, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage));
+
+
+			nLen_AttackMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage);
+			nLen_AttackResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage);
+			nLen_BattleResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage);
+			SIZE tmpSize;
+			POINT startPos = { 58, 472 + FONT_SIZE_NORMAL * 2 };
+			GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage().BattleResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().BattleResultMessage), &tmpSize);
+
+			GAME_MANAGER->SetCurMsgLine_state(1, TRUE);
+			GAME_MANAGER->SetCurMsgLine_state(2, TRUE);
+			GAME_MANAGER->SetCurMsgLine_state(3, TRUE);
+
+			Battle_ShowMessageText_marker(BackMemDC, startPos, tmpSize);
+		}
+		break;
+		case 200:
+		{
+			// reset text count variables.
+			nLen_AttackMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage);
+			nLen_AttackResultMessage = lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage);
+
+			TextOut(BackMemDC, 58, 472, GAME_MANAGER->GetBattleMessage().AttackMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackMessage));
+			TextOut(BackMemDC, 58, 472 + FONT_SIZE_NORMAL, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage));
+
+			SIZE tmpSize;
+			POINT startPos = { 58, 472 + FONT_SIZE_NORMAL };
 			GetTextExtentPoint(BackMemDC, GAME_MANAGER->GetBattleMessage().AttackResultMessage, lstrlen(GAME_MANAGER->GetBattleMessage().AttackResultMessage), &tmpSize);
 
 			GAME_MANAGER->SetCurMsgLine_state(1, TRUE);
@@ -711,7 +879,10 @@ void SceneManager::Battle_ShowMessageText(HDC BackMemDC)
 		}
 	}
 
-}
+	*/
+
+	}
+
 
 void SceneManager::Battle_ShowMessageText_marker(HDC BackMemDC, POINT &startPos, SIZE &tmpSize)
 {
@@ -733,7 +904,7 @@ void SceneManager::Battle_ShowMessageText_marker(HDC BackMemDC, POINT &startPos,
 	DeleteDC(hMemDC);
 }
 
-void SceneManager::Battle_DrawFX(HDC BackMemDC, POINT & position, bool SrcIsVertical, HBITMAP & src)
+void SceneManager::Battle_DrawFX(HDC BackMemDC, bool SrcIsVertical, HBITMAP & src)
 {
 	// Create Back Memory DC
 	HDC hMemDC = CreateCompatibleDC(BackMemDC);
@@ -747,16 +918,16 @@ void SceneManager::Battle_DrawFX(HDC BackMemDC, POINT & position, bool SrcIsVert
 	DeleteObject(hBit4);
 
 	SelectObject(hMemDC, (HBITMAP)src);
-	TransparentBlt(BackMemDC, position.x, position.y, WPN_VFX_SIZE, WPN_VFX_SIZE,
-		hMemDC, frameNumber * WPN_VFX_SIZE, 0, WPN_VFX_SIZE, WPN_VFX_SIZE,
-		RGB(255, 0, 255));
-
+	if (GAME_MANAGER->GetBattleStep() == PC_Action)
+		TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_MOB().pos_x, GAME_MANAGER->GetStatus_MOB().pos_y, WPN_VFX_SIZE, WPN_VFX_SIZE,	hMemDC, frameNumber * WPN_VFX_SIZE, 0, WPN_VFX_SIZE, WPN_VFX_SIZE, RGB(255, 0, 255));
+	else if (GAME_MANAGER->GetBattleStep() == MOB_Action)
+		TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_PC().pos_x, GAME_MANAGER->GetStatus_PC().pos_y, WPN_VFX_SIZE, WPN_VFX_SIZE, hMemDC, frameNumber * WPN_VFX_SIZE, 0, WPN_VFX_SIZE, WPN_VFX_SIZE, RGB(255, 0, 255));
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteObject(hOldBitmap);
 	DeleteDC(hMemDC);
 }
 
-void SceneManager::Battle_DrawWPN(HDC BackMemDC, POINT & position, bool SrcIsVertical, HBITMAP & src)
+void SceneManager::Battle_DrawWPN(HDC BackMemDC,bool SrcIsVertical, HBITMAP & src)
 {
 	// Create Back Memory DC
 	HDC hMemDC = CreateCompatibleDC(BackMemDC);
@@ -770,7 +941,7 @@ void SceneManager::Battle_DrawWPN(HDC BackMemDC, POINT & position, bool SrcIsVer
 	DeleteObject(hBit);
 
 	SelectObject(hMemDC, (HBITMAP)src);
-	TransparentBlt(BackMemDC, position.x - WPN_MOD_LEFT, position.y - WPN_MOD_UP, WPN_WIDTH, WPN_HEIGHT,
+	TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_PC().pos_x - WPN_MOD_LEFT, GAME_MANAGER->GetStatus_PC().pos_y - WPN_MOD_UP, WPN_WIDTH, WPN_HEIGHT,
 		hMemDC, frameNumber * WPN_WIDTH, 0, WPN_WIDTH, WPN_HEIGHT,
 		RGB(255, 0, 255));
 
@@ -779,7 +950,7 @@ void SceneManager::Battle_DrawWPN(HDC BackMemDC, POINT & position, bool SrcIsVer
 	DeleteDC(hMemDC);
 }
 
-void SceneManager::Battle_DrawMonster(HDC BackMemDC, POINT & position, HBITMAP &src)
+void SceneManager::Battle_DrawMonster(HDC BackMemDC, STATUS_MOB *status_mob, HBITMAP &src)
 {
 	// Create Back Memory DC
 	HDC hMemDC = CreateCompatibleDC(BackMemDC);
@@ -794,39 +965,69 @@ void SceneManager::Battle_DrawMonster(HDC BackMemDC, POINT & position, HBITMAP &
 
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, src);
 	
-
-
 	// Get Size of src image
-	GetObject(src, sizeof(BITMAP), &bm);
-	
+	GetObject(src, sizeof(BITMAP), &bm);	
 	static int height = bm.bmHeight;
+
 
 	if (GAME_MANAGER->GetBattleStep() == ShowBattleMenu)
 		height = bm.bmHeight;
 	
+
 	if (GAME_MANAGER->GetStatus_MOB().battlestate == Monster_Dying)
 	{		
 		if (height > 0)
 		{
-			TransparentBlt(BackMemDC, position.x + (-1 * (frameCounter % shake_fast)), position.y, bm.bmWidth, height, hMemDC, 0, 0, bm.bmWidth, height, RGB(255, 0, 255));
-			height -= 2;
+			TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_MOB().pos_x + (-1 * (frameCounter % shake_fast)), GAME_MANAGER->GetStatus_MOB().pos_y, bm.bmWidth, height, hMemDC, 0, 0, bm.bmWidth, height, RGB(255, 0, 255));
+			height -= 4;
 		}
 		else
 		{
-			GAME_MANAGER->NextBattleStep();
-			GAME_MANAGER->SetCurMsgLine(1);
-			GAME_MANAGER->SetCurMsgLine_state(1,FALSE);
-			GAME_MANAGER->SetCurMsgLine_state(2,FALSE);
-			GAME_MANAGER->SetCurMsgLine_state(3,FALSE);
+				GAME_MANAGER->NextBattleStep();
+				GAME_MANAGER->SetCurMsgLine(1);
+				GAME_MANAGER->SetCurMsgLine_state(1, FALSE);
+				GAME_MANAGER->SetCurMsgLine_state(2, FALSE);
+				GAME_MANAGER->SetCurMsgLine_state(3, FALSE);		
 		}
 	}
 	else if (GAME_MANAGER->GetBattleStep() == PC_Action)
 	{
-		TransparentBlt(BackMemDC, position.x + (-1 * (frameCounter % shake_mid)), position.y, bm.bmWidth, bm.bmHeight, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 0, 255));
+		TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_MOB().pos_x + (-1 * (frameCounter % shake_mid)), GAME_MANAGER->GetStatus_MOB().pos_y, bm.bmWidth, bm.bmHeight, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 0, 255));
+	}
+	else if (GAME_MANAGER->GetBattleStep() == MOB_Action)
+	{
+		static int forward = 0;
+		static int EndPoint = 30;		
+		static int checker = 0;
+		
+		if (forward < EndPoint)
+		{			
+			forward += 6;
+		}
+		else 
+			forward = 0;
+
+		if (frameNumber == 3)
+			checker = 1;
+
+		if (frameNumber == 0 && checker == 1)
+		{
+			forward = 0;
+			status_mob->battlestate = Monster_Wait;
+			GAME_MANAGER->NextBattleStep();
+			GAME_MANAGER->SetCurMsgLine(1);
+			damage_font.CurPos.x = damage_font.StartPos.x = GAME_MANAGER->GetStatus_PC().pos_x + UI_FONT_SIZE;
+			damage_font.CurPos.y = damage_font.StartPos.y = GAME_MANAGER->GetStatus_PC().pos_y - UI_FONT_SIZE;
+			damage_font.EndPos.x = damage_font.CurPos.x + UI_FONT_SIZE * 2;
+			damage_font.EndPos.y = damage_font.CurPos.y - UI_FONT_SIZE * 2;
+		}
+		
+		TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_MOB().pos_x + forward, GAME_MANAGER->GetStatus_MOB().pos_y, bm.bmWidth, bm.bmHeight, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 0, 255));
+		
 	}
 	else
 	{
-		TransparentBlt(BackMemDC, position.x, position.y, bm.bmWidth, bm.bmHeight, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 0, 255));
+		TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_MOB().pos_x, GAME_MANAGER->GetStatus_MOB().pos_y, bm.bmWidth, bm.bmHeight, hMemDC, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 0, 255));
 	}
 
 
@@ -886,6 +1087,25 @@ void SceneManager::Battle_DrawHP_bar(HDC BackMemDC)
 		pixelperhp_MOB * GAME_MANAGER->GetStatus_MOB().hp, bm.bmHeight / 2,
 		RGB(255, 0, 255));
 
+	// HP bar background for PC
+	TransparentBlt(BackMemDC,
+		GAME_MANAGER->GetStatus_PC().pos_x, GAME_MANAGER->GetStatus_PC().pos_y + CHARACTER_SIZE_BATTLE + bm.bmHeight,
+		bm.bmWidth, bm.bmHeight / 2,
+		hMemDC,
+		0, 0,
+		bm.bmWidth, bm.bmHeight / 2,
+		RGB(255, 0, 255));
+
+
+	// actual HP of PC	
+
+	TransparentBlt(BackMemDC,
+		GAME_MANAGER->GetStatus_PC().pos_x, GAME_MANAGER->GetStatus_PC().pos_y + CHARACTER_SIZE_BATTLE + bm.bmHeight,
+		pixelperhp_PC * GAME_MANAGER->GetStatus_PC().hp, bm.bmHeight / 2,
+		hMemDC,
+		0, bm.bmHeight / 2,
+		pixelperhp_PC * GAME_MANAGER->GetStatus_MOB().hp, bm.bmHeight / 2,
+		RGB(255, 0, 255));
 
 
 	SelectObject(hMemDC, hOldBitmap);
@@ -913,9 +1133,17 @@ void SceneManager::Battle_DrawDamageNumber(HDC BackMemDC)
 	DeleteObject(hBit);
 
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, resUI_numbers);
+	
 
 	if (lstrlen(numbers) > 0)
 	{
+		// adjust damage font position
+		if (damage_font.CurPos.y > damage_font.EndPos.y)
+			damage_font.CurPos.y -= 3;
+		else
+			damage_font.CurPos.y = damage_font.EndPos.y;
+
+
 		switch (GAME_MANAGER->GetBattleStep())
 		{
 		case PC_Action_Result:
@@ -924,7 +1152,22 @@ void SceneManager::Battle_DrawDamageNumber(HDC BackMemDC)
 				for (int i = 0; i < lstrlen(numbers); i++)
 				{
 					TransparentBlt(BackMemDC,
-						GAME_MANAGER->GetStatus_MOB().pos_x + 35 + i * 18 , GAME_MANAGER->GetStatus_MOB().pos_y + 32 -3,
+						damage_font.CurPos.x + i * UI_FONT_SIZE/2+4 , damage_font.CurPos.y,
+						UI_FONT_SIZE, UI_FONT_SIZE,
+						hMemDC,
+						(numbers[i] - 48) * UI_FONT_SIZE, 0,
+						UI_FONT_SIZE, UI_FONT_SIZE,
+						RGB(255, 0, 255));
+				}
+			}
+			break;
+		case MOB_Action_Result:
+			if (GAME_MANAGER->GetCurMsgLine_state(1))
+			{
+				for (int i = 0; i < lstrlen(numbers); i++)
+				{
+					TransparentBlt(BackMemDC,
+						damage_font.CurPos.x + i * UI_FONT_SIZE / 2 + 4, damage_font.CurPos.y,
 						UI_FONT_SIZE, UI_FONT_SIZE,
 						hMemDC,
 						(numbers[i] - 48) * UI_FONT_SIZE, 0,
@@ -935,7 +1178,6 @@ void SceneManager::Battle_DrawDamageNumber(HDC BackMemDC)
 			break;
 		}
 	}
-
 
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteObject(hOldBitmap);
@@ -949,9 +1191,7 @@ void SceneManager::AddFrameCounter(int amount)
 {
 	frameCounter += amount;
 
-	if (frameCounter > CHARACTER_FRAME_MAX * CHARACTER_FRAME_MAX) frameCounter = 0;
-
-
+	if (frameCounter > 1000) frameCounter = 0;
 }
 
 void SceneManager::SetFramecounter(int value)

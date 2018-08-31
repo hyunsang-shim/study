@@ -30,16 +30,18 @@ public:
 	void Battle_ShowMessageBox(HDC BackMemDC);
 	void Battle_ShowMessageText(HDC BackMemDC);
 	void Battle_ShowMessageText_marker(HDC BackMemDC, POINT &startPos, SIZE &tmpSize);
-	void Battle_DrawFX(HDC BackMemDC, POINT &position, bool SrcIsVertical, HBITMAP &src);
-	void Battle_DrawWPN(HDC BackMemDC, POINT &position, bool SrcIsVertical, HBITMAP &src);
-	void Battle_DrawMonster(HDC BackMemDC, POINT &position, HBITMAP &src);
+	void Battle_DrawFX(HDC BackMemDC, bool SrcIsVertical, HBITMAP &src);
+	void Battle_DrawWPN(HDC BackMemDC, bool SrcIsVertical, HBITMAP &src);
+	void Battle_DrawMonster(HDC BackMemDC, STATUS_MOB *status_mob, HBITMAP &src);
 	void Battle_DrawHP_bar(HDC BackMemDC);
 	void Battle_DrawDamageNumber(HDC BackMemDC);
 
 	// Draw Whole Scenes
 	void DrawTitleScene(HDC FrontDC);
-	void DrawTownScene(HDC FrontDC);
+	void DrawTownScene(HDC FrontDC);	
 	void DrawBattleScene(HDC FrontDC, STATUS_PC *status_pc, STATUS_MOB *status_mob);
+	void DrawGameOverScene(HDC FrontDC);
+
 
 	// frame related
 	void AddFrameCounter(int amount);
@@ -64,6 +66,9 @@ public:
 	HBITMAP resPC_shadow;
 	HBITMAP resPC_battle;
 	HBITMAP resPC_face;
+
+	HBITMAP resGameover_bg;
+
 
 	HBITMAP resUI_btnAttack_on;
 	HBITMAP resUI_btnAttack_off;

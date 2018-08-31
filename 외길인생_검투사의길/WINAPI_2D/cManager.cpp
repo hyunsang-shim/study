@@ -70,7 +70,7 @@ void cManager::InitBattleScene()
 
 	status_pc.atk = 10;
 	status_pc.def = 1;
-	status_pc.hp = 15;
+	status_pc.hp = 1;
 	status_pc.hp_max = 15; 
 	status_pc.coord_x = status_pc.coord_next_x = BATTLE_POS_PC_DEFAULT_X;
 	status_pc.coord_y = status_pc.coord_next_y = BATTLE_POS_PC_DEFAULT_Y;
@@ -83,12 +83,19 @@ void cManager::InitBattleScene()
 	status_pc.battlestate = Player_Ready; 		
 	status_pc.speed = 4; 		
 		
-	status_mob.atk = 7;
+	status_mob.atk = 12;
 	status_mob.def = 1;
-	status_mob.hp = 8;
+	status_mob.hp = 35;
 	status_mob.hp_max = 35;
-	status_mob.battlestate = Monster_Ready;
+	status_mob.coord_x = status_mob.coord_next_x = BATTLE_POS_MOB_DEFAULT_X;
+	status_mob.coord_y = status_mob.coord_next_y = BATTLE_POS_MOB_DEFAULT_Y;
+	status_mob.pos_x = status_mob.coord_next_x * 48;
+	status_mob.pos_y = status_mob.coord_next_y * 48;
+	status_mob.battlestate = Monster_Ready;	
+}
 
+void cManager::InitGameOverScene()
+{
 }
 
 
@@ -110,7 +117,7 @@ void cManager::ChangeScene(int destSceneidx)
 		InitBattleScene();
 		break;
 	case GameOverScene:
-		CurScene = GameOverScene;
+		InitGameOverScene();
 		break;
 	}
 
@@ -142,6 +149,9 @@ void cManager::DrawScene(HDC FrontDC)
 	case BattleScene:
 		scnManager->DrawBattleScene(FrontDC, &status_pc, &status_mob);		
 		break;
+	case GameOverScene:
+		scnManager->DrawGameOverScene(FrontDC);
+
 	}
 }
 
@@ -153,15 +163,32 @@ bool cManager::HaveSaveFile()
 
 void cManager::UpdateTitle()
 {
+	// advance character frames
+	scnManager->AddFrameCounter(1);
+	int n = 0;
+	if (scnManager->GetFrameCounter() % CHARACTER_FRAME_MAX == 0)
+	{
+		n = scnManager->GetAnimationFrameNumber() + 1;
+		if (n >= CHARACTER_FRAME_MAX)
+			n = 0;
+
+		scnManager->SetAnimationFrame(n);
+	}
 }
 
 void cManager::UpdateTown()
 {	
-	
+	// advance character frames
 	scnManager->AddFrameCounter(1);
-	scnManager->SetAnimationFrame((scnManager->GetFrameCounter() / CHARACTER_FRAME_MAX) % CHARACTER_FRAME_MAX);
+	int n = 0;
+	if (scnManager->GetFrameCounter() % CHARACTER_FRAME_MAX == 0)
+	{
+		n = scnManager->GetAnimationFrameNumber() + 1;
+		if (n >= CHARACTER_FRAME_MAX)
+			n = 0;
 
-
+		scnManager->SetAnimationFrame(n);
+	}
 	EventId = TownMap[status_pc.coord_y][status_pc.coord_x];
 
 	if (status_pc.movestate == Moving)
@@ -185,8 +212,17 @@ void cManager::UpdateTown()
 
 void cManager::UpdateBattle()
 {	
+	// advance character frames
 	scnManager->AddFrameCounter(1);
-	scnManager->SetAnimationFrame((scnManager->GetFrameCounter() / CHARACTER_FRAME_MAX) % CHARACTER_FRAME_MAX);
+	int n = 0;
+	if (scnManager->GetFrameCounter() % CHARACTER_FRAME_MAX == 0)
+	{
+		n = scnManager->GetAnimationFrameNumber() + 1;
+		if (n >= CHARACTER_FRAME_MAX)
+			n = 0;
+
+		scnManager->SetAnimationFrame(n);
+	}
 
 	switch (BattleStep)
 	{
@@ -208,8 +244,9 @@ void cManager::UpdateBattle()
 		break;
 		// 3	플레이어 캐릭터 행동	do player character's action
 	case PC_Action:
-		SetBattleMessage(&status_pc, &status_mob);
-		dmg_counter = calcDamage(&status_pc, &status_mob);
+		SetBattleMessage(&status_pc);
+		dmg_counter = calcDamage(&status_pc, &status_mob);		
+		CurMsgLine = 1;
 		break;
 		// 4	플레이어 캐릭터 행동 결과 출력	show result of PC action
 	case PC_Action_Result:
@@ -218,11 +255,11 @@ void cManager::UpdateBattle()
 		if (CurMsgLine == 1 && CurMsgLine_State[0] == TRUE)
 			CurMsgLine = 2;
 		else if (CurMsgLine == 2 && CurMsgLine_State[1] == TRUE)
-			if (MSG_Battle.damage >= status_mob.hp)
+			if (0 >= status_mob.hp)
 				CurMsgLine = 3;
 			else
 				CurMsgLine = 200;
-		else if (CurMsgLine == 2 && CurMsgLine_State[2] == TRUE)
+		else if (CurMsgLine == 3 && CurMsgLine_State[2] == TRUE)
 			CurMsgLine = 100;
 
 		if (CurMsgLine >= 2 && dmg_counter > 0)
@@ -230,21 +267,14 @@ void cManager::UpdateBattle()
 			if (scnManager->GetFrameCounter() % 3 == 0)
 			{
 				status_mob.hp--;
-				dmg_counter++;
+				dmg_counter--;
 			}
-		}
-
-		if (CurMsgLine == 200 || CurMsgLine == 100)
-		{
-			BattleStep = Check_Mob_Die;
-			dmg_counter = 0;
 		}
 	break;
 		// 5	몬스터 사망 확인	check whether mob die or not
 	case Check_Mob_Die:
 		if (status_mob.hp <= 0)
 		{
-			SetBattleMessage_Loot(&status_pc, &status_mob);
 			GainLoot();
 			scnManager->ResetMsgBox_FrameNumber();
 			UI_state_MSGW = FALSE;
@@ -255,17 +285,17 @@ void cManager::UpdateBattle()
 		{
 			BattleStep = PC_Return;
 			status_pc.battlestate = Player_Return_Move;
+			status_mob.coord_next_x = BATTLE_POS_MOB_ATTACK_X;
 			CurMsgLine = 0;
 		}
 		break;
 		// 6	몬스터 사망 처리	kill monster
 	case Kill_Mob:
 		status_mob.battlestate = Monster_Dying;
-
-
+		SetBattleMessage_Loot();
 		break;
 		// 7 루팅		
-	case Loot:		
+	case Loot:
 		// 1	경험치 획득	loot XP.
 		// 2	골드 획득	loot Gold.
 		// 3	전리품 획득	loot etc. 
@@ -284,32 +314,87 @@ void cManager::UpdateBattle()
 		break;
 		// 8	전투 종료->마을 씬 복귀	end battle.Return to town scene
 	case Return_To_Town:
-		ChangeScene(TownScene);
+		if (CurMsgLine == 1 && CurMsgLine_State[0] == TRUE)
+			CurMsgLine = 2;
 		break;
 		// 9	플레이어 캐릭터 복귀	return PC to start position
-	case PC_Return:		
+	case PC_Return:
 		MoveCharacter();
 		break;
 		// 10	몬스터 캐릭터 이동	move mob
 	case MOB_Move:
+		MoveCharacter(&status_mob);
 		break;
 		// 11	몬스터 캐릭터 행동	mob action
 	case MOB_Action:
+		SetBattleMessage(&status_mob);
+		dmg_counter = calcDamage(&status_mob, &status_pc);
+		CurMsgLine = 1;
+		CurMsgLine_State[0] = FALSE;
+		CurMsgLine_State[1] = FALSE;
+		CurMsgLine_State[2] = FALSE;
 		break;
 		// 12	몬스터 캐릭터 행동 결과 출력	show result of mob action
-	case MOB_Atcion_Result:
+	case MOB_Action_Result:
 		//		메시지 라인 1
 		//		메시지 라인 2
 		//		메시지 라인 3
+		scnManager->AddMsgBox_frameNumber();
+
+		if (CurMsgLine == 2 && CurMsgLine_State[2] == TRUE)
+			CurMsgLine = 100; 
+		else if (CurMsgLine == 2 && CurMsgLine_State[1] == TRUE)
+			if (status_pc.hp <= 0)
+				CurMsgLine = 3;
+			else
+				CurMsgLine = 200;
+		else  if (CurMsgLine == 1 && CurMsgLine_State[0] == TRUE)
+			CurMsgLine = 2;
+
+		if (CurMsgLine >= 2 && dmg_counter > 0)
+		{
+			if (scnManager->GetFrameCounter() % 3 == 0)
+			{
+				status_pc.hp--;
+				dmg_counter--;
+			}
+		}
+
+		if (CurMsgLine == 200 || CurMsgLine == 100)
+		{
+			BattleStep = Check_PC_Die;
+		}
 		break;
 		// 13	캐릭터 사망 확인	check whether PC die or not
 	case Check_PC_Die:
+		if (status_pc.hp <= 0)
+		{
+			scnManager->ResetMsgBox_FrameNumber();
+			UI_state_MSGW = FALSE;
+			CurMsgLine = 1;
+			BattleStep = Kill_PC;
+		}
+		else
+		{
+			BattleStep = MOB_Return;
+			status_mob.coord_next_x = BATTLE_POS_MOB_DEFAULT_X;
+			status_mob.battlestate = Monster_Return_Move;
+			CurMsgLine = 0;
+		}
 		break;
 		// 14	캐릭터 사망 처리	kill PC
 	case Kill_PC:
+		scnManager->AddMsgBox_frameNumber(); 
+		SetBattleMessage_Result(Player_Lose);
+		status_mob.battlestate = Monster_Wait;
+		status_pc.battlestate = Player_Lose;
 		break;
 		// 15	전투 종료->게임오버 씬	end battle.Go to gameover scene.
 	case Goto_Gameover:
+		ChangeScene(GameOverScene);
+		break;
+	case MOB_Return:
+		MoveCharacter(&status_mob);
 		break;
 	}
 }
@@ -350,6 +435,7 @@ void cManager::key(WPARAM wParam)
 				CurMenu = menuNew;
 			break;
 		case VK_RETURN:
+		case VK_SPACE:
 			switch (CurMenu)
 			{
 			case menuQuit:
@@ -441,6 +527,7 @@ void cManager::key(WPARAM wParam)
 				}
 				break;
 			}
+		case VK_RETURN:
 		case VK_SPACE:	// for testing purpose
 			ChangeScene(BattleScene);
 			break;
@@ -449,17 +536,6 @@ void cManager::key(WPARAM wParam)
 		//std::cout << "PC Coord (current, next) : (" << PC_COORD.y << "," << PC_COORD.x << "), (" << PC_COORD_NEXT.y << "," << PC_COORD_NEXT.y << "  EventID : " << EventId << "\n";
 		break;
 	case BattleScene:
-
-#ifdef _DEBUG
-
-		if (wParam == VK_ESCAPE)
-		{
-			ChangeScene(TownScene);
-			break;
-		}
-
-#endif
-
 		switch (BattleStep)
 		{
 			case ShowBattleMenu:
@@ -478,6 +554,7 @@ void cManager::key(WPARAM wParam)
 					status_pc.hp = status_pc.hp_max;
 					break;
 				case VK_RETURN:
+				case VK_SPACE:
 					BattleStep = ShowBattleMenu;
 					if (CurMenu == menuAttack)
 					{
@@ -498,41 +575,109 @@ void cManager::key(WPARAM wParam)
 			break;
 			case PC_Action_Result:
 				if (wParam)
-				{					
-					if (CurMsgLine_State[1] == TRUE && lstrlen(MSG_Battle.BattleResultMessage) > 1)
-					{
-						CurMsgLine = 100;
-						status_mob.battlestate = Monster_Dying;
+				{
+					if (CurMsgLine_State[1] == TRUE && status_mob.hp > 0)
+					{							
+						status_pc.battlestate = Player_Return_Move;
+						status_pc.coord_next_x = BATTLE_POS_PC_DEFAULT_X;
 						InitBattleMessage();						
 						CurMsgLine = 1;
 						CurMsgLine_State[0] = FALSE;
 						CurMsgLine_State[1] = FALSE;
 						CurMsgLine_State[2] = FALSE;
+						BattleStep = PC_Return;
+					}
+					else if (CurMsgLine_State[2] == TRUE)
+					{
+						status_mob.battlestate = Monster_Dying;					
 						BattleStep = Kill_Mob;
 					}
-					else if (CurMsgLine_State[2] == TRUE && lstrlen(MSG_Battle.BattleResultMessage) == 0)
-					{
-						CurMsgLine = 200;
+				}
+				break;
+			case Kill_Mob:
+				if (wParam)
+				{
+					if (CurMsgLine == 100 && CurMsgLine_State[2] == TRUE)
+					{						
+						CurMsgLine = 1;
+						CurMsgLine_State[0] = FALSE;
+						CurMsgLine_State[1] = FALSE;
+						CurMsgLine_State[2] = FALSE; 
+						status_mob.battlestate = Monster_Dead;
+						BattleStep = Loot;
 					}
 				}
 				break;
 			case Loot:
 				if (wParam)
 				{
-					if (CurMsgLine == 100 && CurMsgLine_State[2] == TRUE)
-					{
-						InitBattleMessage();
-						InitBattleMessage_Loot();
+					if (CurMsgLine == 3 && CurMsgLine_State[2] == TRUE)
+					{						
 						CurMsgLine = 1;
 						CurMsgLine_State[0] = FALSE;
 						CurMsgLine_State[1] = FALSE;
-						CurMsgLine_State[2] = FALSE; 
+						CurMsgLine_State[2] = FALSE;
+
+						SetBattleMessage_Result(Player_Win);
 						BattleStep = Return_To_Town;
+
 					}
 				}
 				break;
+			case Return_To_Town:
+				if (wParam)
+				{
+					if (CurMsgLine == 2 && CurMsgLine_State[1] == TRUE)
+					{
+						CurMsgLine = 1;
+						CurMsgLine_State[0] = FALSE;
+						CurMsgLine_State[1] = FALSE;
+						CurMsgLine_State[2] = FALSE;
+						ChangeScene(TownScene);
+					}
+				}
+				break;
+			case MOB_Action_Result:
+				if (wParam)
+				{
+					if (CurMsgLine_State[2] == TRUE)
+					{
+						status_pc.battlestate = Player_Lose;
+						BattleStep = Check_PC_Die;
+					}
+					else if (CurMsgLine_State[1] == TRUE && status_pc.hp > 0)
+					{
+						status_mob.battlestate = Monster_Return_Move;
+						InitBattleMessage();
+						CurMsgLine = 1;
+						CurMsgLine_State[0] = FALSE;
+						CurMsgLine_State[1] = FALSE;
+						CurMsgLine_State[2] = FALSE;
+						BattleStep = MOB_Return;
+					}
+				}
+				break;
+			case Kill_PC:
+				if (wParam)
+				{
+					if (CurMsgLine == 2 && CurMsgLine_State[1] == TRUE)
+					{
+						BattleStep = Goto_Gameover;
+					}
+					else if (CurMsgLine == 1 && CurMsgLine_State[0] == TRUE)
+					{
+						CurMsgLine = 2;
+					}
+					
+				}
+				break;
+
 		}
 		break;
+		case GameOverScene:
+			if (wParam)
+				ChangeScene(TitleScene);
+			break;
 	}
 }
 
@@ -579,11 +724,11 @@ bool cManager::PeekNextCoord()
 
 }
 
+
 void cManager::MoveCharacter()
 {
-	// Move Character from currend coordinate to next coordinate.
+	// Move Character from current coordinate to next coordinate.
 	// should ignore input while moving
-
 
 	int DestX = status_pc.coord_next_x * 48;
 	int DestY = status_pc.coord_next_y * 48;
@@ -612,34 +757,34 @@ void cManager::MoveCharacter()
 		status_pc.pos_shadow_y -= status_pc.speed;
 	}
 
-	// change character status to Idle whel reaches target position.
+	// change character status to Idle when reaches target position.
 	if ((status_pc.pos_x == DestX) && (status_pc.pos_y == DestY))
 	{
-		if (BattleStep >= ShowBattleMenu)
+
+		if (BattleStep == PC_Move)
 		{
-			if (BattleStep == PC_Move)
-			{
-				status_pc.movestate = Idle;
-				status_pc.coord_next_x = status_pc.coord_x;
-				status_pc.coord_next_y = status_pc.coord_y;
-				BattleStep = PC_Action;
-				status_pc.battlestate = Player_Attacking;
-				scnManager->SetFramecounter(1);
-				scnManager->SetAnimationFrame(0);
-			}
-			
-			if (BattleStep == PC_Return)
-			{
-				status_pc.movestate = Idle;
-				status_pc.coord_next_x = status_pc.coord_x;
-				status_pc.coord_next_y = status_pc.coord_y;
-				BattleStep = ShowBattleMenu;
-				status_pc.battlestate = Player_Ready;
-				scnManager->SetFramecounter(1);
-				scnManager->SetAnimationFrame(0);
-			}
+			status_pc.movestate = Idle;
+			status_pc.coord_next_x = status_pc.coord_x;
+			status_pc.coord_next_y = status_pc.coord_y;
+			BattleStep = PC_Action;
+			status_pc.battlestate = Player_Attacking;
+			scnManager->SetFramecounter(1);
+			scnManager->SetAnimationFrame(0);
 		}
-		else if (BattleStep == NotInBattle)
+
+		if (BattleStep == PC_Return)
+		{
+			status_pc.movestate = Idle;
+			status_pc.coord_next_x = status_pc.coord_x;
+			status_pc.coord_next_y = status_pc.coord_y;
+			BattleStep = MOB_Move;
+			status_pc.battlestate = Player_Ready;
+			scnManager->SetFramecounter(1);
+			scnManager->SetAnimationFrame(0);
+			status_mob.coord_x = BATTLE_POS_MOB_ATTACK_X;
+		}
+
+		if (BattleStep == NotInBattle)
 		{
 			if (status_pc.movestate == Moving)
 			{
@@ -652,11 +797,53 @@ void cManager::MoveCharacter()
 		}
 	}
 
-
 	// TODO : check for event
 	if (EventId > 1)
 		ChangeScene(EventId);
 }
+void cManager::MoveCharacter(STATUS_MOB *mob)
+{
+	// Move Character from current coordinate to next coordinate.
+	// should ignore input while moving
+
+	int DestX = status_mob.coord_next_x * 48;
+	int DestY = status_mob.coord_next_y * 48;
+
+	// Set x position
+	if (DestX - status_mob.pos_x > 0)
+	{
+		status_mob.pos_x += 4;
+	}
+	else if (DestX - status_mob.pos_x < 0)
+	{
+		status_mob.pos_x -= 4;
+	}
+
+	// change character status to Idle whel reaches target position.
+	if ((status_mob.pos_x == DestX) && (status_mob.pos_y == DestY))
+	{
+
+		if (BattleStep == MOB_Move)
+		{
+			status_mob.movestate = Idle;
+			status_mob.coord_next_x = status_mob.coord_x;
+			status_mob.coord_next_y = status_mob.coord_y;
+			BattleStep = MOB_Action;
+			status_mob.battlestate = Monster_Attacking;
+		}
+
+		if (BattleStep == MOB_Return)
+		{
+			status_mob.movestate = Idle;
+			status_mob.coord_next_x = status_mob.coord_x;
+			status_mob.coord_next_y = status_mob.coord_y;
+			BattleStep = ShowBattleMenu;
+			status_mob.battlestate = Monster_Ready;
+		}
+
+	}
+}
+
 
 void cManager::ApplyDamage(STATUS_PC *pc, int damage)
 {
@@ -691,7 +878,7 @@ void cManager::SetUiState_BattleMessageBox(bool val)
 	UI_state_MSGW = val;
 }
 
-void cManager::SetBattleMessage(STATUS_PC *pc, STATUS_MOB *mob)
+void cManager::SetBattleMessage(STATUS_PC *pc)
 {
 	MSG_Battle.damage = calcDamage(&status_pc, &status_mob);
 
@@ -712,7 +899,7 @@ void cManager::SetBattleMessage(STATUS_PC *pc, STATUS_MOB *mob)
 		wsprintf(MSG_Battle.BattleResultMessage, _T("%s를 쓰러뜨렸다!"), status_mob.NAME);
 	}
 }
-void cManager::SetBattleMessage(STATUS_MOB *mob, STATUS_PC *pc)
+void cManager::SetBattleMessage(STATUS_MOB *mob)
 {
 	MSG_Battle.damage = calcDamage(&status_mob, &status_pc);
 	
@@ -729,7 +916,7 @@ void cManager::SetBattleMessage(STATUS_MOB *mob, STATUS_PC *pc)
 	else
 		wsprintf(MSG_Battle.AttackResultMessage, _T("%s의 공격은 아무런 효과가 없었다!"), status_mob.NAME);
 
-	if (MSG_Battle.damage >= status_mob.hp)
+	if (MSG_Battle.damage >= status_pc.hp)
 	{
 		wsprintf(MSG_Battle.BattleResultMessage, _T("당신을 %s에게 쓰러졌다!"), status_mob.NAME);
 	}
@@ -741,7 +928,7 @@ void cManager::InitBattleMessage()
 	memset(MSG_Battle.BattleResultMessage, 0, sizeof(MSG_Battle.BattleResultMessage));
 }
 
-void cManager::SetBattleMessage_Loot(STATUS_PC * attacker, STATUS_MOB * defender)
+void cManager::SetBattleMessage_Loot()
 {
 	// reset message buffers
 	InitBattleMessage_Loot();
@@ -750,6 +937,32 @@ void cManager::SetBattleMessage_Loot(STATUS_PC * attacker, STATUS_MOB * defender
 	wsprintf(MSG_Battle_Loot.Exp, _T("%d의 경험치를 얻었다!"), status_mob.hp_max);
 	wsprintf(MSG_Battle_Loot.Gold, _T("%d의 골드를 얻었다!"), status_mob.hp_max / 3);
 	wsprintf(MSG_Battle_Loot.Fame, _T("%d의 명성을 얻었다!"), (status_mob.hp_max / 10) > 1 ? status_mob.hp_max / 10 : 1);
+}
+
+void cManager::SetBattleMessage_Result(short PlayerBattleState)
+{
+	// reset message buffer
+	InitBattleMessage_Result();
+
+	// set message buffers
+	switch (PlayerBattleState)
+	{
+	case Player_Win:
+		wsprintf(MSG_Battle_Result.Result, _T("전투에서 승리했다!"));
+		wsprintf(MSG_Battle_Result.Move, _T("오늘도 보람찬 하루였다. 마을로 돌아가자."));
+		break;
+	case Player_Lose:
+		wsprintf(MSG_Battle_Result.Result, _T("전투에서 패배했다..."));
+		wsprintf(MSG_Battle_Result.Move, _T("내 인생은... 이렇게 끝났다..."));
+		break;
+	}
+
+}
+
+void cManager::InitBattleMessage_Result()
+{
+	memset(MSG_Battle_Result.Result, 0, sizeof(MSG_Battle_Result.Result));
+	memset(MSG_Battle_Result.Move, 0, sizeof(MSG_Battle_Result.Move));
 }
 
 void cManager::InitBattleMessage_Loot()
@@ -844,6 +1057,11 @@ BATTLE_MSG cManager::GetBattleMessage()
 LOOT_MSG cManager::GetBattleMessage_Loot()
 {
 	return MSG_Battle_Loot;
+}
+
+RESULT_MSG cManager::GetBattleMessage_Result()
+{
+	return MSG_Battle_Result;
 }
 
 
