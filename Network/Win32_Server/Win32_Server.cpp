@@ -147,6 +147,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static SOCKET		s;
 	static std::vector<SOCKET> cs;
 	static int			cnt_connection = 0;
+	static int			found = -1;
 	static TCHAR		msg[200];
 	static SOCKADDR_IN	addr = { 0 }, c_addr;
 	int					size, msgLen;
@@ -196,26 +197,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			size = sizeof(c_addr);
 			if (cnt_connection == 0)
 			{
-				cs.push_back(accept(s, (LPSOCKADDR)&c_addr, &size));				
-				WSAAsyncSelect(cs.at(cnt_connection), hWnd, WM_ASYNC, FD_READ);
+				cs.push_back(accept(s, (LPSOCKADDR)&c_addr, &size));
+				WSAAsyncSelect(cs.at(cnt_connection), hWnd, WM_ASYNC, FD_READ);				
 			}
 			else
 			{
 				SOCKET tmp;
 				tmp = accept(s, (LPSOCKADDR)&c_addr, &size);
-				for (int i = 0; i < cs.size(); i++)
+				for (int i = 0; i < cnt_connection; i++)
 				{
 					if (tmp == cs.at(i))
-						WSAAsyncSelect(cs.at(i), hWnd, WM_ASYNC, FD_READ);
+					{
+						WSAAsyncSelect(cs.at(i), hWnd, WM_ASYNC, FD_READ);						
+						found = i;
+						break;
+					}
 				}
 				
-				WSAAsyncSelect(cs.at(cnt_connection), hWnd, WM_ASYNC, FD_READ);
-			}
-			break;
+				if (found < 0)
+				{
+					cs.push_back(tmp);
+					WSAAsyncSelect(cs.at(cnt_connection), hWnd, WM_ASYNC, FD_READ);
+					found = cnt_connection;
+				}
 
+			}
 			cnt_connection = cs.size();
+			break;			
 		case FD_READ:
-			msgLen = recv(cs.at(cnt_connection), buffer, 100, 0);
+			msgLen = recv(cs.at(found), buffer, 100, 0);
 			buffer[msgLen] = NULL;
 #ifdef _UNICODE
 			msgLen = MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), NULL, NULL);
@@ -231,9 +241,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 
 			InvalidateRgn(hWnd, NULL, TRUE);
-			break;
-		case FD_CLOSE:
-
 			break;
 		default:
 			break;

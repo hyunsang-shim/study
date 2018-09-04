@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Win32_Client.h"
 #include <stdio.h>
+#include <vector>
 
 //
 //
@@ -144,6 +145,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static SOCKADDR_IN	addr = { 0 };
 	char				sendmessage[200];
 	static TCHAR		msg[200];
+	static std::vector<std::basic_string<TCHAR> > Log;
 	static int			count = 0;
 	int					msgLen;
 	char				buffer[200];
@@ -161,16 +163,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		addr.sin_port = 20;
 		addr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
 		WSAAsyncSelect(s, hWnd, WM_ASYNC, FD_READ);
-		if (connect(s, (LPSOCKADDR)&addr, sizeof(addr)) == -1)
+		if (connect(s, (LPSOCKADDR)&addr, sizeof(addr)) != -1)
 		{
-			//MessageBox(NULL, _T("Connection Failed!"), _T("Error!!"), MB_OK);
-			//PostQuitMessage(0);
-			//return 0;
+			MessageBox(NULL, _T("Connection Failed!"), _T("Error!!"), MB_OK);
+			PostQuitMessage(0);			
 		}
-		else
-		{
-			//MessageBox(NULL, _T("Connection Successful!"), _T("Success!!"), MB_OK);
-		}
+		
 		break;
     case WM_COMMAND:
         {
@@ -195,7 +193,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
 			TextOut(hdc, 10, 10, _T("아무 키나 누르세요."), lstrlen(_T("아무 키나 누르세요.")));
-			TextOut(hdc, 10, 50+msgLines*18, msg, (int)_tcslen(msg));
+			if (!Log.empty())
+			{
+
+				for (int i = 0, lines = 0; i < Log.size(); i++, lines++)
+				{
+					TextOut(hdc, 10, 50 + lines * 18, Log[i].c_str(), (int)lstrlen(Log[i].c_str()));
+				}
+			}
             EndPaint(hWnd, &ps);
         }
         break;
@@ -212,6 +217,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 #else
 			strcpy_s(msg, buffer);
 #endif
+			Log.push_back(msg);
 			InvalidateRgn(hWnd, NULL, TRUE);
 			break;
 		default:
