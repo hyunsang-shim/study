@@ -135,12 +135,8 @@ void SceneManager::ShowDebugMessageOnScreen(HDC BackMemDC)
 	break;
 	case TownScene:
 	{
-
-		
-		char aaa[123] = { "만ㅇ머ㅗㄴㅇㄹ" };
-
 		TCHAR a[128];
-		wsprintf(a, _T("%s CurFrameNumber : %d FrameCounter : %d"), (wchar_t)aaa, frameNumber, frameCounter);
+		wsprintf(a, _T("CurFrameNumber : %d FrameCounter : %d"), frameNumber, frameCounter);
 		TextOut(BackMemDC, 10, 10, a, lstrlen(a));
 	}
 
@@ -261,8 +257,7 @@ void SceneManager::DrawBattleScene(HDC FrontDC, STATUS_PC *status_pc, STATUS_MOB
 	}
 	else
 		DrawPC_Battle(BackMemDC, status_pc);
-
-	HFONT myFont = CreateFont(FONT_SIZE_NORMAL, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, _T("돋움체"));
+	
 	HFONT oldFont = (HFONT)SelectObject(BackMemDC, myFont);
 	SetBkMode(BackMemDC, TRANSPARENT);
 	SetTextColor(BackMemDC, RGB(255, 255, 255));
@@ -312,7 +307,91 @@ void SceneManager::DrawBattleScene(HDC FrontDC, STATUS_PC *status_pc, STATUS_MOB
 }
 void SceneManager::DrawGameOverScene(HDC FrontDC) 
 {
-	DrawBG(FrontDC, resGameover_bg);
+	// Create Back Memory DC
+	HDC BackMemDC = CreateCompatibleDC(FrontDC);
+	HBITMAP hOldBitmap;
+
+	//make BackMemDC's size properly and select source image onto BackMemDC
+	HDC tmpDC = GetDC(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")));
+	HBITMAP hBit = CreateCompatibleBitmap(tmpDC, SCREEN_WIDTH, SCREEN_HEIGHT);
+	hOldBitmap = (HBITMAP)SelectObject(BackMemDC, hBit);
+	ReleaseDC(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")), tmpDC);
+
+
+	DeleteObject(hBit);
+	DrawBG(BackMemDC, resGameover_bg);
+	(HFONT)SelectObject(BackMemDC, myFont_Bold);
+	SetBkMode(BackMemDC, TRANSPARENT);
+	SetTextColor(BackMemDC, RGB(255, 255, 255));
+
+
+	(HFONT)SelectObject(BackMemDC, myFont);
+
+	TCHAR AA[128];
+	TCHAR BB[128];
+	TCHAR CC[128];
+	TCHAR DD[128];
+	TCHAR tmp[128];
+	wsprintf(tmp, _T("Cur Msg Line : %d"), GAME_MANAGER->GetCurMsgLine());
+	TextOut(BackMemDC, 20, 10, tmp, lstrlen(tmp));
+
+
+	switch (GAME_MANAGER->GetCurMsgLine())
+	{
+	case 1:
+		TextOut(BackMemDC, 300, 80, _T("GAME OVER"), lstrlen(_T("GAME OVER")));
+		break;
+	case 2:
+		wsprintf(AA, _T("몬스터 처치 : %d"), GAME_MANAGER->GetHistory().monster_killed);
+		TextOut(BackMemDC, 300, 80, _T("GAME OVER"), lstrlen(_T("GAME OVER")));
+		TextOut(BackMemDC, 50, 150, AA, lstrlen(AA));
+		break;
+	case 3:
+		wsprintf(AA, _T("몬스터 처치 : %d"), GAME_MANAGER->GetHistory().monster_killed);
+		wsprintf(BB, _T("경험치 획득 : %d"), GAME_MANAGER->GetHistory().exp_earned);
+		TextOut(BackMemDC, 300, 80, _T("GAME OVER"), lstrlen(_T("GAME OVER")));
+		TextOut(BackMemDC, 50, 150, AA, lstrlen(AA));
+		TextOut(BackMemDC, 50, 200, BB, lstrlen(BB));
+		break;
+	case 4:
+		wsprintf(AA, _T("몬스터 처치 : %d"), GAME_MANAGER->GetHistory().monster_killed);
+		wsprintf(BB, _T("경험치 획득 : %d"), GAME_MANAGER->GetHistory().exp_earned);
+		wsprintf(CC, _T("경험치 사용 : %d"), GAME_MANAGER->GetHistory().exp_earned);
+		TextOut(BackMemDC, 300, 80, _T("GAME OVER"), lstrlen(_T("GAME OVER")));
+		TextOut(BackMemDC, 50, 150, AA, lstrlen(AA));
+		TextOut(BackMemDC, 50, 200, BB, lstrlen(BB));
+		TextOut(BackMemDC, 50, 250, CC, lstrlen(CC));
+		break;
+	case 5:
+		wsprintf(AA, _T("몬스터 처치 : %d"), GAME_MANAGER->GetHistory().monster_killed);
+		wsprintf(BB, _T("경험치 획득 : %d"), GAME_MANAGER->GetHistory().exp_earned);
+		wsprintf(CC, _T("경험치 사용 : %d"), GAME_MANAGER->GetHistory().exp_spent);
+		wsprintf(DD, _T("명  성 획득 : %d"), GAME_MANAGER->GetHistory().fame_earned);
+		TextOut(BackMemDC, 300, 80, _T("GAME OVER"), lstrlen(_T("GAME OVER")));
+		TextOut(BackMemDC, 50, 150, AA, lstrlen(AA));
+		TextOut(BackMemDC, 50, 200, BB, lstrlen(BB));
+		TextOut(BackMemDC, 50, 250, CC, lstrlen(CC));
+		TextOut(BackMemDC, 50, 300, DD, lstrlen(DD));
+		break;
+	case 6:		
+		wsprintf(AA, _T("몬스터 처치 : %d"), GAME_MANAGER->GetHistory().monster_killed);
+		wsprintf(BB, _T("경험치 획득 : %d"), GAME_MANAGER->GetHistory().exp_earned);
+		wsprintf(CC, _T("경험치 사용 : %d"), GAME_MANAGER->GetHistory().exp_spent);
+		wsprintf(DD, _T("명  성 획득 : %d"), GAME_MANAGER->GetHistory().fame_earned);
+		TextOut(BackMemDC, 300, 80, _T("GAME OVER"), lstrlen(_T("GAME OVER")));
+		TextOut(BackMemDC, 50, 150, AA, lstrlen(AA));
+		TextOut(BackMemDC, 50, 200, BB, lstrlen(BB));
+		TextOut(BackMemDC, 50, 250, CC, lstrlen(CC));
+		TextOut(BackMemDC, 50, 300, DD, lstrlen(DD));
+		break;
+	}
+
+	TransparentBlt(FrontDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackMemDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 0, 255));
+
+	SelectObject(BackMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
+	DeleteDC(BackMemDC);
+	
 }
 
 
@@ -419,10 +498,10 @@ void SceneManager::DrawPC_Battle(HDC BackMemDC, STATUS_PC *status_pc)
 			GAME_MANAGER->NextBattleStep();
 			GAME_MANAGER->SetCurMsgLine(1);
 			ResetMsgBox_FrameNumber();
-			damage_font.CurPos.x = damage_font.StartPos.x = GAME_MANAGER->GetStatus_MOB().pos_x + UI_FONT_SIZE;
-			damage_font.CurPos.y = damage_font.StartPos.y = GAME_MANAGER->GetStatus_MOB().pos_y - UI_FONT_SIZE;
-			damage_font.EndPos.x = damage_font.CurPos.x + UI_FONT_SIZE * 2;
-			damage_font.EndPos.y = damage_font.CurPos.y - UI_FONT_SIZE * 2;
+			damage_font.CurPos.x = damage_font.StartPos.x = GAME_MANAGER->GetStatus_MOB().pos_x;
+			damage_font.CurPos.y = damage_font.StartPos.y = GAME_MANAGER->GetStatus_MOB().pos_y;
+			damage_font.EndPos.x = damage_font.CurPos.x + UI_FONT_SIZE * 1.5;
+			damage_font.EndPos.y = damage_font.CurPos.y - UI_FONT_SIZE * 1.5;
 			break;
 		}
 	}
@@ -916,15 +995,20 @@ void SceneManager::Battle_DrawFX(HDC BackMemDC, bool SrcIsVertical, HBITMAP & sr
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBit4);
 	ReleaseDC(FindWindow(_T("Oneway_Life"), _T("외길인생 : 검투사의 길")), tmpDC);
 	DeleteObject(hBit4);
+	static int cnt = 0;
 
 	SelectObject(hMemDC, (HBITMAP)src);
 	if (GAME_MANAGER->GetBattleStep() == PC_Action)
-		TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_MOB().pos_x, GAME_MANAGER->GetStatus_MOB().pos_y, WPN_VFX_SIZE, WPN_VFX_SIZE,	hMemDC, frameNumber * WPN_VFX_SIZE, 0, WPN_VFX_SIZE, WPN_VFX_SIZE, RGB(255, 0, 255));
+		TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_MOB().pos_x, GAME_MANAGER->GetStatus_MOB().pos_y, WPN_VFX_SIZE, WPN_VFX_SIZE,	hMemDC, (cnt++)/3 * WPN_VFX_SIZE, 0, WPN_VFX_SIZE, WPN_VFX_SIZE, RGB(255, 0, 255));
 	else if (GAME_MANAGER->GetBattleStep() == MOB_Action)
-		TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_PC().pos_x, GAME_MANAGER->GetStatus_PC().pos_y, WPN_VFX_SIZE, WPN_VFX_SIZE, hMemDC, frameNumber * WPN_VFX_SIZE, 0, WPN_VFX_SIZE, WPN_VFX_SIZE, RGB(255, 0, 255));
+		TransparentBlt(BackMemDC, GAME_MANAGER->GetStatus_PC().pos_x-32, GAME_MANAGER->GetStatus_PC().pos_y-32, WPN_VFX_SIZE, WPN_VFX_SIZE, hMemDC, (cnt++)/3 * WPN_VFX_SIZE, 0, WPN_VFX_SIZE, WPN_VFX_SIZE, RGB(255, 0, 255));
+
 	SelectObject(hMemDC, hOldBitmap);
 	DeleteObject(hOldBitmap);
 	DeleteDC(hMemDC);
+
+	if (cnt >= 14)
+		cnt = 0;
 }
 
 void SceneManager::Battle_DrawWPN(HDC BackMemDC,bool SrcIsVertical, HBITMAP & src)
@@ -1104,7 +1188,7 @@ void SceneManager::Battle_DrawHP_bar(HDC BackMemDC)
 		pixelperhp_PC * GAME_MANAGER->GetStatus_PC().hp, bm.bmHeight / 2,
 		hMemDC,
 		0, bm.bmHeight / 2,
-		pixelperhp_PC * GAME_MANAGER->GetStatus_MOB().hp, bm.bmHeight / 2,
+		pixelperhp_PC * GAME_MANAGER->GetStatus_PC().hp, bm.bmHeight / 2,
 		RGB(255, 0, 255));
 
 
@@ -1139,7 +1223,7 @@ void SceneManager::Battle_DrawDamageNumber(HDC BackMemDC)
 	{
 		// adjust damage font position
 		if (damage_font.CurPos.y > damage_font.EndPos.y)
-			damage_font.CurPos.y -= 3;
+			damage_font.CurPos.y -= 1;
 		else
 			damage_font.CurPos.y = damage_font.EndPos.y;
 
@@ -1184,8 +1268,6 @@ void SceneManager::Battle_DrawDamageNumber(HDC BackMemDC)
 	DeleteDC(hMemDC);
 
 }
-
-
 
 void SceneManager::AddFrameCounter(int amount)
 {

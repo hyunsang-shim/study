@@ -1,12 +1,12 @@
 ﻿  SceneManager.cpp
-k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(140): error C2440: '초기화 중': 'const wchar_t [8]'에서 'char'(으)로 변환할 수 없습니다.
-  k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(140): note: 이 변환이 가능한 컨텍스트가 없습니다.
-k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(143): warning C4302: '형식 캐스트': 'char *'에서 'wchar_t'(으)로 잘립니다.
-k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(460): warning C4838: 'double'에서 'LONG'(으)로의 변환에는 축소 변환이 필요합니다.
-k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(460): warning C4244: '초기화 중': 'double'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(461): warning C4838: 'double'에서 'LONG'(으)로의 변환에는 축소 변환이 필요합니다.
-k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(461): warning C4244: '초기화 중': 'double'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(1087): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(1084): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(1107): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(1104): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(503): warning C4244: '=': 'double'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(504): warning C4244: '=': 'double'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(539): warning C4838: 'double'에서 'LONG'(으)로의 변환에는 축소 변환이 필요합니다.
+k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(539): warning C4244: '초기화 중': 'double'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(540): warning C4838: 'double'에서 'LONG'(으)로의 변환에는 축소 변환이 필요합니다.
+k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(540): warning C4244: '초기화 중': 'double'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(1171): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(1168): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(1191): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\외길인생_검투사의길\winapi_2d\scenemanager.cpp(1188): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  WINAPI_2D.vcxproj -> K:\WORK\git\외길인생_검투사의길\Debug\WINAPI_2D.exe

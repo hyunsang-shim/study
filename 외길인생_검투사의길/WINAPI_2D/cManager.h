@@ -33,6 +33,7 @@ public:
 	void UpdateTitle();
 	void UpdateTown();
 	void UpdateBattle();
+	void UpdateGameOverScene();
 
 	//
 	// UI related
@@ -90,11 +91,13 @@ public:
 	bool GetUiState_BattleMessageBox();
 	short GetCurMsgLine();
 	bool GetCurMsgLine_state(short idx);
+	HISTORY GetHistory();
 	STATUS_PC GetStatus_PC();
 	STATUS_MOB GetStatus_MOB();
 	BATTLE_MSG GetBattleMessage();
 	LOOT_MSG GetBattleMessage_Loot();
 	RESULT_MSG GetBattleMessage_Result();
+	
 	
 public:
 	static cManager* GetInstance()
@@ -131,6 +134,7 @@ private:
 	BATTLE_MSG MSG_Battle;
 	LOOT_MSG MSG_Battle_Loot;
 	RESULT_MSG MSG_Battle_Result;
+	HISTORY history;
 
 
 	POINT MOB_XY = { 96, 280 };

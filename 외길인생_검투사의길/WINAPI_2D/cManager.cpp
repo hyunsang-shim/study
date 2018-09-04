@@ -33,6 +33,7 @@ void cManager::InitTitleScene()
 	CurScene = TitleScene;
 	status_pc.facing = FacingRight;
 	CurMenu = menuNew;
+	history = { 0 };
 }
 
 void cManager::InitTownScene()
@@ -67,10 +68,11 @@ void cManager::InitBattleScene()
 	CurScene = BattleScene;	
 	CurMenu = menuAttack;
 	BattleStep = ShowBattleMenu;
+	scnManager->SetAnimationFrame(0);
 
-	status_pc.atk = 10;
-	status_pc.def = 1;
-	status_pc.hp = 1;
+	status_pc.atk = 5;
+	status_pc.def = 2;
+	status_pc.hp = 15;
 	status_pc.hp_max = 15; 
 	status_pc.coord_x = status_pc.coord_next_x = BATTLE_POS_PC_DEFAULT_X;
 	status_pc.coord_y = status_pc.coord_next_y = BATTLE_POS_PC_DEFAULT_Y;
@@ -83,19 +85,23 @@ void cManager::InitBattleScene()
 	status_pc.battlestate = Player_Ready; 		
 	status_pc.speed = 4; 		
 		
-	status_mob.atk = 12;
-	status_mob.def = 1;
-	status_mob.hp = 35;
-	status_mob.hp_max = 35;
+	status_mob.atk = 3;
+	status_mob.def = -1;
+	status_mob.hp = 7;
+	status_mob.hp_max = 7;
 	status_mob.coord_x = status_mob.coord_next_x = BATTLE_POS_MOB_DEFAULT_X;
 	status_mob.coord_y = status_mob.coord_next_y = BATTLE_POS_MOB_DEFAULT_Y;
 	status_mob.pos_x = status_mob.coord_next_x * 48;
 	status_mob.pos_y = status_mob.coord_next_y * 48;
 	status_mob.battlestate = Monster_Ready;	
+	status_mob.movestate = Idle;
+
 }
 
 void cManager::InitGameOverScene()
 {
+	CurScene = GameOverScene;
+	CurMsgLine = 1;
 }
 
 
@@ -132,6 +138,9 @@ void cManager::UpdateScene(HDC FrontDC)
 		break;
 	case TownScene:
 		UpdateTown();	
+		break;
+	case GameOverScene:
+		UpdateGameOverScene();
 		break;
 	}
 }
@@ -247,6 +256,9 @@ void cManager::UpdateBattle()
 		SetBattleMessage(&status_pc);
 		dmg_counter = calcDamage(&status_pc, &status_mob);		
 		CurMsgLine = 1;
+		CurMsgLine_State[0] = FALSE;
+		CurMsgLine_State[1] = FALSE;
+		CurMsgLine_State[2] = FALSE;
 		break;
 		// 4	플레이어 캐릭터 행동 결과 출력	show result of PC action
 	case PC_Action_Result:
@@ -293,6 +305,7 @@ void cManager::UpdateBattle()
 	case Kill_Mob:
 		status_mob.battlestate = Monster_Dying;
 		SetBattleMessage_Loot();
+		history.monster_killed++;
 		break;
 		// 7 루팅		
 	case Loot:
@@ -301,7 +314,7 @@ void cManager::UpdateBattle()
 		// 3	전리품 획득	loot etc. 
 		scnManager->AddMsgBox_frameNumber();
 		status_mob.battlestate = Monster_Dead;
-		status_pc.battlestate = Player_Win;
+		status_pc.battlestate = Player_Win;		
 
 		if (CurMsgLine == 1 && CurMsgLine_State[0] == TRUE)
 			CurMsgLine = 2;
@@ -371,7 +384,7 @@ void cManager::UpdateBattle()
 		{
 			scnManager->ResetMsgBox_FrameNumber();
 			UI_state_MSGW = FALSE;
-			CurMsgLine = 1;
+			CurMsgLine = 0;
 			BattleStep = Kill_PC;
 		}
 		else
@@ -397,6 +410,11 @@ void cManager::UpdateBattle()
 		MoveCharacter(&status_mob);
 		break;
 	}
+}
+
+void cManager::UpdateGameOverScene()
+{
+
 }
 
 //
@@ -591,6 +609,9 @@ void cManager::key(WPARAM wParam)
 					{
 						status_mob.battlestate = Monster_Dying;					
 						BattleStep = Kill_Mob;
+						CurMsgLine_State[0] = FALSE;
+						CurMsgLine_State[1] = FALSE;
+						CurMsgLine_State[2] = FALSE;
 					}
 				}
 				break;
@@ -671,13 +692,20 @@ void cManager::key(WPARAM wParam)
 					
 				}
 				break;
-
 		}
 		break;
 		case GameOverScene:
+		{
 			if (wParam)
-				ChangeScene(TitleScene);
-			break;
+			{
+				if (CurMsgLine <= 4)
+					CurMsgLine++;
+				else
+					ChangeScene(TitleScene);
+			}
+		}
+		break;
+		
 	}
 }
 
@@ -917,8 +945,8 @@ void cManager::SetBattleMessage(STATUS_MOB *mob)
 		wsprintf(MSG_Battle.AttackResultMessage, _T("%s의 공격은 아무런 효과가 없었다!"), status_mob.NAME);
 
 	if (MSG_Battle.damage >= status_pc.hp)
-	{
-		wsprintf(MSG_Battle.BattleResultMessage, _T("당신을 %s에게 쓰러졌다!"), status_mob.NAME);
+	{		
+		wsprintf(MSG_Battle.BattleResultMessage, _T("%s는 체력이 다했다...."), status_pc.NAME);
 	}
 }
 void cManager::InitBattleMessage()
@@ -995,8 +1023,10 @@ void cManager::SetCurMsgLine_state(short idx, bool value)
 void cManager::GainLoot()
 {
 	status_pc.Exp = status_mob.hp_max;
+	history.exp_earned += status_mob.hp_max;
 	status_pc.Gold = status_mob.hp_max / 3;
 	status_pc.Fame = (status_mob.hp_max / 10) > 1 ? status_mob.hp_max / 10 : 1;
+	history.fame_earned = (status_mob.hp_max / 10) > 1 ? status_mob.hp_max / 10 : 1;
 }
 
 //
@@ -1037,6 +1067,11 @@ short cManager::GetCurMsgLine()
 bool cManager::GetCurMsgLine_state(short idx)
 {
 	return CurMsgLine_State[idx-1];
+}
+
+HISTORY cManager::GetHistory()
+{
+	return history;
 }
 
 STATUS_PC cManager::GetStatus_PC()

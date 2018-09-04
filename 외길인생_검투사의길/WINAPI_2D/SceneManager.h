@@ -117,5 +117,9 @@ private:
 	int shake_fast = 5;
 	int shake_mid = 8;
 	int shake_slow = 15;
+
+
+	HFONT myFont = CreateFont(FONT_SIZE_NORMAL, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, _T("µ¸¿ò"));
+	HFONT myFont_Bold = CreateFont(FONT_SIZE_NORMAL, 0, 0, FW_EXTRABOLD, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, _T("µ¸¿ò"));
 };
 
