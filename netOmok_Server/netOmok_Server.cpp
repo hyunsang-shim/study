@@ -154,7 +154,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	static WSADATA		wsadata;
 	static SOCKET		s, last;
-	static SOCKET cs[2] = { NULL };
+	static std::vector<SOCKET> cs;
 	static int			cnt_connection = 0;
 	static int			found = -1;
 	static TCHAR		msg[MSG_MAX_LENGTH];
@@ -204,23 +204,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case FD_ACCEPT:
 			size = sizeof(c_addr);
-			if (cs[0] == NULL)
+			// 접속 시도가 있을 때마다 접속을 받는다. 2번째 이후부터는 접속을 거부한다.
+			if (cs.size() < 2)
 			{
-				cs[0] = accept(s, (LPSOCKADDR)&c_addr, &size);
-				WSAAsyncSelect(cs[0], hWnd, WM_ASYNC, FD_READ);
-				last = cs[0];
+				cs.push_back(accept(s, (LPSOCKADDR)&c_addr, &size));
+				WSAAsyncSelect(cs[cs.size() - 1], hWnd, WM_ASYNC, FD_READ | FD_CLOSE);
 
-				sprintf(sendmessage, "0%s%d", "환영하오↘낯↘선↗이 ", 0);
-				send(cs[0], sendmessage, strlen(sendmessage) + 1, 0);
+				sprintf(sendmessage, "$ID$%d", cs.size()-1);
+				send(cs[cs.size() - 1], sendmessage, strlen(sendmessage) + 1, 0);
 			}
 			else
 			{
-				cs[1] = accept(s, (LPSOCKADDR)&c_addr, &size);
-				WSAAsyncSelect(cs[0], hWnd, WM_ASYNC, FD_READ);
-				last = cs[1];
+				SOCKET tmp = accept(s, (LPSOCKADDR)&c_addr, &size);
+				WSAAsyncSelect(tmp, hWnd, WM_ASYNC, FD_READ | FD_CLOSE);
 
-				sprintf(sendmessage, "1%s%d", "환영하오↘낯↘선↗이 ", 0);
-				send(cs[1], sendmessage, strlen(sendmessage) + 1, 0);
+				sprintf(sendmessage, "$QUIT$더이상 입장할 수 없습니다.");
+				send(tmp, sendmessage, strlen(sendmessage) + 1, 0);
 			}
 			break;
 		case FD_READ:

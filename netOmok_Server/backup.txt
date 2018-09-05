@@ -1,0 +1,49 @@
+case FD_ACCEPT:
+			size = sizeof(c_addr);
+			if (cs[0] == NULL)
+			{
+				cs[0] = accept(s, (LPSOCKADDR)&c_addr, &size);
+				WSAAsyncSelect(cs[0], hWnd, WM_ASYNC, FD_READ);
+				last = cs[0];
+
+				sprintf(sendmessage, "0%s%d", "환영하오↘낯↘선↗이 ", 0);
+				send(cs[0], sendmessage, strlen(sendmessage) + 1, 0);
+			}
+			else
+			{
+				cs[1] = accept(s, (LPSOCKADDR)&c_addr, &size);
+				WSAAsyncSelect(cs[0], hWnd, WM_ASYNC, FD_READ);
+				last = cs[1];
+
+				sprintf(sendmessage, "1%s%d", "환영하오↘낯↘선↗이 ", 0);
+				send(cs[1], sendmessage, strlen(sendmessage) + 1, 0);
+			}
+			break;
+		case FD_READ:
+		{
+			memset(msg, 0, MSG_MAX_LENGTH);
+			SOCKET tmp = wParam;
+			msgLen = recv(tmp, buffer, MSG_MAX_LENGTH, 0);
+
+
+			buffer[msgLen] = NULL;
+#ifdef _UNICODE
+			msgLen = MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), NULL, NULL);
+			MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), msg, msgLen);
+
+			if (msgLen < MSG_MAX_LENGTH - 1)
+			{
+				TCHAR tcharTmp[MSG_MAX_LENGTH];
+				wsprintf(tcharTmp, _T("%s"), msg);
+				sprintf(sendmessage, "%s", buffer);
+				wsprintf(msg, _T("%s"), tcharTmp);
+			}
+#else		
+			strcpy_s(msg, buffer);
+#endif			
+				send(cs[0], sendmessage, strlen(sendmessage) + 1, 0);
+				send(cs[1], sendmessage, strlen(sendmessage) + 1, 0);		
+
+			InvalidateRgn(hWnd, NULL, TRUE);
+		}
+		break;

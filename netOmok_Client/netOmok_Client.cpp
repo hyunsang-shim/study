@@ -154,6 +154,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	char				sendmessage[200];
 	static TCHAR		MyMsg[200];
 	static TCHAR		NotMyMsg[200];
+	static std::string	resCommand;
 	static int			count = 0;
 	int					tmpLen, MyMsgLen, NotMyMsgLen;
 	char				buffer[200];
@@ -188,9 +189,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (lParam)
 		{
 		case FD_READ:
-
+		{
+			resCommand.clear();
 			tmpLen = recv(s, buffer, 200, 0);
 			buffer[tmpLen] = NULL;
+			resCommand += buffer;
+
+			//처음 받은 메시지이면
+			// 서버로부터 내 턴 번호를 부여받는 것이므로
+			// 내 턴 번호에 저장한다.
+			
+			if (strstr(buffer, "$ID$"))
+				resCommand.erase(strstr((buffer, "$ID$"), 4);
+			
+			if (tmp.find("$QUIT$"),0)
+				
+			
+			
+
 #ifdef _UNICODE
 			if (MyTurnNumber == buffer[0] - 48)
 			{
