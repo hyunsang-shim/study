@@ -11,7 +11,6 @@
 // for Windows Socket Programming
 #include <WinSock2.h>
 #pragma comment(lib, "ws2_32.lib")
-int WinSockTest_Client();
 //>>
 
 
@@ -258,17 +257,4 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
-}
-
-
-
-
-int WinSockTest_Client()
-{
-
-	
-
-	
-
-	return 1;
 }

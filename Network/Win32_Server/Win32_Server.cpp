@@ -5,6 +5,7 @@
 #include "Win32_Server.h"
 #include <stdio.h>
 #include <vector>
+#include <string>
 
 
 //
@@ -143,16 +144,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+#define MSG_MAX_LENGTH 200
+
 	static WSADATA		wsadata;
-	static SOCKET		s;
+	static SOCKET		s, last;
 	static std::vector<SOCKET> cs;
 	static int			cnt_connection = 0;
 	static int			found = -1;
-	static TCHAR		msg[200];
+	static TCHAR		msg[MSG_MAX_LENGTH];
 	static SOCKADDR_IN	addr = { 0 }, c_addr;
 	int					size, msgLen;
-	char				buffer[200];
-	char				sendmessage[200];
+	char				buffer[MSG_MAX_LENGTH];
+	char				sendmessage[MSG_MAX_LENGTH];
 
     switch (message)
     {
@@ -198,49 +201,75 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (cnt_connection == 0)
 			{
 				cs.push_back(accept(s, (LPSOCKADDR)&c_addr, &size));
-				WSAAsyncSelect(cs.at(cnt_connection), hWnd, WM_ASYNC, FD_READ);				
+				WSAAsyncSelect(cs.at(cnt_connection), hWnd, WM_ASYNC, FD_READ);		
+				last = cs.at(cs.size() - 1);
+
+				sprintf(sendmessage, "%s%d%s", "환영하오↘낯↘선↗이 ", 0, "이여↘.");
+				send(cs.at(0), sendmessage, strlen(sendmessage) + 1, 0);
 			}
 			else
 			{
-				SOCKET tmp;
-				tmp = accept(s, (LPSOCKADDR)&c_addr, &size);
+				SOCKET tmp = accept(s, (LPSOCKADDR)&c_addr, &size);
 				for (int i = 0; i < cnt_connection; i++)
 				{
 					if (tmp == cs.at(i))
 					{
 						WSAAsyncSelect(cs.at(i), hWnd, WM_ASYNC, FD_READ);						
-						found = i;
+						found = i;					
 						break;
 					}
 				}
 				
-				if (found < 0)
+				if (last != tmp)
 				{
 					cs.push_back(tmp);
 					WSAAsyncSelect(cs.at(cnt_connection), hWnd, WM_ASYNC, FD_READ);
-					found = cnt_connection;
+					found = cnt_connection;					
+					sprintf(sendmessage, "%s%d%s", "환영하오↘낯↘선↗이 ", cnt_connection, "이여↘.");
+					send(cs.at(cnt_connection), sendmessage, strlen(sendmessage) + 1, 0);
 				}
-
 			}
 			cnt_connection = cs.size();
+			found = -1;
 			break;			
 		case FD_READ:
-			msgLen = recv(cs.at(found), buffer, 100, 0);
+		{
+			memset(msg, 0, MSG_MAX_LENGTH);
+			SOCKET tmp = wParam;
+			msgLen = recv(tmp, buffer, MSG_MAX_LENGTH, 0);
+
+			for (int i = 0; i < cs.size(); i++)
+			{
+				if (cs.at(i) == tmp)
+				{
+					last = i;
+					break;
+				}
+			}
+
 			buffer[msgLen] = NULL;
 #ifdef _UNICODE
 			msgLen = MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), NULL, NULL);
 			MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), msg, msgLen);
-			msg[msgLen] = NULL;
-#else
+
+			if (msgLen < MSG_MAX_LENGTH - 1)
+			{	
+				TCHAR tcharTmp[MSG_MAX_LENGTH];
+				wsprintf(tcharTmp, _T("%d:%s"), last, msg);
+				sprintf(sendmessage, "%d:%s", last, buffer);
+				wsprintf(msg, _T("%s"), last, tcharTmp);
+			}
+#else		
+			strcpy_s(msg, last+48);
 			strcpy_s(msg, buffer);
 #endif
-
 			for (int i = 0; i < cs.size(); i++)
-			{				
-				send(cs.at(i), buffer, strlen(buffer) + 1, 0);
+			{
+				send(cs.at(i), sendmessage, strlen(sendmessage) + 1, 0);
 			}
 
 			InvalidateRgn(hWnd, NULL, TRUE);
+		}
 			break;
 		default:
 			break;
@@ -268,7 +297,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);	
 			TextOut(hdc, 10, 10, _T("아무 키나 누르세요."), lstrlen(_T("아무 키나 누르세요.")));
-			TextOut(hdc, 10, 50, msg, (int)_tcslen(msg));
+			TextOut(hdc, 10, 30, msg, (int)lstrlen(msg));
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
 
             EndPaint(hWnd, &ps);
@@ -281,8 +310,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			for (int i = 0; i < cs.size(); i++)
 			{
-				sprintf(sendmessage, "%s%d%s", "조선의↗궁궐에↘당도한 것을→환영하오↘낯↘선↗이", i, "이여↘.");
-				send(cs.at(i), sendmessage, strlen(sendmessage) + 1, 0);
+
 			}
 		}
 		break;
