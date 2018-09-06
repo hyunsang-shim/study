@@ -13,9 +13,11 @@
 // for Windows Socket Programming
 #include <WinSock2.h>
 #pragma comment(lib, "ws2_32.lib")
-int WinSockTest_Server();
 //>>
+
+
 #define MAX_LOADSTRING 100
+#define MSG_MAX_LENGTH 200
 #define WM_ASYNC WM_USER + 2
 
 #define GAME 1234
@@ -23,6 +25,8 @@ int WinSockTest_Server();
 #define SYSTEM_CANNOT_JOIN 9999
 #define SYSTEM_KEEP_ALIVE 7777
 #define SYSTEM_NEW_ID 2000
+#define SYSTEM_INVALID_ACTION 6666
+
 
 
 //  메시지 구조체
@@ -33,19 +37,21 @@ typedef struct omok_message {
 	int NewStoneY;
 	short StoneColor;
 	int NextTurn;
+	int GameState;
 }OMOK_MSG;
 
 typedef struct omok_system_msg {
 	int MsgType;
-	char MSG[180];
+	char MSG1[80];
+	char MSG2[80];
 }OMOK_MSG_SYS;
 
 // 전역 변수:
 HINSTANCE			hInst;                           // 현재 인스턴스입니다.
 WCHAR				szTitle[MAX_LOADSTRING];         // 제목 표시줄 텍스트입니다.
 WCHAR				szWindowClass[MAX_LOADSTRING];   // 기본 창 클래스 이름입니다.
-OMOK_MSG			GameMessage;						 // 게임 진행용 메시지 구조체
-OMOK_MSG_SYS		SystemMessage;
+static OMOK_MSG		GameMessage, Recieved;		// 게임 진행 메시지 전송/수신용 구조체
+static OMOK_MSG_SYS	SystemMessage;				// 시스템 메시지 전송.수신용 구조체
 
 char				Board[19][19] = { 0 };
 
@@ -169,18 +175,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-#define MSG_MAX_LENGTH 200
 
-	static WSADATA		wsadata;
-	static SOCKET		s, last;
-	static std::vector<SOCKET> cs;
-	static int			cnt_connection = 0;
-	static int			found = -1;
-	static TCHAR		msg[MSG_MAX_LENGTH];
-	static SOCKADDR_IN	addr = { 0 }, c_addr;
-	int					size, msgLen;
-	char				buffer[MSG_MAX_LENGTH];
-	char				sendmessage[MSG_MAX_LENGTH];
+	static WSADATA		wsadata;					// WSADATA 구조체
+	static SOCKET		s;							// 서버의 소켓 구조체
+	static std::vector<SOCKET> cs;					// 클라이언트 소켓 저장 공간(vector)		
+	static SOCKADDR_IN	addr = { 0 }, c_addr;		// 소켓 주소. 
+	int					size, MsgLen;				// 버퍼 사이즈, 소켓주소 크기 등을 저장하기 위한 변수
+	char				buffer[MSG_MAX_LENGTH];		// 받은 메시지를 입시 저장하는 공간	
+	static int			LastTurn = -1;				// 마지막으로 움직인 플레이어.
+	static int			CurrentPlayer;				// 마지막으로 돌을 둔 유저의 Socket ID
+	static int			NextPlayer;					// 다음 차례의 플레이어
+	static bool			GameState = false;					// 게임 진행 상태
 
 	switch (message)
 	{
@@ -213,54 +218,118 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (lParam)
 		{
 		case FD_ACCEPT:
+		{
 			size = sizeof(c_addr);
 			// 접속 시도가 있을 때마다 접속을 받는다. 2번째 이후부터는 접속을 거부한다.
-			if (cs.size() < 2)
+
+			//
+			// 2번째 플레이어가 들어왔으면 게임 시작을 위해 시작 정보를 넘겨준다.
+			if (cs.size() == 1)
+			{
+
+				// 2번째 유저를 바로 대전 상대로 넣는다.
+				cs.push_back(accept(s, (LPSOCKADDR)&c_addr, &size));
+				WSAAsyncSelect(cs[cs.size() - 1], hWnd, WM_ASYNC, FD_READ | FD_CLOSE);
+
+				// 첫번째 접속 유저에게 보낼 메시지 세팅
+				GameMessage.MsgType = GAME;
+				GameMessage.NewStoneX = -1;
+				GameMessage.NewStoneY = -1;
+				GameMessage.ThisTurn = cs[0];
+				GameMessage.NextTurn = cs[1];
+				GameMessage.StoneColor = 1;
+				GameMessage.GameState = 1;
+				CurrentPlayer = cs[0];
+				send(cs[0], (char*)&GameMessage, sizeof(GameMessage) + 1, 0);
+
+
+				
+				// 두번째 접속 유저에게 보낼 메시지 세팅
+				GameMessage.ThisTurn = cs[0];
+				GameMessage.NextTurn = cs[1];
+				GameMessage.StoneColor = -1;				
+				NextPlayer = cs[1];
+				send(cs[1], (char*)&GameMessage, sizeof(GameMessage) + 1, 0);
+
+				GameState = true;
+			}
+			//접속자가 없으면 받아들인다.
+			else if (cs.size() == 0)
 			{
 				cs.push_back(accept(s, (LPSOCKADDR)&c_addr, &size));
 				WSAAsyncSelect(cs[cs.size() - 1], hWnd, WM_ASYNC, FD_READ | FD_CLOSE);
 				SystemMessage.MsgType = SYSTEM_NEW_ID;
-				sprintf(SystemMessage.MSG, "%d", cs[cs.size() - 1]);
+				sprintf(SystemMessage.MSG1, "%d", cs[cs.size() - 1]);
+				
+				if (cs.size() == 1)
+					sprintf(SystemMessage.MSG2, "%d", 1);
+				else
+					sprintf(SystemMessage.MSG2, "%d", -1);
+
 
 				send(cs[cs.size() - 1], (char*)&SystemMessage, sizeof(SystemMessage) + 1, 0);
+
 			}
 			else
 			{
 				SOCKET tmp = accept(s, (LPSOCKADDR)&c_addr, &size);
 				WSAAsyncSelect(tmp, hWnd, WM_ASYNC, FD_READ | FD_CLOSE);
-
-				sprintf(sendmessage, "더이상 입장할 수 없습니다.");
-				send(tmp, sendmessage, strlen(sendmessage) + 1, 0);
+				SystemMessage.MsgType = SYSTEM_CANNOT_JOIN;
+				sprintf_s(SystemMessage.MSG1, "접속 실패");
+				sprintf_s(SystemMessage.MSG2, "인원 초과로 입장에 실패하였습니다.\n게임을 종료합니다.");
+				send(tmp, (char*)&SystemMessage, sizeof(SystemMessage), 0);
 			}
+		}
 			break;
 		case FD_READ:
 		{
-			memset(msg, 0, MSG_MAX_LENGTH);
-			SOCKET tmp = wParam;
-			msgLen = recv(tmp, buffer, MSG_MAX_LENGTH, 0);
-
-
-			buffer[msgLen] = NULL;
-#ifdef _UNICODE
-			msgLen = MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), NULL, NULL);
-			MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), msg, msgLen);
-
-			if (msgLen < MSG_MAX_LENGTH - 1)
+			memset(buffer, 0, 200);
+			MsgLen = recv(CurrentPlayer, buffer, 200, 0);
+			buffer[MsgLen] = NULL;
+			OMOK_MSG_SYS* tmpsys = (OMOK_MSG_SYS*)buffer;
+			
+			switch (tmpsys->MsgType)
 			{
-				TCHAR tcharTmp[MSG_MAX_LENGTH];
-				wsprintf(tcharTmp, _T("%s"), msg);
-				sprintf(sendmessage, "%s", buffer);
-				wsprintf(msg, _T("%s"), tcharTmp);
-			}
-#else		
-			strcpy_s(msg, buffer);
-#endif			
-			if (!cs.empty())
-			{
+			case GAME:
+				//받은 메시지를 가공
+				OMOK_MSG* tmp = (OMOK_MSG*)buffer;
+				Recieved.ThisTurn = tmp->ThisTurn;			// 방금 돌을 둔 유저
+				Recieved.NewStoneX = tmp->NewStoneX;		// 방금 돌을 둔 유저의 돌 위치 column 값
+				Recieved.NewStoneY = tmp->NewStoneY;		// 방금 돌을 둔 유저의 돌 위치 row 값
+				Recieved.StoneColor = tmp->StoneColor;		// 방금 돌을 둔 유저의 돌 색깔
+				Recieved.NextTurn = tmp->NextTurn;			// 다음 턴 정보 (무시)
+
+
+				// 서버측 턴 정보 갱신
+				// 이번 턴에 해야 하는 유저가 맞다면 OK
+				// 아니면 ERROR (돌아가!)
+				if (Recieved.ThisTurn == CurrentPlayer)
+				{
+					CurrentPlayer = NextPlayer;
+					NextPlayer = Recieved.ThisTurn;
+				}
+				else
+				{
+					SystemMessage.MsgType = SYSTEM_INVALID_ACTION;
+				}
+
+				// 바둑판 정보 업데이트
+				Board[Recieved.NewStoneY][Recieved.NewStoneX] = Recieved.StoneColor;
+
+				// 업데이트 된 정보를 준비
+				GameMessage.MsgType = GAME;
+				GameMessage.NewStoneX = Recieved.NewStoneX;
+				GameMessage.NewStoneY = Recieved.NewStoneY;
+				GameMessage.NextTurn = NextPlayer;
+				GameMessage.ThisTurn = CurrentPlayer;
+				GameMessage.StoneColor = Recieved.StoneColor;
+
 				for (int i = 0; i < cs.size(); i++)
 				{
-					send(cs[i], sendmessage, strlen(sendmessage) + 1, 0);
+					send(cs[i], (char*)&GameMessage, sizeof(GameMessage), 0);
 				}
+				
+				break;
 			}
 
 			InvalidateRgn(hWnd, NULL, TRUE);
@@ -289,9 +358,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					{
 						if (cs[i] != wParam)
 						{
-							memset(sendmessage, 0, sizeof(sendmessage));
-							sprintf(sendmessage, "%s(%d)", "상대방이 접속을 종료했습니다.", wParam);
-							send(cs[i], sendmessage, strlen(sendmessage) + 1, 0);
+							//접종 메시지
 						}
 					}
 				}
@@ -299,76 +366,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		default:
 			break;
-		}
-		break;
-	case WM_COMMAND:
-	{
-		int wmId = LOWORD(wParam);
-		// 메뉴 선택을 구문 분석합니다.
-		switch (wmId)
-		{
-		case IDM_ABOUT:
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			break;
-		case IDM_EXIT:
-			DestroyWindow(hWnd);
-			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-	}
-	break;
+		}		
+		break;	
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hWnd, &ps);
-		TextOut(hdc, 10, 30, msg, (int)lstrlen(msg));
-		
+		HDC hdc = BeginPaint(hWnd, &ps);		
 		// TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
 
 		EndPaint(hWnd, &ps);
 	}
-	break;
-	case WM_KEYDOWN:
-		if (wParam == VK_SPACE)
-		{
-			if (!cs.empty())
-			{
-				for (int i = 0; i < cs.size(); i++)
-				{
-					SystemMessage.MsgType = SYSTEM_KEEP_ALIVE;
-					SystemMessage.MSG[0] = '1';
-					sprintf(sendmessage, "%d님, 살아있죠?", cs[i]);
-					send(cs[i], sendmessage, strlen(sendmessage) + 1, 0);
-				}
-			}
-		}
-		else if (wParam == VK_RETURN)
-		{
-
-			if (!cs.empty())
-			{
-				GameMessage.ThisTurn = cs[rand() % cs.size()];
-				GameMessage.NewStoneX = rand() % 19;
-				GameMessage.NewStoneY = rand() % 19;
-				if (GameMessage.ThisTurn == cs[0])
-					GameMessage.StoneColor = -1;
-				else 
-					GameMessage.StoneColor = 1;
-				GameMessage.NextTurn = cs[rand() % cs.size()];
-
-				for (int i = 0; i < cs.size(); i++)
-				{					
-					
-
-					send(cs[i], (char*)&GameMessage, sizeof(GameMessage), 0);
-				}
-			}
-		}
-
-		InvalidateRgn(hWnd, NULL, FALSE);
-		break;
-
+	break;	
 	case WM_DESTROY:
 		closesocket(s);
 		WSACleanup();
@@ -378,65 +386,4 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
-}
-
-// 정보 대화 상자의 메시지 처리기입니다.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	UNREFERENCED_PARAMETER(lParam);
-	switch (message)
-	{
-	case WM_INITDIALOG:
-		return (INT_PTR)TRUE;
-
-	case WM_COMMAND:
-		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-		{
-			EndDialog(hDlg, LOWORD(wParam));
-			return (INT_PTR)TRUE;
-		}
-		break;
-	}
-	return (INT_PTR)FALSE;
-}
-
-
-
-
-int WinSockTest_Server()
-{
-	TCHAR			message[300];
-	WSADATA			wsadata;
-	SOCKET			s;
-	SOCKADDR_IN		addr = { 0 };
-
-
-	TCHAR Title[128];
-	wsprintf(Title, _T("서버 알림"));
-
-	do {
-		SOCKADDR_IN	c_addr;
-		char		buffer[100];
-
-#ifdef _UNICODE
-		TCHAR wbuffer[100];
-#endif	// _UNICODE
-		int			msgLen;
-		int			size = sizeof(c_addr);
-		SOCKET		cs = accept(s, (LPSOCKADDR)&c_addr, &size);
-		msgLen = recv(cs, buffer, 100, 0);
-		buffer[msgLen] = NULL;
-
-#ifdef _UNICODE
-		msgLen = MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), NULL, NULL);
-		MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), wbuffer, msgLen);
-		wbuffer[msgLen] = NULL;
-		wsprintf(message, _T("[클라이언트] 님의 말 : \n%s\n\n클라이언트 접속을 확인 했습니다.\n서버를 종료하시겠습니까?"), wbuffer);
-#else
-		wsprintf(message, _T("[클라이언트] 님의 말 : \n%s\n\n클라이언트 접속을 확인 했습니다.\n서버를 종료하시겠습니까?"), buffer);
-#endif // _UNICODE
-	} while (MessageBox(NULL, message, Title, MB_YESNO) == IDNO);
-
-
-	return 1;
 }

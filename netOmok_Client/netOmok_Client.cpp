@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "netOmok_Client.h"
 #include <vector>
+
 //
 //
 // for Windows Socket Programming
@@ -22,8 +23,11 @@
 #define SYSTEM_CANNOT_JOIN 9999
 #define SYSTEM_KEEP_ALIVE 7777
 #define SYSTEM_NEW_ID 2000
+#define SYSTEM_INVALID_ACTION 6666
 
 
+
+#define SCREEN_SIZE 750
 #define BOARD_SIZE 500
 #define BOARD_LINES 19
 #define SQUARE_WIDTH 23
@@ -40,12 +44,14 @@ typedef struct OMOK_MSG {
 	int NewStoneY;
 	short StoneColor;
 	int NextTurn;
+	int GameState;
 }OMOK_MSG;
 
 
 typedef struct omok_system_msg {
 	int MsgType;
-	char MSG[180];
+	char MSG1[80];
+	char MSG2[80];
 }OMOK_MSG_SYS;
 
 
@@ -53,12 +59,14 @@ typedef struct omok_system_msg {
 HINSTANCE				hInst;                          // 현재 인스턴스입니다.
 WCHAR					szTitle[MAX_LOADSTRING];        // 제목 표시줄 텍스트입니다.
 WCHAR					szWindowClass[MAX_LOADSTRING];  // 기본 창 클래스 이름입니다.
-OMOK_MSG					MyMessage, RecievedMessage;						// 메시지 전송/수신용 구조체
-std::vector<POINT>		MyStones, OpponentStones;		// 바둑 돌 좌표 정보 저장용 벡터
+OMOK_MSG				MyMessage, RecievedMessage;		// 메시지 전송/수신용 구조체
+OMOK_MSG_SYS			SystemMessage;					// 시스템 메시지 송/수신용 구조체
 RECT					RectClient;						// 화면 그리기용 클라이언트 영역
-char					Board[19][19] = { 0 };
-//static int				flag = 1;						//돌 영역을 확인하기 위한 임시 사각형
-int						MySocketID = -1;
+char					Board[19][19] = { 0 };			// 바둑판 정보
+int						MySocketID = -1;				// 방에 접속 했을 때 배정 받는 소켓 ID
+int						MyStoneColor = 0;				// 내가 배정 받은 돌 색깔
+bool					isMyTurn = false;				// 내 턴인가?
+
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -67,6 +75,8 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 void				DrawGameScene(HDC FrontDC);
 void				DrawBoard(HDC BackMemDC);
 void				DrawStones(HDC BackMemDC);
+void				ShowDebugInfo(HDC BackMemDC);
+
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -179,36 +189,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static WSADATA		wsadata;
 	static SOCKET		s;	// 서버 소켓
 	static SOCKADDR_IN	addr = { 0 };
-	char				sendmessage[200];
-	static TCHAR		MyMsg[200];
-	static TCHAR		NotMyMsg[200];
-	static std::string	resCommand;
-	static int			count = 0;
-	int					tmpLen, MsgLen;
 	char				buffer[200];
-	static int			msgLines = 0;
-	static int			mouseX, mouseY;
-	static POINT		laststone;
-	static int			MyTurnNumber = -1;
-	std::string			tmp;
+	int					bufferLen;
+
 
     switch (message)
     {
 	case WM_CREATE:
-		SetRect(&RectClient, 0, 0, 500 + (GetSystemMetrics(SM_CXFRAME) << 1), 500 + (GetSystemMetrics(SM_CYFRAME) << 1) + GetSystemMetrics(SM_CYCAPTION));
+	{
+		SetRect(&RectClient, 0, 0, BOARD_SIZE + (GetSystemMetrics(SM_CXFRAME) << 1), BOARD_SIZE + (GetSystemMetrics(SM_CYFRAME) << 1) + GetSystemMetrics(SM_CYCAPTION));
 		AdjustWindowRect(&RectClient, WS_OVERLAPPEDWINDOW, FALSE);
-				
+
 		WSAStartup(MAKEWORD(2, 2), &wsadata);
 		s = socket(AF_INET, SOCK_STREAM, 0);
 		addr.sin_family = AF_INET;
 		addr.sin_port = 20;
 		addr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
-		WSAAsyncSelect(s, hWnd, WM_ASYNC, FD_READ);
+		WSAAsyncSelect(s, hWnd, WM_ASYNC, FD_READ | FD_CLOSE);
+
 		if (connect(s, (LPSOCKADDR)&addr, sizeof(addr)) != -1)
 		{
 			MessageBox(NULL, _T("Connection Failed!"), _T("Error!!"), MB_OK);
 		}
-		
+	}
 		break;	
 	case WM_ASYNC:
 		switch (lParam)
@@ -216,39 +219,76 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case FD_READ:
 			{
 				memset(buffer, 0, 200);
-				MsgLen = recv(s, buffer, 200, 0);
-				buffer[MsgLen] = NULL;
+				bufferLen = recv(s, buffer, 200, 0);
+				buffer[bufferLen] = NULL;
 				OMOK_MSG_SYS* tmpsys = (OMOK_MSG_SYS*)buffer;
 
 				switch (tmpsys->MsgType)
 				{
-				case SYSTEM_NEW_ID:
-					MySocketID = atoi(tmpsys->MSG);
-					break;
-					/*
-					if (MySocketID == -1)
+					case SYSTEM_INVALID_ACTION:
+						return 0;
+						break;
+					case SYSTEM_NEW_ID:
+						MySocketID = atoi(tmpsys->MSG1);
+						MyStoneColor = atoi(tmpsys->MSG2);
+						InvalidateRgn(hWnd, NULL, FALSE);
+						break;
+					case SYSTEM_CANNOT_JOIN:
 					{
-						MySocketID = atoi(buffer);
+						TCHAR caption[100];
+						int captionLen;
+						TCHAR description[100];
+						int descriptionLen;
+	#ifdef _UNICODE					
+						captionLen = MultiByteToWideChar(CP_ACP, 0, tmpsys->MSG1, sizeof(tmpsys->MSG1), NULL, NULL);
+						MultiByteToWideChar(CP_ACP, 0, tmpsys->MSG1, sizeof(tmpsys->MSG1), caption, captionLen);
+						caption[captionLen] = NULL;
+						descriptionLen = MultiByteToWideChar(CP_ACP, 0, tmpsys->MSG2, sizeof(tmpsys->MSG2), NULL, NULL);
+						MultiByteToWideChar(CP_ACP, 0, tmpsys->MSG2, sizeof(tmpsys->MSG2), description, descriptionLen);
+						description[descriptionLen] = NULL;
+	#else
+						strcpy_s(caption, tmpsys->MSG1);
+						strcpy_s(description, tmpsys->MSG2);
+
+	#endif
+						MessageBox(NULL, description, caption, MB_OK);
+						PostQuitMessage(0);
 					}
-					*/
-				case GAME:
-				{
-					recv(s, buffer, 200, 0);
-					OMOK_MSG* tmp = (OMOK_MSG*)buffer;
-
-					RecievedMessage.ThisTurn = tmp->ThisTurn;
-					RecievedMessage.NewStoneX = tmp->NewStoneX;
-					RecievedMessage.NewStoneY = tmp->NewStoneY;
-					RecievedMessage.StoneColor = tmp->StoneColor;
-					RecievedMessage.NextTurn = tmp->NextTurn;
+						break;
+					case GAME:
+					{
+						OMOK_MSG* tmp = (OMOK_MSG*)buffer;
 
 
-					Board[RecievedMessage.NewStoneY][RecievedMessage.NewStoneX] = RecievedMessage.StoneColor;
-					InvalidateRgn(hWnd, NULL, TRUE);
-				}
-				break;
-				case SYSTEM_KEEP_ALIVE:
+						// 2번째 유저는 아직 소켓 아이디를 할당 받지 못한 상태.
+						// 먼저 들어온 유저가 백을 잡고 선공 하므로
+						// 나중 유저는 자연히 흑을 잡고 후공을 하게 된다.
+						if (MySocketID == -1)
+						{
+							MySocketID = tmp->NextTurn;
+							MyStoneColor = tmp->StoneColor;
+						}
+
+
+						RecievedMessage.ThisTurn = tmp->ThisTurn;		// 이번 턴
+						RecievedMessage.NewStoneX = tmp->NewStoneX;		// 상대방이 놓은 돌 column 값
+						RecievedMessage.NewStoneY = tmp->NewStoneY;		// 상대방이 놓은 돌 row 값
+						RecievedMessage.StoneColor = tmp->StoneColor;	// 상대방의 돌 색깔
+						RecievedMessage.NextTurn = tmp->NextTurn;		// 다음 턴
+						RecievedMessage.GameState = tmp->GameState;		// 현재 게임 진행 상태
+
+						if (RecievedMessage.ThisTurn == MySocketID)
+							isMyTurn = true;
+						else
+							isMyTurn = false;
+					
+						if (RecievedMessage.NewStoneY != -1)
+							Board[RecievedMessage.NewStoneY][RecievedMessage.NewStoneX] = RecievedMessage.StoneColor;
+						InvalidateRgn(hWnd, NULL, TRUE);
+					}
 					break;
+					case SYSTEM_KEEP_ALIVE:
+						break;
 				}
 			}
 			break;
@@ -263,50 +303,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
 			
 			DrawGameScene(hdc);
-			TextOut(hdc, 550, 10, _T("My ID : "), lstrlen(_T("MY ID : ")));
-			TCHAR tmp[32];
-			wsprintf(tmp, _T("%d"), MySocketID);			
-			TextOut(hdc, 600, 10, tmp, lstrlen(tmp));
-			
-			wsprintf(tmp, _T("MyMessage"));
-			TextOut(hdc, 550, 30, tmp, lstrlen(tmp));
-
-			wsprintf(tmp, _T("This Turn : %d"), MyMessage.ThisTurn);
-			TextOut(hdc, 550, 50, tmp, lstrlen(tmp));
-
-			wsprintf(tmp, _T("NextTurn : %d"), MyMessage.NextTurn);
-			TextOut(hdc, 550, 70, tmp, lstrlen(tmp));
-
-			wsprintf(tmp, _T("Stone X : %d"), MyMessage.NewStoneX);
-			TextOut(hdc, 550, 90, tmp, lstrlen(tmp));
-
-			wsprintf(tmp, _T("Stone Y : %d"), MyMessage.NewStoneY);
-			TextOut(hdc, 550, 110, tmp, lstrlen(tmp));
-
-
-
-			wsprintf(tmp, _T("Recieved Message"));
-			TextOut(hdc, 750, 30, tmp, lstrlen(tmp));
-
-			wsprintf(tmp, _T("This Turn : %d"), RecievedMessage.ThisTurn);
-			TextOut(hdc, 750, 50, tmp, lstrlen(tmp));
-
-			wsprintf(tmp, _T("NextTurn : %d"), RecievedMessage.NextTurn);
-			TextOut(hdc, 750, 70, tmp, lstrlen(tmp));
-
-			wsprintf(tmp, _T("Stone X : %d"), RecievedMessage.NewStoneX);
-			TextOut(hdc, 750, 90, tmp, lstrlen(tmp));
-
-			wsprintf(tmp, _T("Stone Y : %d"), RecievedMessage.NewStoneY);
-			TextOut(hdc, 750, 110, tmp, lstrlen(tmp));
 
             EndPaint(hWnd, &ps);
         }
         break;
 	case WM_GETMINMAXINFO:
-		((MINMAXINFO *)lParam)->ptMaxTrackSize.x = RectClient.right + BOARD_SIZE;
+		((MINMAXINFO *)lParam)->ptMaxTrackSize.x = RectClient.right + BOARD_SIZE/2;
 		((MINMAXINFO *)lParam)->ptMaxTrackSize.y = RectClient.bottom;
-		((MINMAXINFO *)lParam)->ptMinTrackSize.x = RectClient.right + BOARD_SIZE;
+		((MINMAXINFO *)lParam)->ptMinTrackSize.x = RectClient.right + BOARD_SIZE/2;
 		((MINMAXINFO *)lParam)->ptMinTrackSize.y = RectClient.bottom;
 		return FALSE;
     case WM_DESTROY:
@@ -318,30 +322,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (LOWORD(lParam) <= BOARD_SIZE-32 && LOWORD(lParam) >= 32)
 		{
 			if (HIWORD(lParam) <= BOARD_SIZE-16 && HIWORD(lParam) >= 8)
-			{	
-				if (Board[(int)(HIWORD(lParam) - 12) / 25][(int)(LOWORD(lParam) - 28) / 23] == 0)
-					Board[(int)(HIWORD(lParam) - 12) / 25][(int)(LOWORD(lParam) - 28) / 23] = 1;
-
-				send(s, "a-Yo?", strlen("a-Yo?"), 0);
-			}			
-		}		
-		
-		InvalidateRgn(hWnd, NULL, FALSE);
-		break;
-	case WM_RBUTTONDOWN:
-		if (LOWORD(lParam) <= BOARD_SIZE - 32 && LOWORD(lParam) >= 32)
-		{
-			if (HIWORD(lParam) <= BOARD_SIZE - 16 && HIWORD(lParam) >= 8)
 			{
-				if (Board[(int)(HIWORD(lParam) - 12) / 25][(int)(LOWORD(lParam) - 28) / 23] == 0)
-				Board[(int)(HIWORD(lParam) - 12) / 25][(int)(LOWORD(lParam) - 28) / 23] = -1;
+				int tmp_row = (int)(HIWORD(lParam) - 12) / 25;
+				int tmp_col = (int)(LOWORD(lParam) - 28) / 23;
+				if (Board[tmp_row][tmp_col]== 0 && isMyTurn)
+				{
+					MyMessage.MsgType = GAME;
+					MyMessage.NewStoneX = (int)(LOWORD(lParam) - 28) / 23;
+					MyMessage.NewStoneY = (int)(HIWORD(lParam) - 12) / 25;
+					MyMessage.StoneColor = MyStoneColor;
+					MyMessage.ThisTurn = MySocketID;
+					MyMessage.NextTurn = 0;
 
-
-				sprintf(sendmessage, "%s", "안 헬로 서버!");
-				send(s, sendmessage, strlen(sendmessage), 0);
-			}
-		}
-		
+					send(s, (char*)&MyMessage, sizeof(MyMessage), 0);
+					isMyTurn = false;
+				}
+				
+			}			
+		}				
 		InvalidateRgn(hWnd, NULL, FALSE);
 		break;
     default:
@@ -358,7 +356,7 @@ void DrawGameScene(HDC FrontDC)
 
 	//make BackMemDC's size properly and select source image onto BackMemDC
 	HDC tmpDC = GetDC(FindWindow(szWindowClass, szTitle));
-	HBITMAP hBit = CreateCompatibleBitmap(FrontDC, 500, 500);
+	HBITMAP hBit = CreateCompatibleBitmap(FrontDC, SCREEN_SIZE, SCREEN_SIZE);
 	hOldBitmap = (HBITMAP)SelectObject(BackMemDC, hBit);
 	ReleaseDC(FindWindow(szWindowClass, szTitle), tmpDC);
 	DeleteObject(hBit);
@@ -366,8 +364,12 @@ void DrawGameScene(HDC FrontDC)
 
 	DrawBoard(BackMemDC);
 	DrawStones(BackMemDC);
+	ShowDebugInfo(BackMemDC);
+	
 
-	BitBlt(FrontDC, 0, 0, 500, 500, BackMemDC, 0, 0, SRCCOPY);
+
+	BitBlt(FrontDC, 0, 0, SCREEN_SIZE, SCREEN_SIZE, BackMemDC, 0, 0, SRCCOPY);
+
 
 	SelectObject(BackMemDC, hOldBitmap);
 	DeleteObject(hOldBitmap);
@@ -378,17 +380,22 @@ void DrawBoard(HDC BackMemDC)
 {
 	HBRUSH boardBG = CreateSolidBrush(RGB(248,200,120)), oldBrush;
 
-	oldBrush = (HBRUSH)SelectObject(BackMemDC, boardBG);
+	oldBrush = (HBRUSH)SelectObject(BackMemDC, GetStockObject(WHITE_BRUSH));
+	Rectangle(BackMemDC, 0, 0, SCREEN_SIZE, SCREEN_SIZE);
 
-	Rectangle(BackMemDC, 0, 0, 500, 500);
+	oldBrush = (HBRUSH)SelectObject(BackMemDC, boardBG);
+	Rectangle(BackMemDC, 0, 0, BOARD_SIZE, BOARD_SIZE);
 
 	for (int i = 0; i < 18; i++)
 		for (int j = 0; j < 18; j++)
 		{
 			Rectangle(BackMemDC, 40 + j * 23, 25 + i * 25, 41 + (j + 1) * 23, 26 + (i + 1) * 25);
 		}
+		
+	DeleteObject(SelectObject(BackMemDC, oldBrush));
 
-	oldBrush = (HBRUSH)SelectObject(BackMemDC, GetStockObject(NULL_BRUSH));
+
+
 }
 
 void DrawStones(HDC BackMemDC)
@@ -409,6 +416,50 @@ void DrawStones(HDC BackMemDC)
 			}
 		}
 	}
+}
+
+
+void ShowDebugInfo(HDC BackMemDC)
+{
+	if (MySocketID != -1)
+	{
+		TCHAR tmp[100];
+		wsprintf(tmp, _T("내 소켓ID : %d"), MySocketID);
+		TextOut(BackMemDC, 515, 1, tmp, lstrlen(tmp));
+	}
+
+	switch (RecievedMessage.GameState)
+	{
+	case 0:
+		TextOut(BackMemDC, 515, 30, _T("대전 상대를 기다리는 중입니다."), lstrlen(_T("대전 상대를 기다리는 중입니다.")));
+		break;
+	case 1:
+	{
+		if (isMyTurn)
+		{
+			TextOut(BackMemDC, 530, 30, _T("당신의 차례입니다."), lstrlen(_T("당신의 차례입니다.")));
+			if (MyStoneColor == -1)
+				SelectObject(BackMemDC, GetStockObject(BLACK_BRUSH));
+			else
+				SelectObject(BackMemDC, GetStockObject(WHITE_BRUSH));
+
+			Ellipse(BackMemDC, 580, 60, 610, 90);
+		}
+		else
+		{
+			TextOut(BackMemDC, 530, 30, _T("상대방의 차례입니다."), lstrlen(_T("상대방의 차례입니다.")));
+
+			if (MyStoneColor == -1)
+				SelectObject(BackMemDC, GetStockObject(WHITE_BRUSH));
+			else
+				SelectObject(BackMemDC, GetStockObject(BLACK_BRUSH));
+
+			Ellipse(BackMemDC, 580, 60, 610, 90);
+		}
+	}
+	break;
+	}
+
 }
 
 
