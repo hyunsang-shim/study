@@ -14,15 +14,23 @@
 
 
 #define MAX_LOADSTRING 100
+#define MSG_MAX_LENGTH 200
 #define WM_ASYNC WM_USER + 2
+
 #define BOARD_SIZE 500
-#define CHAT_WINDOW_WIDTH 500
+#define BOARD_LINES 19
+#define SQUARE_WIDTH 23
+#define SQUARE_HEIGHT 25
+#define BOARD_MARGIN_HEIGHT 25
+#define BOARD_MARGIN_WIDTH 40
 
 
 //  메시지 구조체
 typedef struct OMOK_MSG {
-	bool turn;
-	POINT newStone;
+	char SocketID[32];
+	char NewStoneX[3];
+	char NewStoneY[3];
+	char ThisTurn[32];
 }OMOK_MSG;
 
 
@@ -31,16 +39,22 @@ typedef struct OMOK_MSG {
 HINSTANCE				hInst;                          // 현재 인스턴스입니다.
 WCHAR					szTitle[MAX_LOADSTRING];        // 제목 표시줄 텍스트입니다.
 WCHAR					szWindowClass[MAX_LOADSTRING];  // 기본 창 클래스 이름입니다.
-OMOK_MSG					MyMessage;						// 메시지 전송용 구조체
+OMOK_MSG					MyMessage, RecievedMessage;						// 메시지 전송/수신용 구조체
 std::vector<POINT>		MyStones, OpponentStones;		// 바둑 돌 좌표 정보 저장용 벡터
 RECT					RectClient;						// 화면 그리기용 클라이언트 영역
-
-
+char					Board[19][19] = { 0 };
+//static int				flag = 1;						//돌 영역을 확인하기 위한 임시 사각형
+int						MySocketID = -1;
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+void				DrawGameScene(HDC FrontDC);
+void				DrawBoard(HDC BackMemDC);
+void				DrawStones(HDC BackMemDC);
+TCHAR*				ParseMessage(char message[]);
+
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -101,6 +115,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_NETOMOK_CLIENT));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
+	//wcex.hbrBackground = (HBRUSH)(RGB(255,100,255));
 	wcex.lpszMenuName = NULL;
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -149,7 +164,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static WSADATA		wsadata;
-	static SOCKET		s;
+	static SOCKET		s;	// 서버 소켓
 	static SOCKADDR_IN	addr = { 0 };
 	char				sendmessage[200];
 	static TCHAR		MyMsg[200];
@@ -157,21 +172,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static std::string	resCommand;
 	static int			count = 0;
 	int					tmpLen, MyMsgLen, NotMyMsgLen;
-	char				buffer[200];
+	char				buffer[201];
 	static int			msgLines = 0;
 	static int			mouseX, mouseY;
 	static POINT		laststone;
 	static int			MyTurnNumber = -1;
+	std::string			tmp;
 
     switch (message)
     {
 	case WM_CREATE:
-		SetRect(&RectClient, 0, 0, BOARD_SIZE + CHAT_WINDOW_WIDTH + (GetSystemMetrics(SM_CXFRAME) >> 1), BOARD_SIZE + (GetSystemMetrics(SM_CYFRAME) << 1) + GetSystemMetrics(SM_CYCAPTION));
+		SetRect(&RectClient, 0, 0, 500 + (GetSystemMetrics(SM_CXFRAME) << 1), 500 + (GetSystemMetrics(SM_CYFRAME) << 1) + GetSystemMetrics(SM_CYCAPTION));
 		AdjustWindowRect(&RectClient, WS_OVERLAPPEDWINDOW, FALSE);
-		MoveWindow(hWnd,
-			GetSystemMetrics(SM_CXSCREEN) / 2 - BOARD_SIZE + CHAT_WINDOW_WIDTH / 2, GetSystemMetrics(SM_CYSCREEN) / 2 - BOARD_SIZE / 2,
-			200, 150, TRUE);
-
+				
 		WSAStartup(MAKEWORD(2, 2), &wsadata);
 		s = socket(AF_INET, SOCK_STREAM, 0);
 		addr.sin_family = AF_INET;
@@ -181,90 +194,209 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (connect(s, (LPSOCKADDR)&addr, sizeof(addr)) != -1)
 		{
 			MessageBox(NULL, _T("Connection Failed!"), _T("Error!!"), MB_OK);
-			PostQuitMessage(0);
 		}
 		
-		break;
+		break;	
 	case WM_ASYNC:
 		switch (lParam)
 		{
-		case FD_READ:
-		{
-			resCommand.clear();
-			tmpLen = recv(s, buffer, 200, 0);
-			buffer[tmpLen] = NULL;
-			resCommand += buffer;
+			case FD_READ:
+			{				
+				memset(buffer, 0, 201);
+				MyMsgLen = recv(s, buffer, 201, 0);
+				buffer[MyMsgLen] = NULL;
 
-			//처음 받은 메시지이면
-			// 서버로부터 내 턴 번호를 부여받는 것이므로
-			// 내 턴 번호에 저장한다.
-			
-			if (strstr(buffer, "$ID$"))
-				resCommand.erase(strstr((buffer, "$ID$"), 4);
-			
-			if (tmp.find("$QUIT$"),0)
-				
-			
-			
+				if (MySocketID == -1)
+				{
+					MySocketID = atoi(buffer);
+				}			
+				else
+				{				
+					strcpy_s(RecievedMessage.SocketID, 32, buffer);
+					strcpy_s(RecievedMessage.NewStoneX, 3, buffer);
+					strcpy_s(RecievedMessage.NewStoneY, 3, buffer);
+					strcpy_s(RecievedMessage.ThisTurn, 32, buffer);
+				}
 
-#ifdef _UNICODE
-			if (MyTurnNumber == buffer[0] - 48)
-			{
-				MyMsgLen = MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), NULL, NULL);		
+		#ifdef _UNICODE
+				MyMsgLen = MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), NULL, NULL);
 				MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), MyMsg, MyMsgLen);
 				MyMsg[MyMsgLen] = NULL;
+		#else
+				strcpy_s(msg, buffer);
+		#endif
+				//Log.push_back(MyMsg);
+				InvalidateRgn(hWnd, NULL, TRUE);
+				break;
+			default:
+				break;
 			}
-			else
-			{
-				NotMyMsgLen = MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), NULL, NULL);
-				MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), NotMyMsg, NotMyMsgLen);
-				NotMyMsg[NotMyMsgLen] = NULL;
-			}
-#else
-			if (MyTurnNumber == buffer[0] - 48)
-				strcpy_s(MyMsg, buffer);
-			else
-				strcpy_s(NotMyMsg, buffer);
-#endif
-		
-			/*
-			받은 메시지를 해석해서 이번에 그릴 좌표를 찾는다.
-			*/
-			InvalidateRgn(hWnd, NULL, TRUE);
-			break;
-		default:
-			break;
 		}
-		break;
-	case WM_MOUSEMOVE:	
-		break;	  
-	case WM_LBUTTONDOWN:
-		sprintf(sendmessage, "%d : %d %d", MyTurnNumber, LOWORD(lParam), HIWORD(lParam));
-		send(s, sendmessage, strlen(sendmessage)+1, 0);
 		break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
-			/*
-			바둑판을 그린다.
-			돌을 그린다.
-			*/
-			TextOut(hdc, 10, 10, MyMsg, lstrlen(MyMsg));
-			TextOut(hdc, 10, 30, NotMyMsg, lstrlen(NotMyMsg));
+			
+			DrawGameScene(hdc);
+			TextOut(hdc, 550, 10, _T("My ID : "), lstrlen(_T("MY ID : ")));
+			TCHAR tmp[32];
+			wsprintf(tmp, _T("%d"), MySocketID);			
+			TextOut(hdc, 600, 10, tmp, lstrlen(tmp));
+			
+			wsprintf(tmp, _T("This Turn : %s"), MyMessage.ThisTurn);
+			TextOut(hdc, 550, 30, tmp, lstrlen(tmp));
+
+			wsprintf(tmp, _T("SocketID : %s"), MyMessage.SocketID);
+			TextOut(hdc, 550, 50, tmp, lstrlen(tmp));
+
+			wsprintf(tmp, _T("Stone X : %s"), MyMessage.NewStoneX);
+			TextOut(hdc, 550, 70, tmp, lstrlen(tmp));
+
+			wsprintf(tmp, _T("Stone Y : %s"), MyMessage.NewStoneY);
+			TextOut(hdc, 550, 90, tmp, lstrlen(tmp));
+
             EndPaint(hWnd, &ps);
         }
         break;
+	case WM_GETMINMAXINFO:
+		((MINMAXINFO *)lParam)->ptMaxTrackSize.x = RectClient.right + BOARD_SIZE;
+		((MINMAXINFO *)lParam)->ptMaxTrackSize.y = RectClient.bottom;
+		((MINMAXINFO *)lParam)->ptMinTrackSize.x = RectClient.right + BOARD_SIZE;
+		((MINMAXINFO *)lParam)->ptMinTrackSize.y = RectClient.bottom;
+		return FALSE;
     case WM_DESTROY:
 		closesocket(s);
 		WSACleanup();
         PostQuitMessage(0);
         break;
+	case WM_LBUTTONDOWN:
+		if (LOWORD(lParam) <= BOARD_SIZE-32 && LOWORD(lParam) >= 32)
+		{
+			if (HIWORD(lParam) <= BOARD_SIZE-16 && HIWORD(lParam) >= 8)
+			{	
+				if (Board[(int)(HIWORD(lParam) - 12) / 25][(int)(LOWORD(lParam) - 28) / 23] == 0)
+					Board[(int)(HIWORD(lParam) - 12) / 25][(int)(LOWORD(lParam) - 28) / 23] = 1;
+
+				send(s, "a-Yo?", strlen("a-Yo?"), 0);
+			}			
+		}		
+		
+		InvalidateRgn(hWnd, NULL, FALSE);
+		break;
+	case WM_RBUTTONDOWN:
+		if (LOWORD(lParam) <= BOARD_SIZE - 32 && LOWORD(lParam) >= 32)
+		{
+			if (HIWORD(lParam) <= BOARD_SIZE - 16 && HIWORD(lParam) >= 8)
+			{
+				if (Board[(int)(HIWORD(lParam) - 12) / 25][(int)(LOWORD(lParam) - 28) / 23] == 0)
+				Board[(int)(HIWORD(lParam) - 12) / 25][(int)(LOWORD(lParam) - 28) / 23] = -1;
+
+
+				sprintf(sendmessage, "%s", "안 헬로 서버!");
+				send(s, sendmessage, strlen(sendmessage), 0);
+			}
+		}
+		
+		InvalidateRgn(hWnd, NULL, FALSE);
+		break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
     return 0;
 }
 
+void DrawGameScene(HDC FrontDC)
+{
+	// Create Back Memory DC
+	HDC BackMemDC = CreateCompatibleDC(GetDC(FindWindow(szWindowClass, szTitle)));
+	HBITMAP hOldBitmap;
 
+	//make BackMemDC's size properly and select source image onto BackMemDC
+	HDC tmpDC = GetDC(FindWindow(szWindowClass, szTitle));
+	HBITMAP hBit = CreateCompatibleBitmap(FrontDC, 500, 500);
+	hOldBitmap = (HBITMAP)SelectObject(BackMemDC, hBit);
+	ReleaseDC(FindWindow(szWindowClass, szTitle), tmpDC);
+	DeleteObject(hBit);
+
+
+	DrawBoard(BackMemDC);
+	DrawStones(BackMemDC);
+
+	BitBlt(FrontDC, 0, 0, 500, 500, BackMemDC, 0, 0, SRCCOPY);
+
+	SelectObject(BackMemDC, hOldBitmap);
+	DeleteObject(hOldBitmap);
+	DeleteDC(BackMemDC);
+}
+
+void DrawBoard(HDC BackMemDC)
+{
+	HBRUSH boardBG = CreateSolidBrush(RGB(248,200,120)), oldBrush;
+
+	oldBrush = (HBRUSH)SelectObject(BackMemDC, boardBG);
+
+	Rectangle(BackMemDC, 0, 0, 500, 500);
+
+	for (int i = 0; i < 18; i++)
+		for (int j = 0; j < 18; j++)
+		{
+			Rectangle(BackMemDC, 40 + j * 23, 25 + i * 25, 41 + (j + 1) * 23, 26 + (i + 1) * 25);
+		}
+
+	oldBrush = (HBRUSH)SelectObject(BackMemDC, GetStockObject(NULL_BRUSH));
+}
+
+void DrawStones(HDC BackMemDC)
+{
+	for (int i = 0; i < 19; i++)
+	{
+		for (int j = 0; j < 19; j++)
+		{
+			if (Board[i][j] == 1)
+			{
+				SelectObject(BackMemDC, GetStockObject(WHITE_BRUSH));
+				Ellipse(BackMemDC, 28 + j * 23, 13 + i * 25, 29 + (j + 1) * 23, 14 + (i + 1) * 25);
+			}
+			else if (Board[i][j] == -1)
+			{
+				SelectObject(BackMemDC, GetStockObject(BLACK_BRUSH));
+				Ellipse(BackMemDC, 28 + j * 23, 13 + i * 25, 29 + (j + 1) * 23, 14 + (i + 1) * 25);
+			}
+		}
+	}
+}
+
+TCHAR* ParseMessage(char message[])
+{
+	TCHAR tmp[MSG_MAX_LENGTH];
+	char buffer[MSG_MAX_LENGTH];
+	int tmpLen;
+	memset(message, 0, 201);
+
+	std::string a;
+	a.assign(message);
+	char tmp2[200]; 
+
+	if (a[0] == '$')
+	{
+		if (a.substr(0, a.find_first_of('$', 1)-1) == "QUIT")
+		{
+			PostQuitMessage(0);
+			return false;
+		}
+	}
+
+#ifdef _UNICODE
+	tmpLen = MultiByteToWideChar(CP_ACP, 0, message, strlen(message), NULL, NULL);
+	MultiByteToWideChar(CP_ACP, 0, message, strlen(message), tmp, tmpLen);
+	tmp[tmpLen] = NULL;
+
+#else
+	strcpy_s(tmp, message);
+
+#endif
+
+	return tmp;
+}

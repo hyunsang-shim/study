@@ -20,8 +20,10 @@ int WinSockTest_Server();
 
 //  메시지 구조체
 typedef struct omok_message {
-	int turn;
-	POINT newStone;
+	char SocketID[32];
+	char NewStoneX[3];
+	char NewStoneY[3];
+	char ThisTurn[32];
 }OMOK_MSG;
 
 // 전역 변수:
@@ -29,7 +31,8 @@ HINSTANCE			hInst;                           // 현재 인스턴스입니다.
 WCHAR				szTitle[MAX_LOADSTRING];         // 제목 표시줄 텍스트입니다.
 WCHAR				szWindowClass[MAX_LOADSTRING];   // 기본 창 클래스 이름입니다.
 OMOK_MSG			MyMessage;						 // 메시지 전송용 구조체
-						
+char				Board[19][19] = { 0 };
+
 RECT RectClient;
 
 
@@ -180,11 +183,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			MessageBox(NULL, _T("Binding Failed!"), _T("Error"), MB_OK);
 			return 0;
 		}
-		else
-		{
-			MessageBox(NULL, _T("Binding Successful!"), _T("Success"), MB_OK);
-		}
-
 
 		WSAAsyncSelect(s, hWnd, WM_ASYNC, FD_ACCEPT | FD_CLOSE);
 		//
@@ -193,10 +191,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			MessageBox(NULL, _T("Listening Failed!"), _T("Error"), MB_OK);
 			return 0;
-		}
-		else
-		{
-			MessageBox(NULL, _T("Listening Successful!"), _T("Success"), MB_OK);
 		}
 		break;
 	case WM_ASYNC:
@@ -210,7 +204,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				cs.push_back(accept(s, (LPSOCKADDR)&c_addr, &size));
 				WSAAsyncSelect(cs[cs.size() - 1], hWnd, WM_ASYNC, FD_READ | FD_CLOSE);
 
-				sprintf(sendmessage, "$ID$%d", cs.size()-1);
+				sprintf(sendmessage, "%d", cs[cs.size()-1]);
 				send(cs[cs.size() - 1], sendmessage, strlen(sendmessage) + 1, 0);
 			}
 			else
@@ -218,7 +212,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				SOCKET tmp = accept(s, (LPSOCKADDR)&c_addr, &size);
 				WSAAsyncSelect(tmp, hWnd, WM_ASYNC, FD_READ | FD_CLOSE);
 
-				sprintf(sendmessage, "$QUIT$더이상 입장할 수 없습니다.");
+				sprintf(sendmessage, "더이상 입장할 수 없습니다.");
 				send(tmp, sendmessage, strlen(sendmessage) + 1, 0);
 			}
 			break;
@@ -244,27 +238,43 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 #else		
 			strcpy_s(msg, buffer);
 #endif			
-				send(cs[0], sendmessage, strlen(sendmessage) + 1, 0);
-				send(cs[1], sendmessage, strlen(sendmessage) + 1, 0);		
+			if (!cs.empty())
+			{
+				for (int i = 0; i < cs.size(); i++)
+				{
+					send(cs[i], sendmessage, strlen(sendmessage) + 1, 0);
+				}
+			}
 
 			InvalidateRgn(hWnd, NULL, TRUE);
 		}
 		break;
 		case FD_CLOSE:
 		{
-			if (cs[0] == wParam)
+			std::vector<SOCKET>::iterator iter;
+			for (iter = cs.begin(); iter != cs.end(); )
 			{
-				cs[0] = { NULL };
-				memset(sendmessage, 0, sizeof(sendmessage));
-				sprintf(sendmessage, "0%s", "상대방이 접속을 종료했습니다.");
-				send(cs[0], sendmessage, strlen(sendmessage) + 1, 0);
+				if(*iter == (SOCKET)wParam)
+				{
+					iter = cs.erase(iter);
+				}
+				else
+				{
+					iter++;
+				}
 			}
-			else if (cs[1] == wParam)
+
+			if (!cs.empty())
 			{
-				cs[1] = { NULL };
-				memset(sendmessage, 0, sizeof(sendmessage));
-				sprintf(sendmessage, "1%s", "상대방이 접속을 종료했습니다.");
-				send(cs[1], sendmessage, strlen(sendmessage) + 1, 0);
+				for (int i = 0; i < cs.size(); i++)
+				{
+					if (cs[i] != wParam)
+					{
+						memset(sendmessage, 0, sizeof(sendmessage));
+						sprintf(sendmessage, "%s(%d)", "상대방이 접속을 종료했습니다.", wParam);
+						send(cs[i], sendmessage, strlen(sendmessage) + 1, 0);
+					}
+				}
 			}
 		}
 			break;
@@ -293,13 +303,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hWnd, &ps);
-		TextOut(hdc, 10, 10, _T("아무 키나 누르세요."), lstrlen(_T("아무 키나 누르세요.")));
 		TextOut(hdc, 10, 30, msg, (int)lstrlen(msg));
+		
 		// TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
 
 		EndPaint(hWnd, &ps);
 	}
 	break;
+	case WM_KEYDOWN:
+		if (wParam == VK_SPACE)
+		{
+			if (!cs.empty())
+			{
+				for (int i = 0; i < cs.size(); i++)
+				{
+					memset(sendmessage, 0, sizeof(sendmessage));
+					sprintf(sendmessage, "%d님, 살아있죠?", cs[i]);
+					send(cs[i], sendmessage, strlen(sendmessage) + 1, 0);
+				}
+			}
+		}
+		else if (wParam == VK_RETURN)
+		{
+			if (!cs.empty())
+			{
+				for (int i = 0; i < cs.size(); i++)
+				{	
+					sprintf(MyMessage.NewStoneX, "%d", 10);
+					sprintf(MyMessage.NewStoneY, "%d", 12);
+					sprintf(MyMessage.SocketID, "%d", cs[i]);
+					sprintf(MyMessage.ThisTurn, "%d", 1);					
+					send(cs[i], (char*)&MyMessage, sizeof(MyMessage), 0);
+				}
+			}
+		}
+
+		InvalidateRgn(hWnd, NULL, FALSE);
+		break;
+
 	case WM_DESTROY:
 		closesocket(s);
 		WSACleanup();
