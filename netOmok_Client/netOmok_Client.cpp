@@ -17,6 +17,13 @@
 #define MSG_MAX_LENGTH 200
 #define WM_ASYNC WM_USER + 2
 
+#define GAME 1234
+#define SYSTEM_OPPONENT_QUIT 1000
+#define SYSTEM_CANNOT_JOIN 9999
+#define SYSTEM_KEEP_ALIVE 7777
+#define SYSTEM_NEW_ID 2000
+
+
 #define BOARD_SIZE 500
 #define BOARD_LINES 19
 #define SQUARE_WIDTH 23
@@ -27,12 +34,19 @@
 
 //  메시지 구조체
 typedef struct OMOK_MSG {
-	char SocketID[32];
-	char NewStoneX[3];
-	char NewStoneY[3];
-	char ThisTurn[32];
+	int MsgType;
+	int ThisTurn;
+	int NewStoneX;
+	int NewStoneY;
+	short StoneColor;
+	int NextTurn;
 }OMOK_MSG;
 
+
+typedef struct omok_system_msg {
+	int MsgType;
+	char MSG[180];
+}OMOK_MSG_SYS;
 
 
 // 전역 변수:
@@ -53,7 +67,6 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 void				DrawGameScene(HDC FrontDC);
 void				DrawBoard(HDC BackMemDC);
 void				DrawStones(HDC BackMemDC);
-TCHAR*				ParseMessage(char message[]);
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -171,8 +184,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static TCHAR		NotMyMsg[200];
 	static std::string	resCommand;
 	static int			count = 0;
-	int					tmpLen, MyMsgLen, NotMyMsgLen;
-	char				buffer[201];
+	int					tmpLen, MsgLen;
+	char				buffer[200];
 	static int			msgLines = 0;
 	static int			mouseX, mouseY;
 	static POINT		laststone;
@@ -201,37 +214,47 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (lParam)
 		{
 			case FD_READ:
-			{				
-				memset(buffer, 0, 201);
-				MyMsgLen = recv(s, buffer, 201, 0);
-				buffer[MyMsgLen] = NULL;
+			{
+				memset(buffer, 0, 200);
+				MsgLen = recv(s, buffer, 200, 0);
+				buffer[MsgLen] = NULL;
+				OMOK_MSG_SYS* tmpsys = (OMOK_MSG_SYS*)buffer;
 
-				if (MySocketID == -1)
+				switch (tmpsys->MsgType)
 				{
-					MySocketID = atoi(buffer);
-				}			
-				else
-				{				
-					strcpy_s(RecievedMessage.SocketID, 32, buffer);
-					strcpy_s(RecievedMessage.NewStoneX, 3, buffer);
-					strcpy_s(RecievedMessage.NewStoneY, 3, buffer);
-					strcpy_s(RecievedMessage.ThisTurn, 32, buffer);
-				}
+				case SYSTEM_NEW_ID:
+					MySocketID = atoi(tmpsys->MSG);
+					break;
+					/*
+					if (MySocketID == -1)
+					{
+						MySocketID = atoi(buffer);
+					}
+					*/
+				case GAME:
+				{
+					recv(s, buffer, 200, 0);
+					OMOK_MSG* tmp = (OMOK_MSG*)buffer;
 
-		#ifdef _UNICODE
-				MyMsgLen = MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), NULL, NULL);
-				MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), MyMsg, MyMsgLen);
-				MyMsg[MyMsgLen] = NULL;
-		#else
-				strcpy_s(msg, buffer);
-		#endif
-				//Log.push_back(MyMsg);
-				InvalidateRgn(hWnd, NULL, TRUE);
+					RecievedMessage.ThisTurn = tmp->ThisTurn;
+					RecievedMessage.NewStoneX = tmp->NewStoneX;
+					RecievedMessage.NewStoneY = tmp->NewStoneY;
+					RecievedMessage.StoneColor = tmp->StoneColor;
+					RecievedMessage.NextTurn = tmp->NextTurn;
+
+
+					Board[RecievedMessage.NewStoneY][RecievedMessage.NewStoneX] = RecievedMessage.StoneColor;
+					InvalidateRgn(hWnd, NULL, TRUE);
+				}
 				break;
+				case SYSTEM_KEEP_ALIVE:
+					break;
+				}
+			}
+			break;
 			default:
 				break;
-			}
-		}
+			}		
 		break;
     case WM_PAINT:
         {
@@ -245,17 +268,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			wsprintf(tmp, _T("%d"), MySocketID);			
 			TextOut(hdc, 600, 10, tmp, lstrlen(tmp));
 			
-			wsprintf(tmp, _T("This Turn : %s"), MyMessage.ThisTurn);
+			wsprintf(tmp, _T("MyMessage"));
 			TextOut(hdc, 550, 30, tmp, lstrlen(tmp));
 
-			wsprintf(tmp, _T("SocketID : %s"), MyMessage.SocketID);
+			wsprintf(tmp, _T("This Turn : %d"), MyMessage.ThisTurn);
 			TextOut(hdc, 550, 50, tmp, lstrlen(tmp));
 
-			wsprintf(tmp, _T("Stone X : %s"), MyMessage.NewStoneX);
+			wsprintf(tmp, _T("NextTurn : %d"), MyMessage.NextTurn);
 			TextOut(hdc, 550, 70, tmp, lstrlen(tmp));
 
-			wsprintf(tmp, _T("Stone Y : %s"), MyMessage.NewStoneY);
+			wsprintf(tmp, _T("Stone X : %d"), MyMessage.NewStoneX);
 			TextOut(hdc, 550, 90, tmp, lstrlen(tmp));
+
+			wsprintf(tmp, _T("Stone Y : %d"), MyMessage.NewStoneY);
+			TextOut(hdc, 550, 110, tmp, lstrlen(tmp));
+
+
+
+			wsprintf(tmp, _T("Recieved Message"));
+			TextOut(hdc, 750, 30, tmp, lstrlen(tmp));
+
+			wsprintf(tmp, _T("This Turn : %d"), RecievedMessage.ThisTurn);
+			TextOut(hdc, 750, 50, tmp, lstrlen(tmp));
+
+			wsprintf(tmp, _T("NextTurn : %d"), RecievedMessage.NextTurn);
+			TextOut(hdc, 750, 70, tmp, lstrlen(tmp));
+
+			wsprintf(tmp, _T("Stone X : %d"), RecievedMessage.NewStoneX);
+			TextOut(hdc, 750, 90, tmp, lstrlen(tmp));
+
+			wsprintf(tmp, _T("Stone Y : %d"), RecievedMessage.NewStoneY);
+			TextOut(hdc, 750, 110, tmp, lstrlen(tmp));
 
             EndPaint(hWnd, &ps);
         }
@@ -368,35 +411,15 @@ void DrawStones(HDC BackMemDC)
 	}
 }
 
-TCHAR* ParseMessage(char message[])
-{
-	TCHAR tmp[MSG_MAX_LENGTH];
-	char buffer[MSG_MAX_LENGTH];
-	int tmpLen;
-	memset(message, 0, 201);
 
-	std::string a;
-	a.assign(message);
-	char tmp2[200]; 
 
-	if (a[0] == '$')
-	{
-		if (a.substr(0, a.find_first_of('$', 1)-1) == "QUIT")
-		{
-			PostQuitMessage(0);
-			return false;
-		}
-	}
 
-#ifdef _UNICODE
-	tmpLen = MultiByteToWideChar(CP_ACP, 0, message, strlen(message), NULL, NULL);
-	MultiByteToWideChar(CP_ACP, 0, message, strlen(message), tmp, tmpLen);
-	tmp[tmpLen] = NULL;
 
+/*#ifdef _UNICODE
+MyMsgLen = MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), NULL, NULL);
+MultiByteToWideChar(CP_ACP, 0, buffer, strlen(buffer), MyMsg, MyMsgLen);
+MyMsg[MyMsgLen] = NULL;
 #else
-	strcpy_s(tmp, message);
-
-#endif
-
-	return tmp;
-}
+strcpy_s(msg, buffer);
+#endif*/
+//Log.push_back(MyMsg);

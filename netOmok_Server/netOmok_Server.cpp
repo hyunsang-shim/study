@@ -18,19 +18,35 @@ int WinSockTest_Server();
 #define MAX_LOADSTRING 100
 #define WM_ASYNC WM_USER + 2
 
+#define GAME 1234
+#define SYSTEM_OPPONENT_QUIT 1000
+#define SYSTEM_CANNOT_JOIN 9999
+#define SYSTEM_KEEP_ALIVE 7777
+#define SYSTEM_NEW_ID 2000
+
+
 //  메시지 구조체
 typedef struct omok_message {
-	char SocketID[32];
-	char NewStoneX[3];
-	char NewStoneY[3];
-	char ThisTurn[32];
+	int MsgType;
+	int ThisTurn;
+	int NewStoneX;
+	int NewStoneY;
+	short StoneColor;
+	int NextTurn;
 }OMOK_MSG;
+
+typedef struct omok_system_msg {
+	int MsgType;
+	char MSG[180];
+}OMOK_MSG_SYS;
 
 // 전역 변수:
 HINSTANCE			hInst;                           // 현재 인스턴스입니다.
 WCHAR				szTitle[MAX_LOADSTRING];         // 제목 표시줄 텍스트입니다.
 WCHAR				szWindowClass[MAX_LOADSTRING];   // 기본 창 클래스 이름입니다.
-OMOK_MSG			MyMessage;						 // 메시지 전송용 구조체
+OMOK_MSG			GameMessage;						 // 게임 진행용 메시지 구조체
+OMOK_MSG_SYS		SystemMessage;
+
 char				Board[19][19] = { 0 };
 
 RECT RectClient;
@@ -203,9 +219,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				cs.push_back(accept(s, (LPSOCKADDR)&c_addr, &size));
 				WSAAsyncSelect(cs[cs.size() - 1], hWnd, WM_ASYNC, FD_READ | FD_CLOSE);
+				SystemMessage.MsgType = SYSTEM_NEW_ID;
+				sprintf(SystemMessage.MSG, "%d", cs[cs.size() - 1]);
 
-				sprintf(sendmessage, "%d", cs[cs.size()-1]);
-				send(cs[cs.size() - 1], sendmessage, strlen(sendmessage) + 1, 0);
+				send(cs[cs.size() - 1], (char*)&SystemMessage, sizeof(SystemMessage) + 1, 0);
 			}
 			else
 			{
@@ -252,30 +269,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case FD_CLOSE:
 		{
 			std::vector<SOCKET>::iterator iter;
-			for (iter = cs.begin(); iter != cs.end(); )
-			{
-				if(*iter == (SOCKET)wParam)
+			
+				for (iter = cs.begin(); iter != cs.end(); )
 				{
-					iter = cs.erase(iter);
-				}
-				else
-				{
-					iter++;
-				}
-			}
-
-			if (!cs.empty())
-			{
-				for (int i = 0; i < cs.size(); i++)
-				{
-					if (cs[i] != wParam)
+					if(*iter == (SOCKET)wParam)
 					{
-						memset(sendmessage, 0, sizeof(sendmessage));
-						sprintf(sendmessage, "%s(%d)", "상대방이 접속을 종료했습니다.", wParam);
-						send(cs[i], sendmessage, strlen(sendmessage) + 1, 0);
+						iter = cs.erase(iter);
+						break;
+					}
+					else
+					{
+						iter++;
 					}
 				}
-			}
+
+				if (!cs.empty())
+				{
+					for (int i = 0; i < cs.size(); i++)
+					{
+						if (cs[i] != wParam)
+						{
+							memset(sendmessage, 0, sizeof(sendmessage));
+							sprintf(sendmessage, "%s(%d)", "상대방이 접속을 종료했습니다.", wParam);
+							send(cs[i], sendmessage, strlen(sendmessage) + 1, 0);
+						}
+					}
+				}
 		}
 			break;
 		default:
@@ -317,7 +336,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				for (int i = 0; i < cs.size(); i++)
 				{
-					memset(sendmessage, 0, sizeof(sendmessage));
+					SystemMessage.MsgType = SYSTEM_KEEP_ALIVE;
+					SystemMessage.MSG[0] = '1';
 					sprintf(sendmessage, "%d님, 살아있죠?", cs[i]);
 					send(cs[i], sendmessage, strlen(sendmessage) + 1, 0);
 				}
@@ -325,15 +345,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		else if (wParam == VK_RETURN)
 		{
+
 			if (!cs.empty())
 			{
+				GameMessage.ThisTurn = cs[rand() % cs.size()];
+				GameMessage.NewStoneX = rand() % 19;
+				GameMessage.NewStoneY = rand() % 19;
+				if (GameMessage.ThisTurn == cs[0])
+					GameMessage.StoneColor = -1;
+				else 
+					GameMessage.StoneColor = 1;
+				GameMessage.NextTurn = cs[rand() % cs.size()];
+
 				for (int i = 0; i < cs.size(); i++)
-				{	
-					sprintf(MyMessage.NewStoneX, "%d", 10);
-					sprintf(MyMessage.NewStoneY, "%d", 12);
-					sprintf(MyMessage.SocketID, "%d", cs[i]);
-					sprintf(MyMessage.ThisTurn, "%d", 1);					
-					send(cs[i], (char*)&MyMessage, sizeof(MyMessage), 0);
+				{					
+					
+
+					send(cs[i], (char*)&GameMessage, sizeof(GameMessage), 0);
 				}
 			}
 		}
