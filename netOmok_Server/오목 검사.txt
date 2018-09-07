@@ -1,0 +1,75 @@
+bool isConsecutiveFour(double values[][7])
+{
+ int lines = 6;
+ int same_count = 4;
+
+ int cnt = 0;
+ for (int i = 0; i < lines; i++)
+ {
+  for (int j = 0; j < 7; j++)
+  {
+   cnt = 0;
+   //가로 검사
+   for (int hor = 0; hor < same_count && j+hor < 7; hor++) //4개 일치이므로 그만큼 앞에까지
+   {
+    if (values[i][j] == values[i][j + hor])
+     cnt += 1;
+    else
+    {
+     cnt = 0;
+     break;
+    }
+
+    if (cnt == 4)
+     return true;
+   }
+
+   //세로 검사
+   for (int ver = 0; ver < same_count; ver++) //4개 일치이므로 그만큼 앞에까지
+   {
+    if (values[i][j] == values[i+ver][j])
+     cnt += 1;
+    else
+    {
+     cnt = 0;
+     break;
+    }
+
+    if (cnt == 4)
+
+     return true;
+   }
+
+   //대각선 검사 (/)
+   for (int upright = 0; upright < same_count && i - upright >= 0 && j - upright >= 0; upright++) //4개 일치이므로 그만큼 앞에까지
+   {
+    if (values[i][j] == values[i+upright][j+upright] && i >0 && j > 0)
+     cnt += 1;
+    else
+    {
+     cnt = 0;
+     break;
+    }
+
+    if (cnt == 4)
+     return true;
+   }
+
+   //대각선 검사 (\)  
+   for (int downright = 0; downright < same_count && i + downright < lines && j + downright < 7; downright++) //4개 일치이므로 그만큼 앞에서 끝
+   {
+    if (values[i][j] == values[i + downright][j + downright])
+     cnt += 1;
+    else
+    {
+     cnt = 0;
+     break;
+    }
+
+    if (cnt == 4)
+     return true;
+   }
+  }
+ }
+ return false;
+}
