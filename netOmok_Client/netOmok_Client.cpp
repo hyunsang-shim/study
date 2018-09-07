@@ -24,6 +24,8 @@
 #define SYSTEM_KEEP_ALIVE 7777
 #define SYSTEM_NEW_ID 2000
 #define SYSTEM_INVALID_ACTION 6666
+#define SYSTEM_PROHIBITED 3333
+
 
 
 
@@ -66,6 +68,7 @@ char					Board[19][19] = { 0 };			// 바둑판 정보
 int						MySocketID = -1;				// 방에 접속 했을 때 배정 받는 소켓 ID
 int						MyStoneColor = 0;				// 내가 배정 받은 돌 색깔
 bool					isMyTurn = false;				// 내 턴인가?
+TCHAR					ConnectionStatus[80];			// 접속 상태 표시용
 
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
@@ -191,7 +194,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static SOCKADDR_IN	addr = { 0 };
 	char				buffer[200];
 	int					bufferLen;
-
+	static HANDLE		hFile = CreateFile(_T("server.txt"), GENERIC_READ, 0, NULL, OPEN_EXISTING, NULL, NULL);
+	static char		Filename[32];
+	DWORD				fReadResult;
 
     switch (message)
     {
@@ -204,13 +209,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		s = socket(AF_INET, SOCK_STREAM, 0);
 		addr.sin_family = AF_INET;
 		addr.sin_port = 20;
-		addr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+
+		if (ReadFile(hFile, Filename, sizeof(Filename), &fReadResult, NULL))
+		{
+			addr.sin_addr.S_un.S_addr = inet_addr(Filename);
+			memset(ConnectionStatus, 0, sizeof(ConnectionStatus));
+
+			TCHAR tmpStr[80];
+			int tmplen = MultiByteToWideChar(CP_ACP, 0, Filename, strlen(Filename), NULL, NULL);
+			MultiByteToWideChar(CP_ACP, 0, Filename, strlen(Filename), tmpStr, tmplen);
+			tmpStr[tmplen] = NULL;
+
+			wsprintf(ConnectionStatus, _T("%s %s"), _T("서버 IP : "), tmpStr);
+			ConnectionStatus[lstrlen(ConnectionStatus)] = '\0';
+		}
+		else
+		{
+			MessageBox(NULL, _T("서버를 찾을 수 없습니다. \n로컬 서버로 접속합니다."), _T("서버 접속 에러!!"), MB_OK);
+			addr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+			memset(ConnectionStatus, 0, sizeof(ConnectionStatus));
+			wsprintf(ConnectionStatus, _T("%s"), _T("서버 IP : 127.0.0.1(로컬)"));
+			ConnectionStatus[lstrlen(ConnectionStatus)] = '\0';
+		}
+
 		WSAAsyncSelect(s, hWnd, WM_ASYNC, FD_READ | FD_CLOSE);
 
 		if (connect(s, (LPSOCKADDR)&addr, sizeof(addr)) != -1)
 		{
 			MessageBox(NULL, _T("Connection Failed!"), _T("Error!!"), MB_OK);
 		}
+
 	}
 		break;	
 	case WM_ASYNC:
@@ -225,13 +253,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				switch (tmpsys->MsgType)
 				{
-					case SYSTEM_INVALID_ACTION:
-						return 0;
+					case SYSTEM_INVALID_ACTION:						
+					{
+						TCHAR caption[100];
+						int captionLen;
+						TCHAR description[100];
+						int descriptionLen;
+#ifdef _UNICODE					
+						captionLen = MultiByteToWideChar(CP_ACP, 0, tmpsys->MSG1, sizeof(tmpsys->MSG1), NULL, NULL);
+						MultiByteToWideChar(CP_ACP, 0, tmpsys->MSG1, sizeof(tmpsys->MSG1), caption, captionLen);
+						caption[captionLen] = NULL;
+						descriptionLen = MultiByteToWideChar(CP_ACP, 0, tmpsys->MSG2, sizeof(tmpsys->MSG2), NULL, NULL);
+						MultiByteToWideChar(CP_ACP, 0, tmpsys->MSG2, sizeof(tmpsys->MSG2), description, descriptionLen);
+						description[descriptionLen] = NULL;
+#else
+						strcpy_s(caption, tmpsys->MSG1);
+						strcpy_s(description, tmpsys->MSG2);
+#endif
+					
+					return 0; 
+					}
 						break;
 					case SYSTEM_NEW_ID:
 						MySocketID = atoi(tmpsys->MSG1);
 						MyStoneColor = atoi(tmpsys->MSG2);
 						InvalidateRgn(hWnd, NULL, FALSE);
+						break;
+					case SYSTEM_PROHIBITED:
+						// 3x3이나 4x3을 하려고 하면 에러~!
 						break;
 					case SYSTEM_CANNOT_JOIN:
 					{
@@ -421,6 +470,8 @@ void DrawStones(HDC BackMemDC)
 
 void ShowDebugInfo(HDC BackMemDC)
 {
+	TextOut(BackMemDC, 515, 100, ConnectionStatus, lstrlen(ConnectionStatus));
+
 	if (MySocketID != -1)
 	{
 		TCHAR tmp[100];

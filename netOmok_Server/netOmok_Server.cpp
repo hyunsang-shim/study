@@ -26,6 +26,7 @@
 #define SYSTEM_KEEP_ALIVE 7777
 #define SYSTEM_NEW_ID 2000
 #define SYSTEM_INVALID_ACTION 6666
+#define SYSTEM_PROHIBITED 3333
 
 
 
@@ -63,7 +64,7 @@ RECT RectClient;
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+int					checkProhibitions(int x, int y);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -186,6 +187,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static int			CurrentPlayer;				// 마지막으로 돌을 둔 유저의 Socket ID
 	static int			NextPlayer;					// 다음 차례의 플레이어
 	static bool			GameState = false;					// 게임 진행 상태
+	static HANDLE		hFile = CreateFile(_T("server.txt"), GENERIC_READ, 0, NULL, OPEN_EXISTING, NULL, NULL);
+	static char			Filename[32];
+	DWORD				fReadResult;
+	static TCHAR		ServerStatus[80];			// 서버 상태 표시
+
 
 	switch (message)
 	{
@@ -195,8 +201,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		s = socket(AF_INET, SOCK_STREAM, 0);
 		addr.sin_family = AF_INET;
 		addr.sin_port = 20;
-		addr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+		
+		if (ReadFile(hFile, Filename, sizeof(Filename), &fReadResult, NULL))
+		{
+			Filename[strlen(Filename)] = NULL;
+			addr.sin_addr.S_un.S_addr = inet_addr(Filename);
+			memset(ServerStatus, 0, sizeof(ServerStatus));
 
+			TCHAR tmpStr[80];
+			int tmplen = MultiByteToWideChar(CP_ACP, 0, Filename, strlen(Filename), NULL, NULL);
+			MultiByteToWideChar(CP_ACP, 0, Filename, strlen(Filename), tmpStr, tmplen);
+			tmpStr[tmplen] = NULL;
+
+			wsprintf(ServerStatus, _T("%s %s"), _T("서버 IP : "), tmpStr);
+			ServerStatus[lstrlen(ServerStatus)] = '\0';
+		}
+		else
+		{
+			addr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+			memset(ServerStatus, 0, sizeof(ServerStatus));
+			wsprintf(ServerStatus, _T("%s"), _T("서버 IP : 127.0.0.1"));
+			ServerStatus[lstrlen(ServerStatus)] = '\0';
+			
+		}
 		//
 		// check Binding
 		if (bind(s, (LPSOCKADDR)&addr, sizeof(addr)))
@@ -280,6 +307,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				send(tmp, (char*)&SystemMessage, sizeof(SystemMessage), 0);
 			}
 		}
+		InvalidateRgn(hWnd, NULL, TRUE);
 			break;
 		case FD_READ:
 		{
@@ -314,20 +342,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				}
 
 				// 바둑판 정보 업데이트
-				Board[Recieved.NewStoneY][Recieved.NewStoneX] = Recieved.StoneColor;
+				// 둬도 될까?
+				if (checkProhibitions(Recieved.NewStoneX, Recieved.NewStoneY))
+				{
+					Board[Recieved.NewStoneY][Recieved.NewStoneX] = Recieved.StoneColor;
+					GameMessage.MsgType = GAME;
+					GameMessage.NewStoneX = Recieved.NewStoneX;
+					GameMessage.NewStoneY = Recieved.NewStoneY;
+					GameMessage.NextTurn = NextPlayer;
+					GameMessage.ThisTurn = CurrentPlayer;
+					GameMessage.StoneColor = Recieved.StoneColor;
+
+					for (int i = 0; i < cs.size(); i++)
+					{
+						send(cs[i], (char*)&GameMessage, sizeof(GameMessage), 0);
+					}
+				}
+				else
+				{
+					SystemMessage.MsgType = SYSTEM_INVALID_ACTION;
+					sprintf(SystemMessage.MSG1, "잘못된 동작입니다.");
+					sprintf(SystemMessage.MSG2, "그 곳에는 둘 수 없습니다.");
+					
+					
+				}
 
 				// 업데이트 된 정보를 준비
-				GameMessage.MsgType = GAME;
-				GameMessage.NewStoneX = Recieved.NewStoneX;
-				GameMessage.NewStoneY = Recieved.NewStoneY;
-				GameMessage.NextTurn = NextPlayer;
-				GameMessage.ThisTurn = CurrentPlayer;
-				GameMessage.StoneColor = Recieved.StoneColor;
-
-				for (int i = 0; i < cs.size(); i++)
-				{
-					send(cs[i], (char*)&GameMessage, sizeof(GameMessage), 0);
-				}
+				
+				
 				
 				break;
 			}
@@ -373,7 +415,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hWnd, &ps);		
 		// TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
-
+		TextOut(hdc, 10, 10, ServerStatus, lstrlen(ServerStatus));
+		TCHAR p1[32];
+		TCHAR p2[32];
+		if (cs.empty())
+		{
+			memset(p1, 0, 32);
+			memset(p2, 0, 32);
+			wsprintf(p1, _T("%s"), _T("선공(백) : 접속 대기중"), 0);
+			wsprintf(p2, _T("%s"), _T("후공(흑) : 접속 대기중"), 0);
+		}
+		else if (cs.size() == 1)
+		{
+			memset(p1, 0, 32);
+			memset(p2, 0, 32);
+			wsprintf(p1, _T("%s%d"), _T("선공(백) : "), cs[0]);
+			wsprintf(p2, _T("%s"), _T("후공(흑) : 접속 대기중"), 0);
+		}
+		else if (cs.size() == 2)
+		{
+			memset(p1, 0, 32);
+			memset(p2, 0, 32);
+			wsprintf(p1, _T("%s%d"), _T("선공(백) : "), cs[0]);
+			wsprintf(p2, _T("%s%d"), _T("후공(흑) : "), cs[1]);
+		}
+		TextOut(hdc, 10, 30, p1, lstrlen(p1));
+		TextOut(hdc, 10, 50, p2, lstrlen(p2));
 		EndPaint(hWnd, &ps);
 	}
 	break;	
@@ -386,4 +453,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
+}
+
+int checkProhibitions(int x, int y)
+{
+	char tmp[19][19];
+	int cnt_open3;
+	int cnt_open4;
+
+	for (int row = 0; row < 19; row++)
+		for (int col = 0; col < 19; col++)
+			tmp[row][col] = Board[row][col];
+
+	tmp[y][x] = Recieved.StoneColor;
+
+	//승리 검사. 5개가 일직선이면 승리
+	for (int row = 0; row < 19; row++)
+		for (int col = 0; col < 19; col++)
+		{
+			if (tmp[row][col] == 0)
+				break;
+			else
+			{
+				for (int i = row; i < 19-row; i++)
+				{
+					//오른쪽
+
+
+				}
+			}
+
+		}
+
+	return true;
 }
