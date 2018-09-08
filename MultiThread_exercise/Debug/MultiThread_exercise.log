@@ -1,0 +1,3 @@
+﻿  MultiThread_exercise.cpp
+k:\work\git\multithread_exercise\multithread_exercise.cpp(167): warning C4804: '>=': 연산에 'bool' 형식을 사용하는 것은 안전하지 않습니다.
+  MultiThread_exercise.vcxproj -> K:\WORK\git\MultiThread_exercise\Debug\MultiThread_exercise.exe
