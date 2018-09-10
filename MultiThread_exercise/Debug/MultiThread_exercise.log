@@ -1,3 +1,6 @@
 ﻿  MultiThread_exercise.cpp
-k:\work\git\multithread_exercise\multithread_exercise.cpp(167): warning C4804: '>=': 연산에 'bool' 형식을 사용하는 것은 안전하지 않습니다.
-  MultiThread_exercise.vcxproj -> K:\WORK\git\MultiThread_exercise\Debug\MultiThread_exercise.exe
+d:\work\study\multithread_exercise\multithread_exercise.cpp(188): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\multithread_exercise\multithread_exercise.cpp(190): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\multithread_exercise\multithread_exercise.cpp(202): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\multithread_exercise\multithread_exercise.cpp(309): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  MultiThread_exercise.vcxproj -> D:\WORK\study\MultiThread_exercise\Debug\MultiThread_exercise.exe
