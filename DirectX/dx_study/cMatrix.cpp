@@ -368,3 +368,39 @@ cMatrix cMatrix::Transpose()
 	return tmp;
 	
 }
+
+
+cMatrix cMatrix::Minor(int nRow, int nCol)
+{
+	cMatrix minor(this->Dimension() - 1);
+	std::vector<cRow> row;
+
+	for (int i = 0; i < this->Dimension(); i++)
+	{
+		for (int j = 0; j < this->Dimension(); j++)
+		{
+			if (i != nRow && j != nCol)
+			{
+				row.Add(m_vecData_cols[i][j]);
+			}
+
+			minor.m_vecData_cols[i][j] = row[i][j];
+		}
+
+	}
+		return ;
+}
+
+double cMatrix::Determinent()
+{
+	double det = 0.0f;
+
+	for (int i = 0; i < this->Dimension(); i++)
+	{
+		this->m_vecData_cols[0][i] * 
+	}
+
+	return det;
+}
+
+
