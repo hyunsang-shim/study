@@ -1,0 +1,9 @@
+﻿  cMatrix.cpp
+k:\work\git\directx\dx_study\cmatrix.cpp(22): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\directx\dx_study\cmatrix.cpp(23): warning C4552: '*': 의미 없는 연산자입니다. 파생 작업이 있는 연산자여야 합니다.
+k:\work\git\directx\dx_study\cmatrix.cpp(48): warning C4244: 'return': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\directx\dx_study\cmatrix.cpp(74): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\directx\dx_study\cmatrix.cpp(124): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\directx\dx_study\cmatrix.cpp(153): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  dx_study.vcxproj -> K:\WORK\git\DirectX\dx_study\Debug\dx_study.exe
+  dx_study.vcxproj -> K:\WORK\git\DirectX\dx_study\Debug\dx_study.pdb (Full PDB)

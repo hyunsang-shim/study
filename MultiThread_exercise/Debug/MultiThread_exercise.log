@@ -1,6 +1,5 @@
 ﻿  MultiThread_exercise.cpp
-d:\work\study\multithread_exercise\multithread_exercise.cpp(188): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-d:\work\study\multithread_exercise\multithread_exercise.cpp(190): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-d:\work\study\multithread_exercise\multithread_exercise.cpp(202): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-d:\work\study\multithread_exercise\multithread_exercise.cpp(309): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-  MultiThread_exercise.vcxproj -> D:\WORK\study\MultiThread_exercise\Debug\MultiThread_exercise.exe
+k:\work\git\multithread_exercise\multithread_exercise.cpp(188): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\multithread_exercise\multithread_exercise.cpp(190): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\multithread_exercise\multithread_exercise.cpp(305): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  MultiThread_exercise.vcxproj -> K:\WORK\git\MultiThread_exercise\Debug\MultiThread_exercise.exe
