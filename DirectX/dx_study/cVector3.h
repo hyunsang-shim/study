@@ -1,4 +1,7 @@
 #pragma once
+
+class cMatrix;
+
 class cVector3
 {
 public:
@@ -22,6 +25,9 @@ public:
 	static cVector3 Cross(cVector3& v1, cVector3& v2);
 	float Length();
 	cVector3 Normalize();
+
+	static cVector3 TransformCoord(cVector3& v, cMatrix& mat);
+	static cVector3 TransformNormal(cVector3& v, cMatrix& mat);
 
 
 };

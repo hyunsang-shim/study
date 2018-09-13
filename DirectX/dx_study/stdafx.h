@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <vector>
+#include <iostream>
+#include <windows.h>
 
 
 #define EPSILON 0.001f

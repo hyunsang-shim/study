@@ -1,5 +1,8 @@
 #pragma once
-#include <windows.h>
+#include "stdafx.h"
+
+class cVector3;
+
 class cMatrix
 {
 public:
@@ -9,7 +12,7 @@ public:
 private:
 	class cRow
 	{
-	private:
+	public:
 		std::vector<double> m_vecData;
 
 	public:
@@ -19,7 +22,7 @@ private:
 		void Add(double value);			//ok
 		int GetRowSize();				//ok
 		void Resize(int nDimension);	//ok
-		float operator[] (int nIndex);	//ok
+		double operator[] (int nIndex);	//ok
 	};
 
 public :
@@ -37,16 +40,25 @@ public :
 	cMatrix operator+(cMatrix& mat);	// ok
 	cMatrix operator-(cMatrix& mat);	// ok
 	cMatrix operator*(cMatrix& mat);	// ok
-	cMatrix operator*(double scalar);	// ok
-	cMatrix operator/(cMatrix& mat);	// ok
+	cMatrix operator*(double scalar);	// ok	
 	cMatrix operator/(double scalar);	// ok
 	void operator=(cMatrix& mat);		// ok
 	cMatrix Transpose();				// ok		
-	cMatrix Minor(int nRow, int nCol);	// on going
+	cMatrix Minor(OUT int nRow, int nCol);	
 	double Determinent();	
 	double Cofactor(int nRow, int mCol);
-	cMatrix adjoint(); 
+	cMatrix Adjoint(); 
 	cMatrix Inverse(OUT double& fDeterminent);
+	
+	//
+	static cMatrix Translation(double x, double y, double z);
+	static cMatrix Translation(cVector3& v);
+	static cMatrix RotationX(double fAngle);
+	static cMatrix RotationY(double fAngle);
+	static cMatrix RotationZ(double fAngle);
+	static cMatrix View(cVector3& vRyr, cVector3& vLookAt, cVector3 vUp);
+	static cMatrix Projection(double fFovY, double fAspect, double fNearZ, double fFarZ);
+	static cMatrix Viewport(double x, double y, double w, double h, double minZ, double maxZ);
 	
 	
 

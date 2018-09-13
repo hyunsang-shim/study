@@ -6,7 +6,6 @@ cMatrix::cMatrix()
 {
 }
 
-
 cMatrix::~cMatrix()
 {
 }
@@ -19,7 +18,7 @@ cMatrix::cRow::cRow(int nDimension)
 {
 	for (int i = 0; i < nDimension; i++)
 	{
-		float tmp = rand() % 100 / 10.0;
+		double tmp = rand() % 100 / 10.0;
 		tmp * (rand() % 3 == 0 ? -1 : 1);
 		m_vecData.push_back(tmp);
 	}
@@ -37,22 +36,22 @@ int cMatrix::cRow::GetRowSize()
 
 void cMatrix::cRow::Resize(int nDimension)
 {
-	if (nDimension == 0)
-		m_vecData.clear();
-	else 
 		m_vecData.resize(nDimension);
 }
 
-float cMatrix::cRow::operator[](int nIndex)
+double cMatrix::cRow::operator[](int nIndex)
 {
 	return m_vecData.at(nIndex);
 }
 
 cMatrix::cMatrix(int nDimension)
-{
+{		
+	m_vecData_cols.resize(nDimension);
+
 	for (int i = 0; i < nDimension; i++)
 	{
-		m_vecData_cols.push_back(cRow(nDimension));
+		cMatrix::cRow tmp(nDimension);
+		m_vecData_cols.push_back(tmp);
 	}
 }
 
@@ -70,12 +69,8 @@ void cMatrix::Print()
 }
 
 void cMatrix::Resize(int nDimension)
-{
-	for (int i = 0; i < m_vecData_cols.size(); i++)
-		m_vecData_cols[i].Resize(nDimension);
-
+{	
 	m_vecData_cols.resize(nDimension);
-
 }
 
 int cMatrix::Dimension()
@@ -86,30 +81,22 @@ int cMatrix::Dimension()
 
 cMatrix cMatrix::Identity(int nDimension)
 {
-	cMatrix tmp(nDimension);
-	cMatrix::cRow row = { 0 };
+	cMatrix ret(nDimension);
 
 	for (int i = 0; i <nDimension; i++)
-	{
-		row.Resize(0);
+	{		
 		for (int j = 0; j < nDimension; j++)
 		{
-			if (j == i)
-			{
-				row.Add(1);
-			}
-			else
-				row.Add(0);
+			//i == j ? ret[i][j] = 1 : ret[i][j] = 0;
 		}
-		tmp.m_vecData_cols[i] = row;
 	}	
 
-	return tmp;
+	return ret;
 }
 
 cMatrix::cRow & cMatrix::operator[](int nIndex)
 {
-	return m_vecData_cols.at(nIndex);
+	return m_vecData_cols[nIndex];
 }
 
 bool cMatrix::operator==(cMatrix & mat)
@@ -131,12 +118,10 @@ bool cMatrix::operator==(cMatrix & mat)
 					ret = false;
 			}
 		}
-
 	}
 	else
 		//아니면 불일치
 		ret = false;
-
 
 	return ret;
 }
@@ -272,41 +257,6 @@ cMatrix cMatrix::operator*(double scalar)
 	return tmp;
 }
 
-cMatrix cMatrix::operator/(cMatrix & mat)
-{
-	cMatrix tmp(this->Dimension());
-	cMatrix::cRow row;
-	double tmp_sum = 0;
-
-	// 구해야 할 행의 수 만큼 반복 하는데
-	for (int i = 0; i < this->Dimension(); i++)
-	{
-		// A의 행 수 만큼
-		for (int j = 0; j < this->Dimension(); j++)
-		{
-			// B의 각 열들과 곱한 값을
-			for (int k = 0; k < this->Dimension(); k++)
-			{
-				// i = 구해야 하는 행
-				// k = A행렬의 행
-				// j = B행렬의 열
-				tmp_sum += this->m_vecData_cols[i][k] / mat.m_vecData_cols[k][j];
-			}
-
-			// 구해야 할 행의 각 열에 넣는다.
-			row.Add(tmp_sum);
-			tmp_sum = 0;		//넣은 값은 초기화시킨다.
-		}
-		//행이 구해졌으므로, 결과에 값을 넣는다.
-		tmp.m_vecData_cols[i] = row;
-		row.Resize(0);		//값을 넣었으므로 초기화 한다.
-	}
-
-	//최종적으로 구해진 값을 반환한다.
-	this->m_vecData_cols = tmp.m_vecData_cols;
-	return tmp;
-}
-
 cMatrix cMatrix::operator/(double scalar)
 {
 	cMatrix tmp(this->Dimension());
@@ -370,37 +320,88 @@ cMatrix cMatrix::Transpose()
 }
 
 
-cMatrix cMatrix::Minor(int nRow, int nCol)
+cMatrix cMatrix::Minor(OUT int nRow, int nCol)
 {
-	cMatrix minor(this->Dimension() - 1);
-	std::vector<cRow> row;
+	// 소행렬 (Minor Matrix)
+	cMatrix ret(this->Dimension() - 1);
 
-	for (int i = 0; i < this->Dimension(); i++)
+	int nMinorCol = 0;
+	int nMinorRow = 0;
+
+	for (int i = 0; i < Dimension(); i++)
 	{
-		for (int j = 0; j < this->Dimension(); j++)
+		if (nRow == 1)
+			continue;
+
+		nMinorCol = 0;
+		for (int j = 0; j < Dimension(); i++)
 		{
-			if (i != nRow && j != nCol)
-			{
-				row.Add(m_vecData_cols[i][j]);
-			}
+			if (nCol == j) continue;
 
-			minor.m_vecData_cols[i][j] = row[i][j];
+			ret[nMinorRow][nMinorCol] = (*this)[i][j];
+			++nMinorCol;
 		}
-
+		++nMinorRow;
 	}
-		return ;
+		return ret.Determinent();
 }
 
 double cMatrix::Determinent()
 {
-	double det = 0.0f;
-
-	for (int i = 0; i < this->Dimension(); i++)
+	if (Dimension() == 2)
 	{
-		this->m_vecData_cols[0][i] * 
+		return (*this)[0][0] * (*this)[1][1] - (*this)[1][0] * (*this)[0][1];
 	}
 
-	return det;
+	double fDeterminant = 0.0f;
+	for (int i = 0; i < Dimension(); i++)
+	{
+		fDeterminant += ((*this)[i][0] * Cofactor(i, 0));
+	}
+
+	return fDeterminant;
+}
+
+double cMatrix::Cofactor(int nRow, int nCol)
+{
+	int nConst = 1;
+
+	if ((nRow + nCol) % 2 != 0)
+		nConst = -1;
+
+
+	return Minor(nRow, nCol) * nConst;
+}
+
+cMatrix cMatrix::Adjoint()
+{
+	cMatrix ret(Dimension());
+
+	for (int i = 0; i < Dimension(); i++)
+	{
+		for (int j = 0; j < Dimension(); j++)
+		{
+			ret[i][j] = Cofactor(j,1);
+		}
+	}
+}
+
+cMatrix cMatrix::Inverse(OUT double & fDeterminent)
+{
+	cMatrix ret = cMatrix::Identity(Dimension());
+
+	fDeterminent = Determinent();
+	if (-EPSILON < fDeterminent && fDeterminent < EPSILON)
+	{
+		printf("역행렬이 존재하지 않습니다.\n");
+		return ret;
+	}
+
+	cMatrix Adj = Adjoint();
+
+	ret = Adj * (1 / fDeterminent);
+
+	return ret;
 }
 
 

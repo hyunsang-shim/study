@@ -70,51 +70,46 @@ int main()
 	check Identity matrix
 
 	*/
-	cMatrix matrix_1(3);
-	cMatrix matrix_2(3);
-	cMatrix matrix_3(3);
+	int nMatDimension = 0;
+	std::cout << "행렬의 차수를 입력하세요. : ";
+	std::cin >> nMatDimension;
+
+	cMatrix mat1(nMatDimension);
+	mat1 = cMatrix::Identity(nMatDimension);
+
+	cMatrix matrix_1(nMatDimension);
+	cMatrix matrix_2(nMatDimension);
+
+	int tmp[4][4] = {
+		{1,3,4,0}, {6,7,8,5},	{98,7,6,9}, {54,3,2,5}
+	};
+
+	for (int i = 0; i < nMatDimension; i++)
+	{
+
+		for (int j = 0; j < nMatDimension; i++)
+		{
+
+		}
+	}
 	printf("Matrix #1\n");
 	matrix_1.Print();
 
 	printf("Matrix #2\n");
 	matrix_2.Print();
 
-	//printf("Matrix #3\n");
-	//matrix_3.Print();
-
-
-	//printf("Matrix #1 == Matrix #2  ==> %s\n", matrix_1 == matrix_2 ? "TRUE" : "FALSE");
-	//printf("Matrix #1 != Matrix #2  ==> %s\n", matrix_1 != matrix_2 ? "TRUE" : "FALSE");
-
-
-	//printf("Matrix #1 + Matrix #2  ==>\n");
-	//matrix_1 + matrix_2;
-	//matrix_1.Print();
-
-
-	//printf("Matrix #1 - Matrix #2  ==>\n");
-	//matrix_1 - matrix_2;
-	//matrix_1.Print();
-
-	//printf("Matrix #1 * Matrix #2  ==>\n");
-	//matrix_1 * matrix_2;
-	//matrix_1.Print();
-
-	//printf("Matrix #1 * 2  ==>\n");
-	//matrix_1 * 2;
-	//matrix_1.Print();
-
-	//printf("Matrix #1 / Matrix #2  ==>\n");
-	//matrix_1 / 3;
-	//matrix_1.Print();
-
-
 	printf("Transpose Matrix #1   ==>\n");
 	matrix_1.Transpose();
 	matrix_1.Print();
 	printf("Identity   ==>\n");
-	cMatrix tmp = matrix_1.Identity(matrix_1.Dimension());
-	tmp.Print();
+	cMatrix x(nMatDimension);
+	x = cMatrix::Identity(matrix_1.Dimension());
+	x.Print();
+
+	printf("minor matrix of Matrix #1(2,1)   ==>\n");
+	cMatrix tmp2(matrix_1.Dimension() - 1);
+	tmp2 = matrix_1.Minor(2, 1);
+	tmp2.Print();
 
 	return 0;
 }
