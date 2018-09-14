@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "cMatrix.h"
+#include "cVector3.h"
 
 
 cMatrix::cMatrix()
@@ -14,10 +15,8 @@ cMatrix::cRow::cRow()
 cMatrix::cRow::cRow(int nDimension)
 {
 	for (int i = 0; i < nDimension; i++)
-	{
-		double tmp = rand() % 100 / 10.0;
-		tmp * (rand() % 3 == 0 ? -1 : 1);
-		m_vecData.push_back(tmp);
+	{	
+		m_vecData.push_back(0.0f);
 	}
 }
 
@@ -66,8 +65,13 @@ void cMatrix::Print()
 }
 
 void cMatrix::Resize(int nDimension)
-{	
+{
 	m_vecData_cols.resize(nDimension);
+	for (int i = 0; i < nDimension; i++)
+	{
+		cMatrix::cRow r(nDimension);
+		m_vecData_cols[i] = r;
+	}
 }
 
 int cMatrix::Dimension()
@@ -278,7 +282,10 @@ cMatrix cMatrix::operator/(double scalar)
 
 
 void cMatrix::operator=(cMatrix & mat)
-{
+{	
+	if (this->Dimension() == 0)
+		this->Resize(mat.Dimension());
+
 	for (int i = 0; i < mat.Dimension(); i++)
 	{
 		for (int j = 0; j < mat.Dimension(); j++)
@@ -390,21 +397,33 @@ cMatrix cMatrix::Inverse(OUT double & fDeterminent)
 	return ret;
 }
 
+double cMatrix::ConvertToRadian(double Degree)
+{
+	double radian;
+
+	radian = Degree * (PI / 180);
+
+	return radian;
+
+}
+
+cMatrix cMatrix::Scale(double scale)
+{
+	cMatrix ret(4);
+
+	ret[0][0] = scale;
+	ret[1][1] = scale;
+	ret[2][2] = scale;
+	ret[3][3] = 1.0f;
+
+	return ret;
+
+}
+
 cMatrix cMatrix::Translation(double x, double y, double z)
 {
 	cMatrix ret(4);
 	ret = cMatrix::Identity(4);
-
-	printf("Identity(4)\n");
-	for (int i = 0; i < ret.Dimension(); i++)
-	{
-		for (int j = 0; j < ret.Dimension(); j++)
-		{
-			printf("%.3f\t", ret[i][j]);
-		}
-		printf("\n");
-	}
-
 
 	ret[3][0] = x;
 	ret[3][1] = y;
@@ -414,31 +433,149 @@ cMatrix cMatrix::Translation(double x, double y, double z)
 	return ret;
 }
 
+cMatrix cMatrix::Translation(cVector3 & v)
+{		
+	cMatrix ret(4);
+	ret = cMatrix::Identity(4);
+
+	ret[3][0] = v.x;
+	ret[3][1] = v.y;
+	ret[3][2] = v.z;
+	ret[3][3] = 1;
+	return cMatrix();
+}
+
 cMatrix cMatrix::RotationX(double fAngle)
 {
+	cMatrix ret(4);
+	ret = cMatrix::Identity(4);
+	double deg = cMatrix::ConvertToRadian(fAngle);
+	
+	ret[1][1] = cos(deg);
+	ret[2][1] = -sin(deg);
+	ret[1][2] = sin(deg);
+	ret[2][2] = cos(deg);
 
-	return cMatrix();
+	return ret;
+}
+
+cMatrix cMatrix::RotationY(double fAngle)
+{
+	cMatrix ret(4);
+	ret = cMatrix::Identity(4);
+	double deg = cMatrix::ConvertToRadian(fAngle);
+	ret[0][0] = cos(deg);
+	ret[0][2] = sin(deg);
+	ret[2][0] = -sin(deg);
+	ret[2][2] = cos(deg);
+
+	return ret;
+}
+
+cMatrix cMatrix::RotationZ(double fAngle)
+{
+	cMatrix ret(4);
+	ret = cMatrix::Identity(4);
+	double deg = cMatrix::ConvertToRadian(fAngle);
+
+	ret[0][0] = cos(deg);
+	ret[0][1] = sin(deg);
+	ret[1][0] = -sin(deg);
+	ret[1][0] = cos(deg);
+
+	return ret;
+}
+
+cMatrix cMatrix::View(cVector3 & vEye, cVector3 & vLookAt, cVector3& vUp)
+{
+	cMatrix ret(4);
+	ret = cMatrix::Identity(4);	
+
+	// W = (vLookAt - vEye) / ( vLookAt - vEye).length()
+	// W는 새로운 Z축
+	cVector3 w(0, 0, 0);
+	w = vLookAt - vEye;
+	w = w.Normalize();
+
+	printf("w : %.3f %.3f %.3f\n", w.x, w.y, w.z);
+
+	//u = j * W / (j * W).length()
+	// 바라보는 방향(W)와 y축 벡터를 Cross 하면(직교시키면) -> 오른쪽 벡터를 구할 수 있다.
+	// u = 오른쪽 벡터 = 새로운 X축
+	cVector3 u(0, 0, 0);
+	u = cVector3::Cross(vUp,w);
+	u = u.Normalize();
+	printf("u : %.3f %.3f %.3f\n", u.x, u.y, u.z);
+
+	//v = w * u; (Cross곱. 직교 시키는 이유는 u와 같음)
+	// v = 새로운 y축
+	cVector3 v(0, 0, 0);
+	v = cVector3::Cross(w, u);
+	printf("v : %.3f %.3f %.3f\n", v.x, v.y, v.z);
+
+	ret[0][0] = u.x;
+	ret[1][0] = u.y;
+	ret[2][0] = u.z;
+	ret[3][0] = cVector3::Dot(vEye, u) * -1.0f;
+
+	ret[0][1] = v.x;
+	ret[1][1] = v.y;
+	ret[2][1] = v.z;
+	ret[3][1] = cVector3::Dot(vEye, v) * -1.0f;
+
+	ret[0][2] = w.x;
+	ret[1][2] = w.y;
+	ret[2][2] = w.z;
+	ret[3][2] = cVector3::Dot(vEye, w) * -1.0f;
+
+	ret[0][3] = 0;
+	ret[1][3] = 0;
+	ret[2][3] = 0;
+	ret[3][3] = 1;
+	
+
+	for (int i = 0; i < 4; i++)
+	{
+		printf("%d : ", i);
+		for (int j = 0; j < 4; j++)
+		{
+			printf("%.2f\t", ret[i][j]);
+		}
+		printf("\n");
+	}
+
+	return ret;
+}
+
+cMatrix cMatrix::Projection(double fFovY, double fAspect, double fNearZ, double fFarZ)
+{
+	cMatrix ret(4);
+	ret = cMatrix::Identity(4);
+	
+	double fScaleY = 1.0f / tanf(fFovY / 2.0f);
+	double fScaleX = fScaleY / fAspect;	
+	ret[0][0] = fScaleX;
+	ret[1][1] = fScaleY;
+	ret[2][2] = fFarZ / (fFarZ - fNearZ);
+	ret[2][3] = 1.0f;
+	ret[3][2] = -fFarZ * fNearZ / (fFarZ - fNearZ);
+	ret[3][3] = 0.0f;
+
+	return ret;
+
 }
 
 cMatrix cMatrix::Viewport(double x, double y, double w, double h, double minZ, double maxZ)
 {
 	cMatrix ret(4);
 
-	for (int i = 0; i < ret.Dimension(); i++)
-	{
-		for (int j = 0; j < ret.Dimension(); j++)
-		{
-			ret[i][j] = 0.0000f;
-		}
-	}
+	ret = cMatrix::Identity(4);
 
-	ret[3][3] = 1;
-
-	ret[0][0] = w / 2.0;
-	ret[1][1] = ((-1) * h) / 2.0;
+	ret[0][0] = w / 2.0f;
+	ret[1][1] = (-1) * (h / 2.0f);
 	ret[2][2] = maxZ - minZ;
-	ret[3][0] = x + w / 2.0;
-	ret[3][1] = y + h / 2.0;
+	ret[3][0] = x + w / 2.0f;
+	ret[3][1] = y + h / 2.0f;
 	ret[3][2] = minZ;
 
 	return ret;

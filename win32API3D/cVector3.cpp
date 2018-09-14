@@ -150,11 +150,16 @@ cVector3 cVector3::TransformCoord(cVector3 & v, cMatrix & mat)
 	cVector3 ret;	
 	vector<double> vToVec;
 	vector<double> tmp_calc(4,0);
+	double x, y, z, w;
+	x = v.x;
+	y = v.y;
+	z = v.z;
+	w = 1.0f;
 
-	vToVec.push_back(v.x);
-	vToVec.push_back(v.y);
-	vToVec.push_back(v.z);
-	vToVec.push_back(1.000f);
+	vToVec.push_back(x);
+	vToVec.push_back(y);
+	vToVec.push_back(z);
+	vToVec.push_back(w);
 
 	for (int i = 0; i < vToVec.size(); i++)
 	{
@@ -163,10 +168,11 @@ cVector3 cVector3::TransformCoord(cVector3 & v, cMatrix & mat)
 			tmp_calc[i] += vToVec[j] * mat[j][i];
 		}
 	}
-	
-	ret.x = tmp_calc[0];
-	ret.y = tmp_calc[1];
-	ret.z = tmp_calc[2];
+	w = x * mat[0][3] + y * mat[1][3] + z * mat[2][3] + w * mat[3][3];
+
+	ret.x = tmp_calc[0] / w;
+	ret.y = tmp_calc[1] / w;
+	ret.z = tmp_calc[2] / w;	
 
 	return ret;
 }

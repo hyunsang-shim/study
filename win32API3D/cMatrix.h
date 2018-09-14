@@ -50,16 +50,20 @@ public :
 	cMatrix Adjoint(); 
 	cMatrix Inverse(OUT double& fDeterminent);
 	
-	//
-	static cMatrix Translation(double x, double y, double z);			// ok
-	static cMatrix Translation(cVector3& v);
-	static cMatrix RotationX(double fAngle);
-	static cMatrix RotationY(double fAngle);
-	static cMatrix RotationZ(double fAngle);
-	static cMatrix View(cVector3& vRyr, cVector3& vLookAt, cVector3 vUp);
-	static cMatrix Projection(double fFovY, double fAspect, double fNearZ, double fFarZ);
-	static cMatrix Viewport(double x, double y, double w, double h, double minZ, double maxZ);	// ok
 	
+	
+	//
+	static double ConvertToRadian(double Degree);
+	static cMatrix Scale(double scale);
+	static cMatrix RotationX(double fAngle);							// ok
+	static cMatrix RotationY(double fAngle);							// ok
+	static cMatrix RotationZ(double fAngle);							// ok
+	static cMatrix Translation(double x, double y, double z);			// ok
+	static cMatrix Translation(cVector3& v);							// ok
+	static cMatrix View(cVector3& vEye, cVector3& vLookAt, cVector3& vUp);						// ok
+	static cMatrix Projection(double fFovY, double fAspect, double fNearZ, double fFarZ);		// 
+	static cMatrix Viewport(double x, double y, double w, double h, double minZ, double maxZ);	// ok
+
 	
 
 private:

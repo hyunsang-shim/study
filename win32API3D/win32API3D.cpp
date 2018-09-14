@@ -10,7 +10,7 @@
 #define MAX_LOADSTRING 100
 
 // 
-HWND g_hWND;
+HWND g_hWnd;
 cMainGame* g_pMainGame;
 
 //
@@ -112,16 +112,16 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   g_hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, 800, 600, nullptr, nullptr, hInstance, nullptr);
 
-   if (!hWnd)
+   if (!g_hWnd)
    {
       return FALSE;
    }
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+   ShowWindow(g_hWnd, nCmdShow);
+   UpdateWindow(g_hWnd);
 
    return TRUE;
 }
@@ -129,25 +129,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 void tmp_func()
 {
-	
-	cMatrix vport(4);
-
-	vport = cMatrix::Viewport(10, 12, 100, 200, 4, 8);
-	printf("뷰포트 (10, 12, 100, 200, 4, 8)\n");
-
-	for (int i = 0; i < vport.Dimension(); i++)
-	{
-		for (int j = 0; j < vport.Dimension(); j++)
-		{
-			printf("%.2f\t", vport[i][j]);
-		}
-		printf("\n");
-	}
-
-	
-
-
+	return;
 }
+
+
 //
 //  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
@@ -160,31 +145,65 @@ void tmp_func()
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (g_pMainGame)
+	//if (g_pMainGame)
 	{
-		g_pMainGame->WndProc(hWnd, message, wParam, lParam);
+		//g_pMainGame->WndProc(hWnd, message, wParam, lParam);
+	}
+	//else
+	{
+		switch (message)
+		{
+		case WM_CREATE:
+			break;
+		case WM_PAINT:
+		{
+			PAINTSTRUCT ps;
+			HDC hdc = BeginPaint(hWnd, &ps);
+			// TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
+			if (g_pMainGame)
+			{
+				g_pMainGame->GetClientArea(hWnd);
+				g_pMainGame->Render(hdc);
+			}
+			EndPaint(hWnd, &ps);
+		}
+		break;
+		case WM_KEYDOWN:
+		{
+			if (wParam == VK_RIGHT)
+			{
+			}
+			else if (wParam == VK_RIGHT)
+			{
+			}
+			else if (wParam == 'd')
+			{
+				g_pMainGame->SetRotationY(g_pMainGame->GetRotationY() + 15.0f);
+			}
+			else if (wParam == 'a')
+			{
+				g_pMainGame->SetRotationY(g_pMainGame->GetRotationY() - 15.0f);
+			}
+			else if (wParam == 'w')
+			{
+				g_pMainGame->SetMyScale(g_pMainGame->GetMyScale() + 5.f);
+			}
+			else if (wParam == 's')
+			{
+				g_pMainGame->SetMyScale(g_pMainGame->GetMyScale() - 5.f);
+			}
+
+			InvalidateRgn(hWnd, NULL, FALSE);
+		}
+			break;
+			
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			break;
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
 	}
 
-    switch (message)
-    {
-	case WM_CREATE:
-		tmp_func();
-		break;
-    case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
-			if (g_pMainGame)
-				g_pMainGame->Render(hdc);
-            EndPaint(hWnd, &ps);
-        }
-        break;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    }
     return 0;
 }
