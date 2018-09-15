@@ -3,7 +3,7 @@
 #include "cMatrix.h"
 
 cMainGame::cMainGame()
-	:m_hBitmap(NULL), m_vEye(2, 2, -5), m_vLookAt(0, 0, 0), m_vUp(0, 1, 0), m_vPosition(0, 0, 0)
+	:m_hBitmap(NULL), m_vEye(0, 0, -5), m_vLookAt(0, 0, 0), m_vUp(0, 1, 0), m_vPosition(0, 0, 0)
 {
 }
 
@@ -80,19 +80,8 @@ void cMainGame::Setup()
 {
 	// set...
 	// 1. draw	
-	m_matView = cMatrix::View(m_vEye, m_vLookAt, m_vUp);
-	m_matProj = cMatrix::Projection(PI / 4.0, 800 / 600, 1.0f, 1000.0f);
-	m_matViewport = cMatrix::Viewport(0, 0, 800, 600, 0.0f, 10.0f);
-	printf("viewport\n");
-	for (int i = 0; i < m_matViewport.Dimension(); i++)
-	{
-		printf("row # %d\t", i);
-		for (int j = 0; j < m_matViewport.Dimension(); j++)
-		{
-			printf("%.f\t", m_matViewport[i][j]);
-		}
-		printf("\n");
-	}
+
+
 
 
 	// 2. Vertex
@@ -175,8 +164,9 @@ void cMainGame::Setup()
 
 	// 3. matrix initialize
 	m_matWorld = cMatrix::Identity(4);
-
-	
+	m_matView = cMatrix::Identity(4);
+	m_matProj = cMatrix::Identity(4);
+	m_matViewport = cMatrix::Identity(4);	
 }
 
 void cMainGame::Update()
@@ -185,30 +175,33 @@ void cMainGame::Update()
 	m_matVPVp = cMatrix::Identity(4);
 
 	// Scale, Rotate, Transform
-	m_matVPVp = m_matVPVp * cMatrix::Scale(GetMyScale());
-	m_matVPVp = m_matVPVp * cMatrix::RotationY(GetRotationY());	
-	m_matVPVp = m_matVPVp * cMatrix::Translation(GetTransformXYZ());
-
-	
+	// Scale
 
 	// World, View, Projectiopn, Viewport
 	// x View -> x Projection -> x Viewport
 
-	m_matVPVp = m_matWorld * m_matView * m_matProj * m_matViewport;
+	m_matView = cMatrix::View(m_vEye, m_vLookAt, m_vUp);
+	m_matProj = cMatrix::Projection(PI / 2.0f, 800 / 600, 1, 1000);
+	m_matViewport = cMatrix::Viewport(0, 0, 800, 600, 0, 1);
 
 	m_vecVertexToDraw.clear();
 	for (int i = 0; i < m_vecVertex.size(); i++)
 	{
 		cVector3 vTemp;
-		vTemp = cVector3::TransformCoord(m_vecVertex[i], m_matVPVp);
-		/*vTemp = cVector3::TransformCoord(m_vecVertex[i], m_matView);
-		printf("* m_matView : %f  %f  %f\n", vTemp.x, vTemp.y, vTemp.z);
+		//vTemp = cVector3::TransformCoord(m_vecVertex[i], cMatrix::Scale(GetMyScale()));
+		//// Rotation
+		//vTemp = cVector3::TransformCoord(vTemp, cMatrix::RotationY(GetRotationY()));
+		//// Transform
+		//vTemp = cVector3::TransformCoord(vTemp, cMatrix::Translation(GetTransformXYZ()));
+		//vTemp = cVector3::TransformCoord(vTemp, m_matView);
+		//vTemp = cVector3::TransformCoord(vTemp, m_matProj);
+		vTemp = cVector3::TransformCoord(m_vecVertex[i], m_matView);
 		vTemp = cVector3::TransformCoord(vTemp, m_matProj);
-		printf("* m_matProj : %f  %f  %f\n", vTemp.x, vTemp.y, vTemp.z);
-		vTemp = cVector3::TransformCoord(vTemp, m_matViewport);
-		printf("* m_matViewport : %f  %f  %f\n", vTemp.x, vTemp.y, vTemp.z);*/
+		vTemp = cVector3::TransformCoord(vTemp, m_matViewport);		
 		m_vecVertexToDraw.push_back(vTemp);
 	}
+
+
 }
 
 void cMainGame::Render(HDC hdc)
@@ -216,7 +209,8 @@ void cMainGame::Render(HDC hdc)
 	Update();
 	// draw... lines	
 	int cnt = 0;
-	for (int i = 0; i < m_vecIndex.size()-1; i++)
+	//for (int i = 0; i < m_vecIndex.size()-1; i++)
+		for (int i = 0; i < 5; i++)
 	{
 		cnt++;
 		MoveToEx(hdc, m_vecVertexToDraw[m_vecIndex[i]].x, m_vecVertexToDraw[m_vecIndex[i]].y, NULL);

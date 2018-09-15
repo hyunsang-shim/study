@@ -62,7 +62,7 @@ private:
 	double myTransformX = 1;
 	double myTransformY = 1;
 	double myTransformZ = 1;
-	double myScale = 0.5;
+	double myScale = 1;
 	RECT ClientRect;
 };
 

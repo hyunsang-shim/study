@@ -442,7 +442,7 @@ cMatrix cMatrix::Translation(cVector3 & v)
 	ret[3][1] = v.y;
 	ret[3][2] = v.z;
 	ret[3][3] = 1;
-	return cMatrix();
+	return ret;
 }
 
 cMatrix cMatrix::RotationX(double fAngle)
