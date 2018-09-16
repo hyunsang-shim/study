@@ -61,14 +61,24 @@ cVector3 cMainGame::GetTransformXYZ()
 	return ret;
 }
 
-double cMainGame::GetMyScale()
+cVector3 cMainGame::GetMyScaleVector()
 {
-	return myScale;
+	return { myScaleX, myScaleY, myScaleZ };
 }
 
-void cMainGame::SetMyScale(double fScale)
+void cMainGame::SetMyScale(double scale_x, double scale_y, double scale_z)
 {
-	myScale = fScale;
+	myScaleX = scale_y;
+	myScaleY = scale_y;
+	myScaleZ = scale_z;
+
+}
+
+void cMainGame::SetMyScale(cVector3 scaleVector)
+{
+	myScaleX = scaleVector.x;
+	myScaleY = scaleVector.y;
+	myScaleZ = scaleVector.z;
 }
 
 void cMainGame::GetClientArea(HWND hWnd)
@@ -171,11 +181,12 @@ void cMainGame::Setup()
 
 void cMainGame::Update()
 {
-	//최종적으로 곱해 줄 매트릭스
-	m_matVPVp = cMatrix::Identity(4);
 
 	// Scale, Rotate, Transform
 	// Scale
+	m_matScale = cMatrix::Translation(myScaleX, myScaleY, myScaleZ);
+	m_matRotation = cMatrix::Translation(myRotationX, myRotationY, myRotationZ);
+	m_matTransform = cMatrix::Translation(myTransformX, myTransformY, myTransformZ);
 
 	// World, View, Projectiopn, Viewport
 	// x View -> x Projection -> x Viewport
@@ -188,14 +199,11 @@ void cMainGame::Update()
 	for (int i = 0; i < m_vecVertex.size(); i++)
 	{
 		cVector3 vTemp;
-		//vTemp = cVector3::TransformCoord(m_vecVertex[i], cMatrix::Scale(GetMyScale()));
-		//// Rotation
-		//vTemp = cVector3::TransformCoord(vTemp, cMatrix::RotationY(GetRotationY()));
-		//// Transform
-		//vTemp = cVector3::TransformCoord(vTemp, cMatrix::Translation(GetTransformXYZ()));
-		//vTemp = cVector3::TransformCoord(vTemp, m_matView);
-		//vTemp = cVector3::TransformCoord(vTemp, m_matProj);
-		vTemp = cVector3::TransformCoord(m_vecVertex[i], m_matView);
+		vTemp = cVector3::TransformCoord(m_vecVertex[i], m_matScale);
+		//vTemp = cVector3::TransformCoord(vTemp, m_matRotation);
+		//vTemp = cVector3::TransformCoord(vTemp, m_matTransform);
+		vTemp = cVector3::TransformCoord(vTemp, m_matView);
+		//vTemp = cVector3::TransformCoord(m_vecVertex[i], m_matView);
 		vTemp = cVector3::TransformCoord(vTemp, m_matProj);
 		vTemp = cVector3::TransformCoord(vTemp, m_matViewport);		
 		m_vecVertexToDraw.push_back(vTemp);
@@ -210,17 +218,13 @@ void cMainGame::Render(HDC hdc)
 	// draw... lines	
 	int cnt = 0;
 	//for (int i = 0; i < m_vecIndex.size()-1; i++)
-		for (int i = 0; i < 5; i++)
+	for (int i = 0; i < m_vecIndex.size() - 1; i+=3)
 	{
-		cnt++;
-		MoveToEx(hdc, m_vecVertexToDraw[m_vecIndex[i]].x, m_vecVertexToDraw[m_vecIndex[i]].y, NULL);
-		LineTo(hdc, m_vecVertexToDraw[m_vecIndex[i + 1]].x, m_vecVertexToDraw[m_vecIndex[i+1]].y);
-
-		if (cnt % 3 == 0)
-		{
-			MoveToEx(hdc, m_vecVertexToDraw[m_vecIndex[i]].x, m_vecVertexToDraw[m_vecIndex[i]].y, NULL);
-			LineTo(hdc, m_vecVertexToDraw[m_vecIndex[i-2]].x, m_vecVertexToDraw[m_vecIndex[i-2]].y);
-		}
+		MoveToEx(hdc, m_vecVertexToDraw[m_vecIndex[i]].x, m_vecVertexToDraw[m_vecIndex[i]].y, NULL);		
+		printf("Moveto #%d (%f,%f)\n", i, m_vecVertexToDraw[m_vecIndex[i]].x, m_vecVertexToDraw[m_vecIndex[i]].y);
+		LineTo(hdc, m_vecVertexToDraw[m_vecIndex[i+1]].x, m_vecVertexToDraw[m_vecIndex[i+1]].y);
+		LineTo(hdc, m_vecVertexToDraw[m_vecIndex[i+2]].x, m_vecVertexToDraw[m_vecIndex[i+2]].y);
+		LineTo(hdc, m_vecVertexToDraw[m_vecIndex[i]].x, m_vecVertexToDraw[m_vecIndex[i]].y);
 	}	
 }
 

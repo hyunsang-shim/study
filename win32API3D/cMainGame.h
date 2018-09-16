@@ -22,6 +22,9 @@ private:
 	vector<cVector3>	m_vecVertexToDraw;
 			
 	
+	cMatrix m_matScale;
+	cMatrix m_matRotation;
+	cMatrix m_matTransform;
 	cMatrix m_matWorld;
 	cMatrix m_matView;
 	cMatrix m_matProj;
@@ -51,8 +54,9 @@ public:
 	cVector3 GetTransformXYZ();
 
 
-	double GetMyScale();
-	void SetMyScale(double fScale);
+	cVector3 GetMyScaleVector();
+	void SetMyScale(double x, double y, double z);
+	void SetMyScale(cVector3 scaleVector);
 	void GetClientArea(HWND hWnd);
 
 private:
@@ -62,7 +66,10 @@ private:
 	double myTransformX = 1;
 	double myTransformY = 1;
 	double myTransformZ = 1;
-	double myScale = 1;
+	double myScaleX = 1;
+	double myScaleY = 1;
+	double myScaleZ = 1;
+
 	RECT ClientRect;
 };
 

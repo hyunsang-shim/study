@@ -168,15 +168,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EndPaint(hWnd, &ps);
 		}
 		break;
-		case WM_KEYDOWN:
-		{
-			if (wParam == VK_RIGHT)
-			{
-			}
-			else if (wParam == VK_RIGHT)
-			{
-			}
-			else if (wParam == 'd')
+		case WM_CHAR:
+			if (wParam == 'd')
 			{
 				g_pMainGame->SetRotationY(g_pMainGame->GetRotationY() + 15.0f);
 			}
@@ -184,17 +177,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				g_pMainGame->SetRotationY(g_pMainGame->GetRotationY() - 15.0f);
 			}
-			else if (wParam == 'w')
+			else if (wParam == 'x')
 			{
-				g_pMainGame->SetMyScale(g_pMainGame->GetMyScale() + 5.f);
+				cVector3 tmp_scale = { 0.1,0.1,0.1 };
+				g_pMainGame->SetMyScale(g_pMainGame->GetMyScaleVector() + tmp_scale);
 			}
-			else if (wParam == 's')
+			else if (wParam == 'z')
 			{
-				g_pMainGame->SetMyScale(g_pMainGame->GetMyScale() - 5.f);
+				cVector3 tmp_scale = { 0.1,0.1,0.1 };
+				g_pMainGame->SetMyScale(g_pMainGame->GetMyScaleVector() - tmp_scale);
 			}
 
 			InvalidateRgn(hWnd, NULL, FALSE);
-		}
+
 			break;
 			
 		case WM_DESTROY:

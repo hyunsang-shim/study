@@ -497,7 +497,6 @@ cMatrix cMatrix::View(cVector3 & vEye, cVector3 & vLookAt, cVector3& vUp)
 	w = vLookAt - vEye;
 	w = w.Normalize();
 
-	printf("w : %.3f %.3f %.3f\n", w.x, w.y, w.z);
 
 	//u = j * W / (j * W).length()
 	// 바라보는 방향(W)와 y축 벡터를 Cross 하면(직교시키면) -> 오른쪽 벡터를 구할 수 있다.
@@ -505,13 +504,11 @@ cMatrix cMatrix::View(cVector3 & vEye, cVector3 & vLookAt, cVector3& vUp)
 	cVector3 u(0, 0, 0);
 	u = cVector3::Cross(vUp,w);
 	u = u.Normalize();
-	printf("u : %.3f %.3f %.3f\n", u.x, u.y, u.z);
 
 	//v = w * u; (Cross곱. 직교 시키는 이유는 u와 같음)
 	// v = 새로운 y축
 	cVector3 v(0, 0, 0);
 	v = cVector3::Cross(w, u);
-	printf("v : %.3f %.3f %.3f\n", v.x, v.y, v.z);
 
 	ret[0][0] = u.x;
 	ret[1][0] = u.y;
@@ -531,18 +528,8 @@ cMatrix cMatrix::View(cVector3 & vEye, cVector3 & vLookAt, cVector3& vUp)
 	ret[0][3] = 0;
 	ret[1][3] = 0;
 	ret[2][3] = 0;
-	ret[3][3] = 1;
-	
+	ret[3][3] = 1;	
 
-	for (int i = 0; i < 4; i++)
-	{
-		printf("%d : ", i);
-		for (int j = 0; j < 4; j++)
-		{
-			printf("%.2f\t", ret[i][j]);
-		}
-		printf("\n");
-	}
 
 	return ret;
 }
