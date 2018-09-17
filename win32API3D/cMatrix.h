@@ -61,6 +61,7 @@ public :
 	static cMatrix Rotation(double fAngleX, double fAngleY, double fAngleZ);
 	static cMatrix Translation(double x, double y, double z);			// ok
 	static cMatrix Translation(cVector3& v);							// ok
+	static cMatrix Transform(cVector3& v);
 	static cMatrix View(cVector3& vEye, cVector3& vLookAt, cVector3& vUp);						// ok
 	static cMatrix Projection(double fFovY, double fAspect, double fNearZ, double fFarZ);		// 
 	static cMatrix Viewport(double x, double y, double w, double h, double minZ, double maxZ);	// ok

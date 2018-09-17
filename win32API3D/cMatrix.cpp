@@ -445,6 +445,7 @@ cMatrix cMatrix::Translation(cVector3 & v)
 	return ret;
 }
 
+
 cMatrix cMatrix::RotationX(double fAngle)
 {
 	cMatrix ret(4);
@@ -488,7 +489,14 @@ cMatrix cMatrix::RotationZ(double fAngle)
 
 cMatrix cMatrix::Rotation(double fAngleX, double fAngleY, double fAngleZ)
 {
-	return cMatrix();
+	cMatrix ret;
+	ret = Identity(4);
+
+	ret = ret * RotationX(fAngleX);
+	ret = ret * RotationY(fAngleY);
+	ret = ret * RotationZ(fAngleZ);
+
+	return ret;
 }
 
 cMatrix cMatrix::View(cVector3 & vEye, cVector3 & vLookAt, cVector3& vUp)

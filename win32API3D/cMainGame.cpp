@@ -202,7 +202,7 @@ void cMainGame::Update()
 	// Scale, Rotate, Transform
 	// Scale
 	m_matScale = cMatrix::Scale(myScaleX, myScaleY, myScaleZ);
-	m_matRotation = cMatrix::Translation(myRotationX, myRotationY, myRotationZ);
+	m_matRotation = cMatrix::RotationY(myRotationY);
 	m_matTransform = cMatrix::Translation(myTransformX, myTransformY, myTransformZ);
 
 	// World, View, Projectiopn, Viewport
