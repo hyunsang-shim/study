@@ -54,10 +54,11 @@ public :
 	
 	//
 	static double ConvertToRadian(double Degree);
-	static cMatrix Scale(double scale);
+	static cMatrix Scale(double scaleX, double scaleY, double scaleZ);
 	static cMatrix RotationX(double fAngle);							// ok
 	static cMatrix RotationY(double fAngle);							// ok
 	static cMatrix RotationZ(double fAngle);							// ok
+	static cMatrix Rotation(double fAngleX, double fAngleY, double fAngleZ);
 	static cMatrix Translation(double x, double y, double z);			// ok
 	static cMatrix Translation(cVector3& v);							// ok
 	static cMatrix View(cVector3& vEye, cVector3& vLookAt, cVector3& vUp);						// ok

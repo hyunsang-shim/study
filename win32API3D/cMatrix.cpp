@@ -407,17 +407,17 @@ double cMatrix::ConvertToRadian(double Degree)
 
 }
 
-cMatrix cMatrix::Scale(double scale)
+cMatrix cMatrix::Scale(double scaleX, double scaleY, double scaleZ)
 {
-	cMatrix ret(4);
+	cMatrix ret;
+	ret = Identity(4);
 
-	ret[0][0] = scale;
-	ret[1][1] = scale;
-	ret[2][2] = scale;
+	ret[0][0] = scaleX;
+	ret[1][1] = scaleY;
+	ret[2][2] = scaleZ;
 	ret[3][3] = 1.0f;
 
 	return ret;
-
 }
 
 cMatrix cMatrix::Translation(double x, double y, double z)
@@ -486,6 +486,11 @@ cMatrix cMatrix::RotationZ(double fAngle)
 	return ret;
 }
 
+cMatrix cMatrix::Rotation(double fAngleX, double fAngleY, double fAngleZ)
+{
+	return cMatrix();
+}
+
 cMatrix cMatrix::View(cVector3 & vEye, cVector3 & vLookAt, cVector3& vUp)
 {
 	cMatrix ret(4);
@@ -541,11 +546,20 @@ cMatrix cMatrix::Projection(double fFovY, double fAspect, double fNearZ, double 
 	
 	double fScaleY = 1.0f / tanf(fFovY / 2.0f);
 	double fScaleX = fScaleY / fAspect;	
+	/*
+	//¿øº»
 	ret[0][0] = fScaleX;
 	ret[1][1] = fScaleY;
 	ret[2][2] = fFarZ / (fFarZ - fNearZ);
 	ret[2][3] = 1.0f;
 	ret[3][2] = -fFarZ * fNearZ / (fFarZ - fNearZ);
+	ret[3][3] = 0.0f;
+	*/
+	ret[0][0] = fScaleX;
+	ret[1][1] = fScaleY;
+	ret[2][2] = fFarZ / (fFarZ - fNearZ);
+	ret[2][3] = 1.0f;
+	ret[3][2] = -1.0f * (fFarZ * (fNearZ / (fFarZ - fNearZ)));
 	ret[3][3] = 0.0f;
 
 	return ret;

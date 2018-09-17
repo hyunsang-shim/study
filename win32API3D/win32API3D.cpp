@@ -187,7 +187,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				cVector3 tmp_scale = { 0.1,0.1,0.1 };
 				g_pMainGame->SetMyScale(g_pMainGame->GetMyScaleVector() - tmp_scale);
 			}
-
+			else if (wParam == 'w')
+			{
+				g_pMainGame->SetTransformXYZ(g_pMainGame->GetTransformXYZ().x, g_pMainGame->GetTransformXYZ().y, g_pMainGame->GetTransformXYZ().z - 0.2f);
+			}
+			else if (wParam == 's')
+			{
+				g_pMainGame->SetTransformXYZ(g_pMainGame->GetTransformXYZ().x, g_pMainGame->GetTransformXYZ().y, g_pMainGame->GetTransformXYZ().z + 0.2f);
+			}
 			InvalidateRgn(hWnd, NULL, FALSE);
 
 			break;

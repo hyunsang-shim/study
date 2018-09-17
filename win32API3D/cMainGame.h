@@ -20,6 +20,10 @@ private:
 	vector<cVector3>	m_vecVertex;
 	vector<DWORD>		m_vecIndex;
 	vector<cVector3>	m_vecVertexToDraw;
+	vector<cVector3>	m_vecGrid_X;
+	vector<cVector3>	m_vecGrid_Z;
+	vector<cVector3>	m_vecGrid_X_ToDraw;
+	vector<cVector3>	m_vecGrid_Z_ToDraw;
 			
 	
 	cMatrix m_matScale;
@@ -60,12 +64,12 @@ public:
 	void GetClientArea(HWND hWnd);
 
 private:
-	double myRotationX = 1;
-	double myRotationY = 1;
-	double myRotationZ = 1;
-	double myTransformX = 1;
-	double myTransformY = 1;
-	double myTransformZ = 1;
+	double myRotationX = 0.0f;
+	double myRotationY = 0.0f;
+	double myRotationZ = 0.0f;
+	double myTransformX = 0.0f;
+	double myTransformY = 0.0f;
+	double myTransformZ = 0.0f;
 	double myScaleX = 1;
 	double myScaleY = 1;
 	double myScaleZ = 1;

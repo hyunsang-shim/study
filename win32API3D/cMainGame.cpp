@@ -3,7 +3,7 @@
 #include "cMatrix.h"
 
 cMainGame::cMainGame()
-	:m_hBitmap(NULL), m_vEye(0, 0, -5), m_vLookAt(0, 0, 0), m_vUp(0, 1, 0), m_vPosition(0, 0, 0)
+	:m_hBitmap(NULL), m_vEye(0, 2, -5), m_vLookAt(0, 0, 0), m_vUp(0, 1, 0), m_vPosition(0, 0, 0)
 {
 }
 
@@ -63,12 +63,17 @@ cVector3 cMainGame::GetTransformXYZ()
 
 cVector3 cMainGame::GetMyScaleVector()
 {
-	return { myScaleX, myScaleY, myScaleZ };
+	cVector3 ret;
+	ret.x = myScaleX;
+	ret.y = myScaleY;
+	ret.z = myScaleZ;
+
+	return ret;
 }
 
 void cMainGame::SetMyScale(double scale_x, double scale_y, double scale_z)
 {
-	myScaleX = scale_y;
+	myScaleX = scale_x;
 	myScaleY = scale_y;
 	myScaleZ = scale_z;
 
@@ -172,6 +177,17 @@ void cMainGame::Setup()
 
 	}
 
+
+	// 그리드 표시용
+	{
+		for (double i = -10.0f; i <= 10.0f; i+=1.0f)
+		{
+			m_vecGrid_X.push_back(cVector3(-10.0f, 0.0f, i));
+			m_vecGrid_X.push_back(cVector3(10.0f, 0.0f, i));
+			m_vecGrid_Z.push_back(cVector3(i, 0.0f, -10.0f));
+			m_vecGrid_Z.push_back(cVector3(-i, 0.0f, 10.0f));
+		}
+	}
 	// 3. matrix initialize
 	m_matWorld = cMatrix::Identity(4);
 	m_matView = cMatrix::Identity(4);
@@ -181,10 +197,11 @@ void cMainGame::Setup()
 
 void cMainGame::Update()
 {
+	
 
 	// Scale, Rotate, Transform
 	// Scale
-	m_matScale = cMatrix::Translation(myScaleX, myScaleY, myScaleZ);
+	m_matScale = cMatrix::Scale(myScaleX, myScaleY, myScaleZ);
 	m_matRotation = cMatrix::Translation(myRotationX, myRotationY, myRotationZ);
 	m_matTransform = cMatrix::Translation(myTransformX, myTransformY, myTransformZ);
 
@@ -192,21 +209,44 @@ void cMainGame::Update()
 	// x View -> x Projection -> x Viewport
 
 	m_matView = cMatrix::View(m_vEye, m_vLookAt, m_vUp);
-	m_matProj = cMatrix::Projection(PI / 2.0f, 800 / 600, 1, 1000);
-	m_matViewport = cMatrix::Viewport(0, 0, 800, 600, 0, 1);
+	//m_matProj = cMatrix::Projection(PI / 2.0f, 800 / 600, 1, 1000);
+	m_matProj = cMatrix::Projection(PI / 2.0f, ClientRect.right / ClientRect.bottom, 1, 1000);
+	m_matViewport = cMatrix::Viewport(0, 0, ClientRect.right, ClientRect.bottom, 0, 1);
 
 	m_vecVertexToDraw.clear();
 	for (int i = 0; i < m_vecVertex.size(); i++)
 	{
 		cVector3 vTemp;
 		vTemp = cVector3::TransformCoord(m_vecVertex[i], m_matScale);
-		//vTemp = cVector3::TransformCoord(vTemp, m_matRotation);
-		//vTemp = cVector3::TransformCoord(vTemp, m_matTransform);
+		vTemp = cVector3::TransformCoord(vTemp, m_matRotation);
+		vTemp = cVector3::TransformCoord(vTemp, m_matTransform);
 		vTemp = cVector3::TransformCoord(vTemp, m_matView);
 		//vTemp = cVector3::TransformCoord(m_vecVertex[i], m_matView);
 		vTemp = cVector3::TransformCoord(vTemp, m_matProj);
 		vTemp = cVector3::TransformCoord(vTemp, m_matViewport);		
 		m_vecVertexToDraw.push_back(vTemp);
+	}
+
+	// X축에 평행한 그리드 그리기용 정점 저장 vector
+	m_vecGrid_X_ToDraw.clear();
+	for (int i = 0; i < m_vecGrid_X.size(); i++)
+	{
+		cVector3 vTemp;
+		vTemp = cVector3::TransformCoord(m_vecGrid_X[i], m_matView);
+		vTemp = cVector3::TransformCoord(vTemp, m_matProj);
+		vTemp = cVector3::TransformCoord(vTemp, m_matViewport);
+		m_vecGrid_X_ToDraw.push_back(vTemp);
+	}
+
+	// Z 축에 평행한 그리드 그리기용 정점 저장 vector
+	m_vecGrid_Z_ToDraw.clear();
+	for (int i = 0; i < m_vecGrid_X.size(); i++)
+	{
+		cVector3 vTemp;
+		vTemp = cVector3::TransformCoord(m_vecGrid_Z[i], m_matView);
+		vTemp = cVector3::TransformCoord(vTemp, m_matProj);
+		vTemp = cVector3::TransformCoord(vTemp, m_matViewport);
+		m_vecGrid_Z_ToDraw.push_back(vTemp);
 	}
 
 
@@ -217,15 +257,47 @@ void cMainGame::Render(HDC hdc)
 	Update();
 	// draw... lines	
 	int cnt = 0;
-	//for (int i = 0; i < m_vecIndex.size()-1; i++)
-	for (int i = 0; i < m_vecIndex.size() - 1; i+=3)
+
+	HDC BackDC = CreateCompatibleDC(hdc);
+	m_hBitmap = CreateCompatibleBitmap(hdc, ClientRect.right, ClientRect.bottom);
+	SelectObject(BackDC, m_hBitmap);
+	Rectangle(BackDC, 0, 0, ClientRect.right, ClientRect.bottom);
+	
+
+	
+	// 그리드 그리기
+	for (int i = 0; i < m_vecGrid_X_ToDraw.size(); i += 2)
 	{
-		MoveToEx(hdc, m_vecVertexToDraw[m_vecIndex[i]].x, m_vecVertexToDraw[m_vecIndex[i]].y, NULL);		
+		// X축에 평행한 선 그리기
+		MoveToEx(BackDC, m_vecGrid_X_ToDraw[i].x, m_vecGrid_X_ToDraw[i].y, NULL);
+		LineTo(BackDC, m_vecGrid_X_ToDraw[i+1].x, m_vecGrid_X_ToDraw[i+1].y);
+
+		
+		// Z축에 평행한 선 그리기
+		MoveToEx(BackDC, m_vecGrid_Z_ToDraw[i].x, m_vecGrid_Z_ToDraw[i].y, NULL);
+		LineTo(BackDC, m_vecGrid_Z_ToDraw[i+1].x, m_vecGrid_Z_ToDraw[i+1].y);
+	}
+
+
+	GetStockObject(WHITE_PEN);
+	// 육면체 그리기
+	//for (int i = 0; i < m_vecIndex.size() - 1; i+=3)
+		for (int i = 0; i <  m_vecIndex.size() - 1; i += 3)
+	{
+		MoveToEx(BackDC, m_vecVertexToDraw[m_vecIndex[i]].x, m_vecVertexToDraw[m_vecIndex[i]].y, NULL);
 		printf("Moveto #%d (%f,%f)\n", i, m_vecVertexToDraw[m_vecIndex[i]].x, m_vecVertexToDraw[m_vecIndex[i]].y);
-		LineTo(hdc, m_vecVertexToDraw[m_vecIndex[i+1]].x, m_vecVertexToDraw[m_vecIndex[i+1]].y);
-		LineTo(hdc, m_vecVertexToDraw[m_vecIndex[i+2]].x, m_vecVertexToDraw[m_vecIndex[i+2]].y);
-		LineTo(hdc, m_vecVertexToDraw[m_vecIndex[i]].x, m_vecVertexToDraw[m_vecIndex[i]].y);
+		LineTo(BackDC, m_vecVertexToDraw[m_vecIndex[i+1]].x, m_vecVertexToDraw[m_vecIndex[i+1]].y);
+		LineTo(BackDC, m_vecVertexToDraw[m_vecIndex[i+2]].x, m_vecVertexToDraw[m_vecIndex[i+2]].y);
+		LineTo(BackDC, m_vecVertexToDraw[m_vecIndex[i]].x, m_vecVertexToDraw[m_vecIndex[i]].y);
 	}	
+
+
+
+	BitBlt(hdc, 0, 0, ClientRect.right, ClientRect.bottom, BackDC, 0, 0, SRCCOPY);
+
+	DeleteObject(m_hBitmap);
+	DeleteDC(BackDC);
+
 }
 
 void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

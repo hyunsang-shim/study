@@ -1,15 +1,17 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (wub32API3D.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  win32API3D.cpp
-  cMatrix.cpp
-d:\work\programming\win32api3d\cmatrix.cpp(139): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-d:\work\programming\win32api3d\cmatrix.cpp(542): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   cMainGame.cpp
-d:\work\programming\win32api3d\cmaingame.cpp(199): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-d:\work\programming\win32api3d\cmaingame.cpp(221): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-d:\work\programming\win32api3d\cmaingame.cpp(223): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\work\programming\win32api3d\cmaingame.cpp(225): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\work\programming\win32api3d\cmaingame.cpp(226): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\work\programming\win32api3d\cmaingame.cpp(227): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  코드를 생성하고 있습니다...
-  wub32API3D.vcxproj -> D:\Work\Programming\win32API3D\Debug\win32API3D.exe
-  wub32API3D.vcxproj -> D:\Work\Programming\win32API3D\Debug\win32API3D.pdb (Full PDB)
+d:\work\study\win32api3d\cmaingame.cpp(217): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\win32api3d\cmaingame.cpp(232): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\win32api3d\cmaingame.cpp(243): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\win32api3d\cmaingame.cpp(269): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\win32api3d\cmaingame.cpp(272): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\win32api3d\cmaingame.cpp(273): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\win32api3d\cmaingame.cpp(277): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\win32api3d\cmaingame.cpp(278): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\win32api3d\cmaingame.cpp(285): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\win32api3d\cmaingame.cpp(287): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\win32api3d\cmaingame.cpp(289): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\win32api3d\cmaingame.cpp(290): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\win32api3d\cmaingame.cpp(291): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  wub32API3D.vcxproj -> D:\WORK\study\win32API3D\Debug\win32API3D.exe
+  wub32API3D.vcxproj -> D:\WORK\study\win32API3D\Debug\win32API3D.pdb (Full PDB)
