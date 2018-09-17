@@ -56,7 +56,7 @@ public:
 	double GetRotationY();
 	double GetRotationZ();
 	cVector3 GetTransformXYZ();
-
+	bool isBackface(cVector3 StartPoint, cVector3 MiddlePoint, cVector3 EndPoint);
 
 	cVector3 GetMyScaleVector();
 	void SetMyScale(double x, double y, double z);

@@ -507,7 +507,7 @@ cMatrix cMatrix::View(cVector3 & vEye, cVector3 & vLookAt, cVector3& vUp)
 	// W = (vLookAt - vEye) / ( vLookAt - vEye).length()
 	// W는 새로운 Z축
 	cVector3 w(0, 0, 0);
-	w = vLookAt - vEye;
+	w = (vLookAt - vEye) / (vLookAt.Length() - vEye.Length());
 	w = w.Normalize();
 
 

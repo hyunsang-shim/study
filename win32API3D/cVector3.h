@@ -16,7 +16,7 @@ public:
 	bool operator==(cVector3& vec);
 	bool operator!=(cVector3& evc);
 	cVector3 operator+(cVector3& vec);
-	cVector3 operator-(cVector3& vec);
+	cVector3 operator-(cVector3& vec);	
 	cVector3 operator*(double f);
 	cVector3 operator/(double f);
 	void operator=(cVector3& vec);

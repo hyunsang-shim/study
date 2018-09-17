@@ -168,33 +168,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EndPaint(hWnd, &ps);
 		}
 		break;
-		case WM_CHAR:
-			if (wParam == 'd')
+		case WM_CHAR:			
+			switch (wParam)
 			{
+			case 'd':
 				g_pMainGame->SetRotationY(g_pMainGame->GetRotationY() + 15.0f);
-			}
-			else if (wParam == 'a')
-			{
+				break;
+			case 'a':
 				g_pMainGame->SetRotationY(g_pMainGame->GetRotationY() - 15.0f);
-			}
-			else if (wParam == 'x')
+				break;
+			case 'x':
 			{
 				cVector3 tmp_scale = { 0.1,0.1,0.1 };
 				g_pMainGame->SetMyScale(g_pMainGame->GetMyScaleVector() + tmp_scale);
 			}
-			else if (wParam == 'z')
+				break;
+			case 'z':
 			{
 				cVector3 tmp_scale = { 0.1,0.1,0.1 };
 				g_pMainGame->SetMyScale(g_pMainGame->GetMyScaleVector() - tmp_scale);
 			}
-			else if (wParam == 'w')
-			{
+				break;
+			case 'w':
 				g_pMainGame->SetTransformXYZ(g_pMainGame->GetTransformXYZ().x, g_pMainGame->GetTransformXYZ().y, g_pMainGame->GetTransformXYZ().z - 0.2f);
-			}
-			else if (wParam == 's')
-			{
+				break;
+			case 's':
 				g_pMainGame->SetTransformXYZ(g_pMainGame->GetTransformXYZ().x, g_pMainGame->GetTransformXYZ().y, g_pMainGame->GetTransformXYZ().z + 0.2f);
+				break;
+			case 'r':
+				g_pMainGame->SetRotationY(0.0f);
+				g_pMainGame->SetMyScale(1.0f, 1.0f, 1.0f);
+				g_pMainGame->SetTransformXYZ(0,0,0);
+				break;
 			}
+			
 			InvalidateRgn(hWnd, NULL, FALSE);
 
 			break;

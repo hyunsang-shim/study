@@ -83,6 +83,7 @@ cVector3 cVector3::operator-(cVector3 & vec)
 	return ret;
 }
 
+
 cVector3 cVector3::operator*(double f)
 {
 	cVector3 ret;
