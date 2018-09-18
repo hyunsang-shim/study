@@ -1,5 +1,0 @@
-﻿  cVector3.cpp
-k:\work\git\win32api3d\cvector3.cpp(165): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\win32api3d\cvector3.cpp(167): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-  wub32API3D.vcxproj -> K:\WORK\git\win32API3D\Debug\win32API3D.exe
-  wub32API3D.vcxproj -> K:\WORK\git\win32API3D\Debug\win32API3D.pdb (Full PDB)

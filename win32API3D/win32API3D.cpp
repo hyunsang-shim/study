@@ -49,7 +49,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	g_pMainGame = new cMainGame;
 	g_pMainGame->Setup();
-	SetTimer(g_hWnd, TIMER_ID, 100, NULL);
+	SetTimer(g_hWnd, TIMER_ID, 16, NULL);
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WUB32API3D));
 

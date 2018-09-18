@@ -88,13 +88,10 @@ cMatrix cMatrix::Identity(int nDimension)
 {
 	cMatrix ret(nDimension);
 
-	for (int i = 0; i <nDimension; i++)
-	{		
-		for (int j = 0; j < nDimension; j++)
-		{
-			i == j ? ret[i][j] = 1 : ret[i][j] = 0;
-		}
-	}	
+	for (int i = 0; i < nDimension; i++)
+	{
+		ret[i][i] = 1.0f;
+	}
 
 	return ret;
 }
@@ -133,74 +130,38 @@ bool cMatrix::operator==(cMatrix & mat)
 
 bool cMatrix::operator!=(cMatrix & mat)
 {
-
-	bool ret = true;
-
-	// 행과 열의 수가 같으면 계산한다.
-	// 다르면 불인치(true)
-	if (this->Dimension() == mat.Dimension())
-	{
-		for (int i = 0; i < m_vecData_cols.size(); i++)
-		{
-			for (int j = 0; j < (this->m_vecData_cols.at(i)).GetRowSize(); j++)
-			{
-				if ((this->m_vecData_cols[i])[j] == (mat.m_vecData_cols[i])[j])
-					ret = false;
-				else
-					ret = true;
-			}
-		}
-	}
+	if ((*this) == mat)
+		return false;
 	else
-		//아니면 불일치
-		ret = true;
-
-
-	return ret;
+		return true;
 }
 
 cMatrix cMatrix::operator+(cMatrix & mat)
 {
-	cMatrix tmp(this->Dimension());
-	cMatrix::cRow row;
+	int nDimension = this->Dimension();
 
-
-	if (this->Dimension() == mat.Dimension())
-	{
-		for (int i = 0; i < this->Dimension(); i++)
-		{			
-			row.Resize(0);
-			for (int j = 0; j < this->Dimension(); j++)
-			{
-				row.Add((this->m_vecData_cols[i])[j] + (mat.m_vecData_cols[i])[j]);
-			}
-			tmp.m_vecData_cols[i] = row;
+	cMatrix tmp(nDimension);
+	
+	for (int i = 0; i < nDimension; i++ )
+		for (int j = 0; j < nDimension; j++)
+		{
+			tmp[i][j] = (*this)[i][j] + mat[i][j];
 		}
-	}
-	this->m_vecData_cols = tmp.m_vecData_cols;
 
 	return tmp;
 }
 
 cMatrix cMatrix::operator-(cMatrix & mat)
 {
-	cMatrix tmp(this->Dimension());
-	cMatrix::cRow row;
+	int nDimension = this->Dimension();
 
+	cMatrix tmp(nDimension);
 
-	if (this->Dimension() == mat.Dimension())
-	{
-		for (int i = 0; i < this->Dimension(); i++)
+	for (int i = 0; i < nDimension; i++)
+		for (int j = 0; j < nDimension; j++)
 		{
-			row.Resize(0);
-			for (int j = 0; j < this->Dimension(); j++)
-			{
-				row.Add((this->m_vecData_cols[i])[j] - (mat.m_vecData_cols[i])[j]);
-			}
-			tmp.m_vecData_cols[i] = row;
+			tmp[i][j] = (*this)[i][j] - mat[i][j];
 		}
-	}
-	this->m_vecData_cols = tmp.m_vecData_cols;
 
 	return tmp;
 }
@@ -242,44 +203,31 @@ cMatrix cMatrix::operator*(cMatrix & mat)
 
 cMatrix cMatrix::operator*(double scalar)
 {
-	cMatrix tmp(this->Dimension());
-	cMatrix::cRow row;
 
+	int nDimension = this->Dimension();
 
+	cMatrix tmp(nDimension);
 	
-	for (int i = 0; i < this->Dimension(); i++)
-	{
-		row.Resize(0);
-		for (int j = 0; j < this->Dimension(); j++)
+	for (int i = 0; i < nDimension; i++)
+		for (int j = 0; j < nDimension; j++)
 		{
-			row.Add((this->m_vecData_cols[i])[j] * scalar);
+			tmp[i][j] = (*this)[i][j] * scalar;
 		}
-		tmp.m_vecData_cols[i] = row;
-	}
 	
-	this->m_vecData_cols = tmp.m_vecData_cols;
-
 	return tmp;
 }
 
 cMatrix cMatrix::operator/(double scalar)
 {
+	int nDimension = this->Dimension();
+
 	cMatrix tmp(this->Dimension());
-	cMatrix::cRow row;
 
-
-
-	for (int i = 0; i < this->Dimension(); i++)
-	{
-		row.Resize(0);
-		for (int j = 0; j < this->Dimension(); j++)
+	for (int i = 0; i < nDimension; i++)
+		for (int j = 0; j < nDimension; j++)
 		{
-			row.Add((this->m_vecData_cols[i])[j] / scalar);
+			tmp[i][j] = (*this)[i][j] / scalar;
 		}
-		tmp.m_vecData_cols[i] = row;
-	}
-
-	this->m_vecData_cols = tmp.m_vecData_cols;
 
 	return tmp;
 }
@@ -301,11 +249,13 @@ void cMatrix::operator=(cMatrix & mat)
 
 cMatrix cMatrix::Transpose()
 {
+	int nDimension = this->Dimension();
+
 	cMatrix tmp(this->Dimension());
 
-	for (int i = 0; i < this->Dimension(); i++)
+	for (int i = 0; i < nDimension; i++)
 	{
-		for (int j = 0; j < this->Dimension(); j++)
+		for (int j = 0; j < nDimension; j++)
 		{
 			tmp[i][j] = m_vecData_cols[j][i];
 		}
@@ -350,29 +300,47 @@ double cMatrix::Determinent()
 	{
 		return (*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0];
 	}
+	else if (Dimension() == 3)
+	{
+
+		//사루스의 법칙 sarrus's law
+		// 3차원 정방행렬의 행렬식 구하는 방법
+		double positives =
+			(*this)[0][0] + (*this)[1][1] + (*this)[2][2]
+			+ (*this)[1][2] + (*this)[2][3] + (*this)[3][1]
+			+ (*this)[1][3] + (*this)[2][1] + (*this)[3][2];
+
+		double negatives =
+			-(*this)[3][1] - (*this)[2][2] - (*this)[1][3]
+			- (*this)[3][2] - (*this)[2][3] - (*this)[1][1]
+			- (*this)[3][3] - (*this)[2][1] - (*this)[1][2];
+
+		return positives + negatives;
+	}
 	else
 	{		
 		for (int i = 0; i < Dimension(); i++)
 		{
-			fDeterminant += pow(-1,i) * m_vecData_cols[0][i] * Minor(0,i).Determinent();
+			fDeterminant += pow(-1,i) * (*this)[0][i] * Minor(0,i).Determinent();
 		}
+		return fDeterminant;
 	}
-	return fDeterminant;
+	
 }
 
 double cMatrix::Cofactor(int nRow, int nCol)
 {
-	double c = pow(-1, nRow + nCol) * Minor(nRow, nCol).Determinent();	
-	return c;
+	return pow(-1, nRow + nCol) * Minor(nRow, nCol).Determinent();
 }
 
 cMatrix cMatrix::Adjoint()
 {
-	cMatrix ret(Dimension());
+	int nDimension = (*this).Dimension();
+	cMatrix ret(nDimension);
 
-	for (int i = 0; i < Dimension(); i++)
+	for (int i = 0; i < nDimension; i++)
 	{
-		for (int j = 0; j < Dimension(); j++)
+		for (int j = 0; j < nDimension; j++)
 		{
 			ret[i][j] = Cofactor(i,j);
 		}
@@ -430,7 +398,6 @@ cMatrix cMatrix::Translation(double x, double y, double z)
 	ret[3][0] = x;
 	ret[3][1] = y;
 	ret[3][2] = z;
-	ret[3][3] = 1;
 
 	return ret;
 }
@@ -454,8 +421,8 @@ cMatrix cMatrix::RotationX(double fAngle)
 	//double deg = cMatrix::ConvertToRadian(fAngle);
 	
 	ret[1][1] = cos(fAngle);
-	ret[2][1] = -sin(fAngle);
 	ret[1][2] = sin(fAngle);
+	ret[2][1] = -sin(fAngle);
 	ret[2][2] = cos(fAngle);
 
 	return ret;
@@ -483,7 +450,7 @@ cMatrix cMatrix::RotationZ(double fAngle)
 	ret[0][0] = cos(fAngle);
 	ret[0][1] = sin(fAngle);
 	ret[1][0] = -sin(fAngle);
-	ret[1][0] = cos(fAngle);
+	ret[1][1] = cos(fAngle);
 
 	return ret;
 }
@@ -507,8 +474,8 @@ cMatrix cMatrix::View(cVector3 & vEye, cVector3 & vLookAt, cVector3& vUp)
 		
 	// W는 새로운 Z축
 	cVector3 w(0, 0, 0);
-	//w = (vLookAt - vEye).Normalize();
-	w = (vEye - vLookAt).Normalize();
+	w = (vLookAt - vEye).Normalize();
+	//w = (vEye - vLookAt).Normalize();
 
 
 	//u = j * W / (j * W).length()

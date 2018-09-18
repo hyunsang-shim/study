@@ -123,25 +123,24 @@ cVector3 cVector3::Cross(cVector3 & v1, cVector3 & v2)
 	cVector3 ret;
 
 	ret.x = (v1.y * v2.z - v1.z * v2.y);
-	ret.y = (v1.x * v2.z - v1.z * v2.x);
+	ret.y = (v1.z * v2.x - v1.x * v2.z);
 	ret.z = (v1.x * v2.y - v1.y * v2.x);
 
 	return ret;
 }
 
 double cVector3::Length()
-{
-
-	return pow(pow(this->x,2) + pow(this->y,2) + pow(this->z,2),0.5);
+{		
+	return sqrtf(powf(this->x, 2) + powf(this->y, 2) + powf(this->z, 2));
 }
 
 cVector3 cVector3::Normalize()
 {
 	cVector3 ret;
-	double leng = Length();
-	ret.x = pow(this->x / leng, 2);
-	ret.y = pow(this->y / leng, 2);
-	ret.z = pow(this->z / leng, 2);
+	double length = Length();
+	ret.x = (*this).x / length;
+	ret.y = (*this).y / length;
+	ret.z = (*this).z / length;
 
 	return ret;
 }
