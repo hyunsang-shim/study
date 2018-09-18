@@ -20,8 +20,7 @@ private:
 	vector<cVector3>	m_vecVertex;
 	vector<DWORD>		m_vecIndex;
 	vector<cVector3>	m_vecVertexToDraw;
-	vector<cVector3>	m_vecGrid_X;
-	vector<cVector3>	m_vecGrid_Z;
+	vector<cVector3>	m_vecGridVertex;
 	vector<cVector3>	m_vecGrid_X_ToDraw;
 	vector<cVector3>	m_vecGrid_Z_ToDraw;
 			
@@ -40,28 +39,53 @@ private:
 	cVector3 m_vLookAt;
 	cVector3 m_vUp;
 	cVector3 m_vPosition;	
+	cVector3 m_vfront;
+
+	POINT	m_ptPrevMouse;
+	bool	m_isLButtonDown;
+	double	m_fCameraDistance;
+
+	cVector3	m_vCamRotAngle;
+	cVector3	m_vAxisXTextPos;
+	cVector3	m_vAxisZTextPos;
+
+	double		m_fBoxRotY;
+	double		m_fScale;
+
+	cVector3	m_vBoxDirection = { 0,0,1 };
+
 
 public:
-	void Setup();
-	void Update();
-	void Render(HDC hdc);
-	void WndProc(HWND hWNd, UINT message, WPARAM wParam, LPARAM lParam);
+	void		Setup();
+	void		Update();
+	void		Render(HDC hdc);
+	void		WndProc(HWND hWNd, UINT message, WPARAM wParam, LPARAM lParam);
 
-	void SetRotationX(double fDegree);
-	void SetRotationY(double fDegree);
-	void SetRotationZ(double fDegree);
-	void SetTransformXYZ(double x, double y, double z);
 
-	double GetRotationX();
-	double GetRotationY();
-	double GetRotationZ();
-	cVector3 GetTransformXYZ();
-	bool isBackface(cVector3 StartPoint, cVector3 MiddlePoint, cVector3 EndPoint);
+	void		SetGrid();
+	void		DrawGrid(HDC BackDC);	
+	bool		isBackface(cVector3 StartPoint, cVector3 MiddlePoint, cVector3 EndPoint);
+	void		Update_Move();
 
-	cVector3 GetMyScaleVector();
-	void SetMyScale(double x, double y, double z);
-	void SetMyScale(cVector3 scaleVector);
-	void GetClientArea(HWND hWnd);
+	void		Update_Scale();
+
+	void		SetRotationX(double fDegree);
+	void		SetRotationY(double fDegree);
+	void		SetRotationZ(double fDegree);
+	void		SetTransformXYZ(double x, double y, double z);
+	void		SetTransformXYZ(cVector3 XYZ);
+
+	double		GetRotationX();
+	double		GetRotationY();
+	double		GetRotationZ();
+	cVector3	GetTransformXYZ();
+
+
+	cVector3	GetMyScaleVector();
+	void		SetMyScale(double x, double y, double z);
+	void		SetMyScale(cVector3 scaleVector);
+	void		GetClientArea(HWND hWnd);
+
 
 private:
 	double myRotationX = 0.0f;

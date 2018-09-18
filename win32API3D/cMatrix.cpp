@@ -33,11 +33,16 @@ int cMatrix::cRow::GetRowSize()
 void cMatrix::cRow::Resize(int nDimension)
 {
 		m_vecData.resize(nDimension);
+		for (int i = 0; m_vecData.size(); i++)
+		{
+			m_vecData.push_back(0.0f);
+		}
 }
 
 double& cMatrix::cRow::operator[](int nIndex)
 {
-	return m_vecData[nIndex];
+	if (nIndex < m_vecData.size() && nIndex >= 0)
+		return m_vecData[nIndex];
 }
 
 cMatrix::cMatrix(int nDimension)
@@ -76,7 +81,6 @@ void cMatrix::Resize(int nDimension)
 
 int cMatrix::Dimension()
 {
-	
 	return m_vecData_cols.size();
 }
 
@@ -311,7 +315,7 @@ cMatrix cMatrix::Transpose()
 }
 
 
-double cMatrix::Minor(int nRow, int nCol)
+cMatrix cMatrix::Minor(int nRow, int nCol)
 {
 	// 소행렬 (Minor Matrix) 반환용
 	cMatrix ret(this->Dimension() - 1);
@@ -340,28 +344,26 @@ double cMatrix::Minor(int nRow, int nCol)
 
 double cMatrix::Determinent()
 {
+	double fDeterminant = 0.0f;
+
 	if (Dimension() == 2)
 	{
-		return (*this)[0][0] * (*this)[1][1] - (*this)[1][0] * (*this)[0][1];
+		return (*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0];
 	}
-
-	double fDeterminant = 0.0f;
-	for (int i = 0; i < Dimension(); i++)
-	{
-		fDeterminant += ((*this)[i][0] * Cofactor(i, 0));
+	else
+	{		
+		for (int i = 0; i < Dimension(); i++)
+		{
+			fDeterminant += pow(-1,i) * m_vecData_cols[0][i] * Minor(0,i).Determinent();
+		}
 	}
-
 	return fDeterminant;
 }
 
 double cMatrix::Cofactor(int nRow, int nCol)
 {
-	int nConst = 1;
-
-	if ((nRow + nCol) % 2 != 0)
-		nConst = -1;
-	
-	return Minor(nRow, nCol) * nConst;
+	double c = pow(-1, nRow + nCol) * Minor(nRow, nCol).Determinent();	
+	return c;
 }
 
 cMatrix cMatrix::Adjoint()
@@ -372,11 +374,11 @@ cMatrix cMatrix::Adjoint()
 	{
 		for (int j = 0; j < Dimension(); j++)
 		{
-			ret[i][j] = Cofactor(j,1);
+			ret[i][j] = Cofactor(i,j);
 		}
 	}
 
-	return ret;
+	return ret.Transpose();
 }
 
 cMatrix cMatrix::Inverse(OUT double & fDeterminent)
@@ -407,14 +409,14 @@ double cMatrix::ConvertToRadian(double Degree)
 
 }
 
-cMatrix cMatrix::Scale(double scaleX, double scaleY, double scaleZ)
+cMatrix cMatrix::Scale(double scale)
 {
 	cMatrix ret;
 	ret = Identity(4);
 
-	ret[0][0] = scaleX;
-	ret[1][1] = scaleY;
-	ret[2][2] = scaleZ;
+	ret[0][0] = scale;
+	ret[1][1] = scale;
+	ret[2][2] = scale;
 	ret[3][3] = 1.0f;
 
 	return ret;
@@ -441,21 +443,20 @@ cMatrix cMatrix::Translation(cVector3 & v)
 	ret[3][0] = v.x;
 	ret[3][1] = v.y;
 	ret[3][2] = v.z;
-	ret[3][3] = 1;
+	ret[3][3] = 1.0f;
 	return ret;
 }
-
 
 cMatrix cMatrix::RotationX(double fAngle)
 {
 	cMatrix ret(4);
 	ret = cMatrix::Identity(4);
-	double deg = cMatrix::ConvertToRadian(fAngle);
+	//double deg = cMatrix::ConvertToRadian(fAngle);
 	
-	ret[1][1] = cos(deg);
-	ret[2][1] = -sin(deg);
-	ret[1][2] = sin(deg);
-	ret[2][2] = cos(deg);
+	ret[1][1] = cos(fAngle);
+	ret[2][1] = -sin(fAngle);
+	ret[1][2] = sin(fAngle);
+	ret[2][2] = cos(fAngle);
 
 	return ret;
 }
@@ -464,11 +465,11 @@ cMatrix cMatrix::RotationY(double fAngle)
 {
 	cMatrix ret(4);
 	ret = cMatrix::Identity(4);
-	double deg = cMatrix::ConvertToRadian(fAngle);
-	ret[0][0] = cos(deg);
-	ret[0][2] = sin(deg);
-	ret[2][0] = -sin(deg);
-	ret[2][2] = cos(deg);
+	//double deg = cMatrix::ConvertToRadian(fAngle);
+	ret[0][0] = cos(fAngle);
+	ret[0][2] = -sin(fAngle);
+	ret[2][0] = sin(fAngle);
+	ret[2][2] = cos(fAngle);
 
 	return ret;
 }
@@ -477,12 +478,12 @@ cMatrix cMatrix::RotationZ(double fAngle)
 {
 	cMatrix ret(4);
 	ret = cMatrix::Identity(4);
-	double deg = cMatrix::ConvertToRadian(fAngle);
+	//double deg = cMatrix::ConvertToRadian(fAngle);
 
-	ret[0][0] = cos(deg);
-	ret[0][1] = sin(deg);
-	ret[1][0] = -sin(deg);
-	ret[1][0] = cos(deg);
+	ret[0][0] = cos(fAngle);
+	ret[0][1] = sin(fAngle);
+	ret[1][0] = -sin(fAngle);
+	ret[1][0] = cos(fAngle);
 
 	return ret;
 }
@@ -503,12 +504,11 @@ cMatrix cMatrix::View(cVector3 & vEye, cVector3 & vLookAt, cVector3& vUp)
 {
 	cMatrix ret(4);
 	ret = cMatrix::Identity(4);	
-
-	// W = (vLookAt - vEye) / ( vLookAt - vEye).length()
+		
 	// W는 새로운 Z축
 	cVector3 w(0, 0, 0);
-	w = (vLookAt - vEye) / (vLookAt.Length() - vEye.Length());
-	w = w.Normalize();
+	//w = (vLookAt - vEye).Normalize();
+	w = (vEye - vLookAt).Normalize();
 
 
 	//u = j * W / (j * W).length()
@@ -524,26 +524,25 @@ cMatrix cMatrix::View(cVector3 & vEye, cVector3 & vLookAt, cVector3& vUp)
 	v = cVector3::Cross(w, u);
 
 	ret[0][0] = u.x;
-	ret[1][0] = u.y;
-	ret[2][0] = u.z;
-	ret[3][0] = cVector3::Dot(vEye, u) * -1.0f;
-
 	ret[0][1] = v.x;
-	ret[1][1] = v.y;
-	ret[2][1] = v.z;
-	ret[3][1] = cVector3::Dot(vEye, v) * -1.0f;
-
 	ret[0][2] = w.x;
+	ret[0][3] = 0.0f;
+
+	ret[1][0] = u.y;
+	ret[1][1] = v.y; 
 	ret[1][2] = w.y;
+	ret[1][3] = 0.0f;
+	
+	ret[2][0] = u.z;
+	ret[2][1] = v.z;
 	ret[2][2] = w.z;
-	ret[3][2] = cVector3::Dot(vEye, w) * -1.0f;
-
-	ret[0][3] = 0;
-	ret[1][3] = 0;
-	ret[2][3] = 0;
-	ret[3][3] = 1;	
-
-
+	ret[2][3] = 0.0f;	
+	
+	ret[3][0] = cVector3::Dot(u, vEye) * -1.0f;
+	ret[3][1] = cVector3::Dot(v, vEye) * -1.0f;
+	ret[3][2] = cVector3::Dot(w, vEye) * -1.0f;
+	ret[3][3] = 1.0f;	
+	
 	return ret;
 }
 
@@ -552,8 +551,9 @@ cMatrix cMatrix::Projection(double fFovY, double fAspect, double fNearZ, double 
 	cMatrix ret(4);
 	ret = cMatrix::Identity(4);
 	
-	double fScaleY = 1.0f / tanf(fFovY / 2.0f);
-	double fScaleX = fScaleY / fAspect;	
+	double h = 1 / tanf(fFovY * 0.5);
+	double w = (h / fAspect);	
+
 	/*
 	//원본
 	ret[0][0] = fScaleX;
@@ -563,11 +563,13 @@ cMatrix cMatrix::Projection(double fFovY, double fAspect, double fNearZ, double 
 	ret[3][2] = -fFarZ * fNearZ / (fFarZ - fNearZ);
 	ret[3][3] = 0.0f;
 	*/
-	ret[0][0] = fScaleX;
-	ret[1][1] = fScaleY;
+	
+	
+	ret[0][0] = w;
+	ret[1][1] = h;
 	ret[2][2] = fFarZ / (fFarZ - fNearZ);
 	ret[2][3] = 1.0f;
-	ret[3][2] = -1.0f * (fFarZ * (fNearZ / (fFarZ - fNearZ)));
+	ret[3][2] = (-fNearZ * fFarZ) / (fFarZ - fNearZ);
 	ret[3][3] = 0.0f;
 
 	return ret;

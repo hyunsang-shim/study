@@ -12,7 +12,7 @@
 // 
 HWND g_hWnd;
 cMainGame* g_pMainGame;
-
+#define TIMER_ID 100
 //
 
 
@@ -49,6 +49,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	g_pMainGame = new cMainGame;
 	g_pMainGame->Setup();
+	SetTimer(g_hWnd, TIMER_ID, 100, NULL);
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WUB32API3D));
 
@@ -64,6 +65,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             DispatchMessage(&msg);
         }
     }
+
+	KillTimer(g_hWnd, TIMER_ID);
 
 	delete g_pMainGame;
 
@@ -112,6 +115,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
+   
+
    g_hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, 800, 600, nullptr, nullptr, hInstance, nullptr);
 
@@ -145,14 +150,22 @@ void tmp_func()
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	//if (g_pMainGame)
+	if (g_pMainGame)
 	{
-		//g_pMainGame->WndProc(hWnd, message, wParam, lParam);
+		g_pMainGame->WndProc(hWnd, message, wParam, lParam);
 	}
-	//else
-	{
+	
+	
 		switch (message)
 		{
+		case WM_TIMER:
+			if (g_pMainGame)
+			{
+				g_pMainGame->Update();
+			}
+
+			InvalidateRgn(g_hWnd, NULL, FALSE);
+			break;
 		case WM_CREATE:
 			break;
 		case WM_PAINT:
@@ -161,58 +174,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			HDC hdc = BeginPaint(hWnd, &ps);
 			// TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
 			if (g_pMainGame)
-			{
-				g_pMainGame->GetClientArea(hWnd);
 				g_pMainGame->Render(hdc);
-			}
 			EndPaint(hWnd, &ps);
 		}
-		break;
-		case WM_CHAR:			
-			switch (wParam)
-			{
-			case 'd':
-				g_pMainGame->SetRotationY(g_pMainGame->GetRotationY() + 15.0f);
-				break;
-			case 'a':
-				g_pMainGame->SetRotationY(g_pMainGame->GetRotationY() - 15.0f);
-				break;
-			case 'x':
-			{
-				cVector3 tmp_scale = { 0.1,0.1,0.1 };
-				g_pMainGame->SetMyScale(g_pMainGame->GetMyScaleVector() + tmp_scale);
-			}
-				break;
-			case 'z':
-			{
-				cVector3 tmp_scale = { 0.1,0.1,0.1 };
-				g_pMainGame->SetMyScale(g_pMainGame->GetMyScaleVector() - tmp_scale);
-			}
-				break;
-			case 'w':
-				g_pMainGame->SetTransformXYZ(g_pMainGame->GetTransformXYZ().x, g_pMainGame->GetTransformXYZ().y, g_pMainGame->GetTransformXYZ().z - 0.2f);
-				break;
-			case 's':
-				g_pMainGame->SetTransformXYZ(g_pMainGame->GetTransformXYZ().x, g_pMainGame->GetTransformXYZ().y, g_pMainGame->GetTransformXYZ().z + 0.2f);
-				break;
-			case 'r':
-				g_pMainGame->SetRotationY(0.0f);
-				g_pMainGame->SetMyScale(1.0f, 1.0f, 1.0f);
-				g_pMainGame->SetTransformXYZ(0,0,0);
-				break;
-			}
-			
-			InvalidateRgn(hWnd, NULL, FALSE);
-
-			break;
-			
+		break;		
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
-	}
+	
 
     return 0;
 }

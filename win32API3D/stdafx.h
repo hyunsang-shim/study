@@ -12,6 +12,8 @@
 
 #define EPSILON 0.0001f
 #define PI 3.1415f
+
+
 // Windows 헤더 파일:
 #include <windows.h>
 
@@ -25,5 +27,6 @@
 
 using namespace std;
 
+extern HWND g_hWnd;
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.

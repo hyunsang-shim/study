@@ -44,7 +44,7 @@ public :
 	cMatrix operator/(double scalar);	// ok
 	void operator=(cMatrix& mat);		// ok
 	cMatrix Transpose();				// ok		
-	double Minor(int nRow, int nCol);	
+	cMatrix Minor(int nRow, int nCol);	
 	double Determinent();	
 	double Cofactor(int nRow, int mCol);
 	cMatrix Adjoint(); 
@@ -54,7 +54,7 @@ public :
 	
 	//
 	static double ConvertToRadian(double Degree);
-	static cMatrix Scale(double scaleX, double scaleY, double scaleZ);
+	static cMatrix Scale(double scale);
 	static cMatrix RotationX(double fAngle);							// ok
 	static cMatrix RotationY(double fAngle);							// ok
 	static cMatrix RotationZ(double fAngle);							// ok

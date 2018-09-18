@@ -139,9 +139,9 @@ cVector3 cVector3::Normalize()
 {
 	cVector3 ret;
 	double leng = Length();
-	ret.x = pow(pow(this->x / leng, 2), 0.5);
-	ret.y = pow(pow(this->y / leng, 2), 0.5);
-	ret.z = pow(pow(this->z / leng, 2), 0.5);
+	ret.x = pow(this->x / leng, 2);
+	ret.y = pow(this->y / leng, 2);
+	ret.z = pow(this->z / leng, 2);
 
 	return ret;
 }
@@ -169,11 +169,28 @@ cVector3 cVector3::TransformCoord(cVector3 & v, cMatrix & mat)
 			tmp_calc[i] += vToVec[j] * mat[j][i];
 		}
 	}
-	w = x * mat[0][3] + y * mat[1][3] + z * mat[2][3] + w * mat[3][3];
+	w = x * mat[0][3] + y * mat[1][3] + z * mat[2][3] + mat[3][3];
+
+	/*ret.x = tmp_calc[0] / w;
+	ret.y = tmp_calc[1] / w;
+	ret.z = tmp_calc[2] / w;*/	
+
 
 	ret.x = tmp_calc[0] / w;
 	ret.y = tmp_calc[1] / w;
-	ret.z = tmp_calc[2] / w;	
+	ret.z = tmp_calc[2] / w; 
+
+
+	return ret;
+}
+
+cVector3 cVector3::TransformNormal(cVector3 & v, cMatrix & mat)
+{
+	cVector3 ret;
+
+	ret.x = v.x * mat[0][0] + v.y * mat[1][0] + v.z * mat[2][0];
+	ret.y = v.x * mat[0][1] + v.y * mat[1][1] + v.z * mat[2][1];
+	ret.z = v.x * mat[0][2] + v.y * mat[1][2] + v.z * mat[2][2];
 
 	return ret;
 }
