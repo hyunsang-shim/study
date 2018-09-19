@@ -16,6 +16,21 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+#include <vector>
+#include <string>
+#include <map>
+#include <set>
+#include <list>
+#include <time.h>
+
+using namespace std;
+#include <assert.h>>
+
+
+#define PI 3.141592f
+#define EPSILON 0.00001f
+
+
 
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
@@ -28,4 +43,33 @@
 // 윈도우 핸들 전역변수화
 extern HWND g_hWnd;
 
-#define	SAFE_RELEASE(p) {if(p) p->Release(); p = NULL;}
+#define	SAFE_RELEASE(p) { if(p) p->Release(); p = NULL;}
+#define SAFE_DELETE(p)  { if(p) delete p; p = NULL;} 
+
+// 싱글톤 매크로 설정
+#define SINGLETONE(class_name) \
+public : \
+	class_name(void);\
+	~class_name(void);\
+public: \
+	static class_name* GetInstance() \
+	{\
+		static class_name instance; \
+		return &instance;\
+	}
+
+
+struct ST_PC_VERTEX
+{
+	D3DXVECTOR3		p;
+	D3DCOLOR		color;
+
+	enum { FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE };
+};
+
+
+
+#include "cDeviceManager.h"
+#include "cCubePC.h"
+#include "cCamera.h"
+

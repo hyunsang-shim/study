@@ -22,9 +22,6 @@ cMainGame::cMainGame()
 cMainGame::~cMainGame()
 {}
 
-
-
-
 void cMainGame::Setup()
 {
 	// set...
@@ -38,8 +35,6 @@ void cMainGame::Setup()
 		m_vecVertex.push_back(cVector3(-1.0f, 1.0f, -1.0f));
 		m_vecVertex.push_back(cVector3(1.0f, 1.0f, -1.0f));
 		m_vecVertex.push_back(cVector3(1.0f, -1.0f, -1.0f));
-
-		// 배면
 		m_vecVertex.push_back(cVector3(-1.0f, -1.0f, 1.0f));
 		m_vecVertex.push_back(cVector3(-1.0f, 1.0f, 1.0f));
 		m_vecVertex.push_back(cVector3(1.0f, 1.0f, 1.0f));
@@ -53,54 +48,36 @@ void cMainGame::Setup()
 		m_vecIndex.push_back(0);
 		m_vecIndex.push_back(1);
 		m_vecIndex.push_back(2);
-
 		m_vecIndex.push_back(0);
 		m_vecIndex.push_back(2);
 		m_vecIndex.push_back(3);
-
-		// 배면 - 삼각형
-		// 배면을 정면으로 보았을 때 시계방향
 		m_vecIndex.push_back(4);
 		m_vecIndex.push_back(6);
 		m_vecIndex.push_back(5);
-
 		m_vecIndex.push_back(4);
 		m_vecIndex.push_back(7);
 		m_vecIndex.push_back(6);
-
-		// 측면 - 정면의 왼쪽
 		m_vecIndex.push_back(4);
 		m_vecIndex.push_back(5);
 		m_vecIndex.push_back(1);
-
 		m_vecIndex.push_back(4);
 		m_vecIndex.push_back(1);
 		m_vecIndex.push_back(0);
-
-		// 측면 - 정면의 오른쪽
 		m_vecIndex.push_back(3);
 		m_vecIndex.push_back(2);
 		m_vecIndex.push_back(6);
-
 		m_vecIndex.push_back(3);
 		m_vecIndex.push_back(6);
 		m_vecIndex.push_back(7);
-
-		// 뚜껑
 		m_vecIndex.push_back(1);
 		m_vecIndex.push_back(5);
 		m_vecIndex.push_back(6);
-
 		m_vecIndex.push_back(1);
 		m_vecIndex.push_back(6);
 		m_vecIndex.push_back(2);
-
-
-		// 바닥
 		m_vecIndex.push_back(4);
 		m_vecIndex.push_back(0);
 		m_vecIndex.push_back(3);
-
 		m_vecIndex.push_back(4);
 		m_vecIndex.push_back(3);
 		m_vecIndex.push_back(7);
@@ -200,8 +177,6 @@ void cMainGame::Update()
 
 }
 
-
-
 void cMainGame::Render(HDC hdc)
 {
 	HDC BackDC = CreateCompatibleDC(hdc);
@@ -250,10 +225,6 @@ void cMainGame::Render(HDC hdc)
 	DeleteDC(BackDC);
 }
 
-
-
-
-
 void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 
@@ -295,51 +266,37 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 }
 
-
 void cMainGame::SetGrid()
 {
-
 	// 그리드 표시용
+	int nNumHalfTile = 5;
+	double fInterval = 1.0f;
+	double fMax = nNumHalfTile * fInterval;
+	double fMin = -nNumHalfTile * fInterval;
+
+	for (int i = 1; i <= nNumHalfTile; i++)
 	{
-		int nNumHalfTile = 5;
-		double fInterval = 1.0f;
-		double fMax = nNumHalfTile * fInterval;
-		double fMin = -nNumHalfTile * fInterval;
+		m_vecGridVertex.push_back(cVector3(fMin, 0, i * fInterval));
+		m_vecGridVertex.push_back(cVector3(fMax, 0, i * fInterval));
+		m_vecGridVertex.push_back(cVector3(fMin, 0, -i * fInterval));
+		m_vecGridVertex.push_back(cVector3(fMax, 0, -i * fInterval));
 
-
-		for (int i = 1; i <= nNumHalfTile; i++)
-		{
-
-			m_vecGridVertex.push_back(cVector3(fMin, 0, i * fInterval));
-			m_vecGridVertex.push_back(cVector3(fMax, 0, i * fInterval));
-			m_vecGridVertex.push_back(cVector3(fMin, 0, -i * fInterval));
-			m_vecGridVertex.push_back(cVector3(fMax, 0, -i * fInterval));
-
-
-			m_vecGridVertex.push_back(cVector3(i * fInterval, 0, fMin));
-			m_vecGridVertex.push_back(cVector3(i * fInterval, 0, fMax));
-			m_vecGridVertex.push_back(cVector3(-i * fInterval, 0, fMin));
-			m_vecGridVertex.push_back(cVector3(-i * fInterval, 0, fMax));
-
-		}
-
-		//가운데 선은 비어있게 되니까 채워준다.
-		m_vecGridVertex.push_back(cVector3(0, 0, fMin));
-		m_vecGridVertex.push_back(cVector3(0, 0, fMax));
-
-		m_vecGridVertex.push_back(cVector3(fMin, 0, 0));
-		m_vecGridVertex.push_back(cVector3(fMax, 0, 0));
-
-
-		m_vAxisXTextPos = cVector3(fMax, 0, 0);
-		m_vAxisZTextPos = cVector3(0, 0, fMax);
-
+		m_vecGridVertex.push_back(cVector3(i * fInterval, 0, fMin));
+		m_vecGridVertex.push_back(cVector3(i * fInterval, 0, fMax));
+		m_vecGridVertex.push_back(cVector3(-i * fInterval, 0, fMin));
+		m_vecGridVertex.push_back(cVector3(-i * fInterval, 0, fMax));
 	}
 
+	//가운데 선은 비어있게 되니까 채워준다.
+	m_vecGridVertex.push_back(cVector3(0, 0, fMin));
+	m_vecGridVertex.push_back(cVector3(0, 0, fMax));
 
+	m_vecGridVertex.push_back(cVector3(fMin, 0, 0));
+	m_vecGridVertex.push_back(cVector3(fMax, 0, 0));
+	
+	m_vAxisXTextPos = cVector3(fMax, 0, 0);
+	m_vAxisZTextPos = cVector3(0, 0, fMax);
 }
-
-
 
 void cMainGame::DrawGrid(HDC BackDC)
 {
@@ -368,7 +325,6 @@ void cMainGame::DrawGrid(HDC BackDC)
 		TextOut(BackDC, tmpY.x, tmpY.y, _T("Z"), 1);
 	}
 }
-
 
 bool cMainGame::isBackface(cVector3 StartPoint, cVector3 MiddlePoint, cVector3 EndPoint)
 {
@@ -409,8 +365,6 @@ bool cMainGame::isBackface(cVector3 StartPoint, cVector3 MiddlePoint, cVector3 E
 		return false;
 
 }
-
-
 
 void cMainGame::Update_Move()
 {
