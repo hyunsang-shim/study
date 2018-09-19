@@ -13,7 +13,7 @@ private:
 	D3DXVECTOR3		 m_vEye;
 	D3DXVECTOR3		 m_vLookAt;
 	D3DXVECTOR3		 m_vUp;
-	D3DXVECTOR3		 m_vPosition;
+	D3DXVECTOR3		 m_vBoxPosition;
 	D3DXVECTOR3		 m_vfront;
 
 	POINT			m_ptPrevMouse;
@@ -25,21 +25,23 @@ private:
 	D3DXVECTOR3		m_vAxisZTextPos;
 
 	double			m_fBoxRotY;
-	double			m_fScale;
+	double			m_fBoxScale;
 
 	D3DXVECTOR3		m_vBoxDirection = { 0,0,1 };
 
 public:
-	void Setup();
-	void Update();
-	void Render();
-	void SetGrid();
-	void DrawGrid();
+	void			Setup();
+	void			Update();
+	void			Render();
+	void			SetGrid();
+	void			DrawGrid();
+
 	void WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
 	cCubePC*				m_pCubePC;
-	cCamera*				m_pCamera;
-	vector<D3DXVECTOR3>		m_vecGridVertex;
+	cCamera*				m_pCamera;							
+	vector<ST_PC_VERTEX>	m_vecGridVertex;
+
 };
 

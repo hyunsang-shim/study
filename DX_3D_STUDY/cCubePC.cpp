@@ -1,9 +1,10 @@
 #include "stdafx.h"
 
+class cCamera;
 cCubePC::cCubePC()
 	:m_vBoxDirection(0, 0, 1),
-	m_vPosition(0, 0, 0),
-	m_fScale(1.0f),
+	m_vBoxPosition(0, 0, 0),
+	m_fBoxScale(1.0f),
 	m_fBoxRotY(0.1f)
 {	 
 	D3DXMatrixIdentity(&m_matWorld);
@@ -48,49 +49,6 @@ void cCubePC::Setup()
 void cCubePC::Update()
 {
 
-	//박스의 회전
-	if (GetKeyState('A') & 0x8000)
-	{
-		m_fBoxRotY -= 0.1f;
-	}
-
-	if (GetKeyState('D') & 0x8000)
-	{
-		m_fBoxRotY += 0.1f;
-	}
-
-
-	// 박스의 이동
-
-	if (GetKeyState('W') & 0x8000)
-	{
-		m_vPosition = m_vPosition + (m_vBoxDirection * 0.1f);
-	}
-
-	if (GetKeyState('S') & 0x8000)
-	{
-		m_vPosition = m_vPosition - (m_vBoxDirection * 0.1f);
-	}
-
-
-
-	//박스의 스케일
-	if (GetKeyState('Z') & 0x8000)
-	{
-		m_fScale += 0.1f;
-		if (m_fScale > 2.0f)
-			m_fScale = 2.0f;
-	}
-
-	if (GetKeyState('X') & 0x8000)
-	{
-
-		m_fScale -= 0.1f;
-		if (m_fScale < 0.2f)
-			m_fScale = 0.2f;
-	}
-
-
 
 }
 
@@ -101,19 +59,19 @@ void cCubePC::Render()
 	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex.size() / 3, &m_vecVertex[0], sizeof(ST_PC_VERTEX));
 }
 
-D3DXVECTOR3 & cCubePC::GetPosition()
+void cCubePC::SetBoxPosition(D3DXVECTOR3 boxPos)
 {
 	// TODO: 여기에 반환 구문을 삽입합니다.
 
-	return m_vPosition;
+	 m_vBoxPosition = boxPos;
 }
 
-double cCubePC::GetScale()
+void cCubePC::SetBoxScale(double scale)
 {
-	return m_fScale;
+	m_fBoxScale = scale;
 }
 
-double cCubePC::GetRotationY()
+void cCubePC::SetBoxRotationY(double rotation)
 {
-	return m_fBoxRotY;
+	m_fBoxRotY = rotation;
 }

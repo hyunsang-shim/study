@@ -3,9 +3,12 @@
 
 
 cCamera::cCamera()
-	:m_vEye(0,5,-5)
-	 , m_vLookAt(0,0,0)
-	 , m_vUp(0,1,0)
+	:m_vEye(0, 5, -5),
+	m_vLookAt(0, 0, 0),
+	m_vUp(0, 1, 0),
+	m_fCameraDistance(5.0f),
+	m_vCamRotAngle(0,0,0),
+	m_vBoxPosition(0,0,0)
 {
 }
 
@@ -32,12 +35,15 @@ void cCamera::Update()
 	카메라 화면은 캐릭터 움직임 등에 따라 회전해야 하므로 여기에서 업데이트 될 수 있도록
 	*/
 	D3DXMATRIXA16 matR, matRX, matRY;
-	D3DXMatrixRotationX(&matRX, 0.0f);
-	D3DXMatrixRotationY(&matRY, 0.0f);
+	D3DXMatrixRotationX(&matRX, m_vCamRotAngle.x);
+	D3DXMatrixRotationY(&matRY, m_vCamRotAngle.y);
 
 	matR = matRX * matRY;
 
-	m_vEye = D3DXVECTOR3(0, 5, -5);
+	// 휠 움직임에 따른 카메라 거리값 갱신
+	m_vEye = D3DXVECTOR3(0, m_fCameraDistance, -m_fCameraDistance);
+
+	m_vLookAt = m_vBoxPosition;
 	D3DXVec3TransformCoord(&m_vEye, &m_vEye, &matR);
 
 	D3DXMATRIXA16 matView;
@@ -45,4 +51,22 @@ void cCamera::Update()
 	g_pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
 
 
+}
+
+void cCamera::SetCameraDistance(double value)
+{
+	m_fCameraDistance = value;
+}
+
+void cCamera::SetCameraRotationAngle(D3DXVECTOR3 Angle)
+{
+	m_vCamRotAngle.x = Angle.x;
+	m_vCamRotAngle.y = Angle.y;
+}
+
+void cCamera::SetBoxPosition(D3DXVECTOR3 position)
+{
+	m_vBoxPosition.x = position.x;
+	m_vBoxPosition.y = position.z;
+	m_vBoxPosition.z = position.z;
 }

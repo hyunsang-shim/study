@@ -1,22 +1,31 @@
-﻿cl : 명령줄 warning D9030: '/Gm'이(가) 다중 처리와 호환되지 않습니다. /MP 스위치를 무시합니다.
+﻿  stdafx.cpp
+d:\work\study\dx_3d_study\stdafx.h(27): warning C4067: 전처리기 지시문 다음에 예기치 않은 토큰이 있습니다. 줄 바꿈 문자가 필요합니다.
+cl : 명령줄 warning D9030: '/Gm'이(가) 다중 처리와 호환되지 않습니다. /MP 스위치를 무시합니다.
   cMainGame.cpp
-k:\work\git\dx_3d_study\cmaingame.cpp(38): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(40): warning C4316: 'cCubePC': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
-k:\work\git\dx_3d_study\cmaingame.cpp(89): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(90): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(91): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(92): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(94): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(95): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(96): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(97): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(101): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(102): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(104): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(105): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(138): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(139): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(39): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(41): warning C4316: 'cCubePC': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+d:\work\study\dx_3d_study\cmaingame.cpp(154): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(155): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(156): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(157): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(160): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(161): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(162): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(163): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(171): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(174): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(180): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(183): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(189): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(192): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(225): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(226): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  cDeviceManager.cpp
+  cCubePC.cpp
+d:\work\study\dx_3d_study\ccubepc.cpp(42): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  cCamera.cpp
+d:\work\study\dx_3d_study\ccamera.cpp(44): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   DX_3D_STUDY.cpp
   코드를 생성하고 있습니다...
-  DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.exe
-  DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.pdb (Full PDB)
+  DX_3D_STUDY.vcxproj -> D:\WORK\study\DX_3D_STUDY\Debug\DX_3D_STUDY.exe
+  DX_3D_STUDY.vcxproj -> D:\WORK\study\DX_3D_STUDY\Debug\DX_3D_STUDY.pdb (Full PDB)
