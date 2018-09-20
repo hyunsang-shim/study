@@ -17,7 +17,6 @@ cCubePC::~cCubePC()
 void cCubePC::Setup()
 {
 	ST_PC_VERTEX	v;
-	v.color = D3DCOLOR_XRGB(rand() % 256, rand() % 256, rand() % 256);
 
 	
 	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, -1.0f));
@@ -42,6 +41,9 @@ void cCubePC::Setup()
 	for (int i = 0; i < vecVerTex_Box_Index.size(); i++)
 	{
 		v.p = vecVerTex_Box[vecVerTex_Box_Index[i]];
+		if (i%6 == 0)
+			v.color = D3DCOLOR_XRGB(rand() % 256, rand() % 256, rand() % 256);
+
 		m_vecVertex.push_back(v);
 	}
 }
@@ -77,4 +79,9 @@ void cCubePC::SetBoxScale(double scale)
 void cCubePC::SetBoxRotationY(double rotation)
 {
 	m_fBoxRotY = rotation;
+}
+
+vector<D3DXVECTOR3> cCubePC::GetOriginVertexList()
+{
+	return vecVerTex_Box;
 }

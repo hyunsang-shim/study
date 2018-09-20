@@ -3,7 +3,7 @@
 
 
 cCamera::cCamera()
-	:m_vEye(0, 5, -5),
+	:m_vEye(3, 5, -5),
 	m_vLookAt(0, 0, 0),
 	m_vUp(0, 1, 0),
 	m_fCameraDistance(5.0f),

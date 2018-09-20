@@ -9,8 +9,6 @@
 
 cMainGame*		g_pMainGame;
 HWND			g_hWnd;
-//cDeviceManager	DevManager;
-cCamera*		g_pCamera;
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.

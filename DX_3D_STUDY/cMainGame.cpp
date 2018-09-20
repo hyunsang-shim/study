@@ -3,6 +3,7 @@
 #include "cMainGame.h"
 
 class cCubePC;
+class cBoxman;
 class cCamera;
 class cGrid;
 
@@ -10,7 +11,8 @@ cMainGame::cMainGame()
 	: m_pCubePC(NULL)
 	, m_pCamera(NULL)
 	, m_pGrid(NULL)
-	, m_vEye(0, 0, -5)
+	, m_vecOriginalBox(NULL)
+	, m_vEye(3, 5, -5)
 	, m_vLookAt(0, 0, 0)
 	, m_vUp(0, 1, 0)
 	, m_vBoxPosition(0, 0, 0)
@@ -51,8 +53,10 @@ void cMainGame::Setup()
 	m_pGrid = new cGrid;
 	m_pGrid->Setup();
 
+	m_pBoxman = new cBoxman;
+	m_vecOriginalBox = m_pCubePC->GetOriginVertexList();
+	m_pBoxman->Setup();
 
-	SetGrid();
 
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
 }
@@ -118,6 +122,24 @@ void cMainGame::Update(){
 		m_pCubePC->Update();
 	}
 
+	if (m_pBoxman)
+	{
+		m_pBoxman->SetRootPosition(m_vBoxPosition);
+
+
+		D3DXMATRIXA16 matRotY;
+		D3DXVECTOR3 vBoxmanRootDirection(0, 0, 1.0f);
+		D3DXMatrixIdentity(&matRotY);
+		D3DXMatrixRotationY(&matRotY, m_fBoxRotY);				
+		D3DXVec3TransformNormal(&vBoxmanRootDirection, &vBoxmanRootDirection, &matRotY);
+
+		m_pBoxman->SetRootDirection(vBoxmanRootDirection);
+
+		m_pBoxman->SetRootRotationY(m_fBoxRotY);
+
+
+	}
+
 	if (m_pCamera)
 	{
 		m_pCamera->SetBoxPosition(m_vBoxPosition);
@@ -136,27 +158,13 @@ void cMainGame::Render()
 
 	// Draw Sonething
 	m_pGrid->Render();
-	m_pCubePC->Render();	
+	//m_pCubePC->Render();	
+	m_pBoxman->Render();
 
 	g_pD3DDevice->EndScene();
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
 
 }
-
-void cMainGame::SetGrid()
-{
-	
-
-}
-
-void cMainGame::DrawGrid()
-{
-	
-
-	
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecIndVertex.size() / 3, &m_vecIndVertex[0], sizeof(ST_PC_VERTEX));
-}
-
 
 
 void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

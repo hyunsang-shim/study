@@ -27,6 +27,7 @@ public:
 	void					SetBoxPosition(D3DXVECTOR3 box_pos);
 	void					SetBoxScale(double scale);
 	void					SetBoxRotationY(double rotY);
+	vector<D3DXVECTOR3>		GetOriginVertexList();
 	
 };
 

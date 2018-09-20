@@ -79,6 +79,7 @@ struct ST_PNT_VERTEX
 
 #include "cDeviceManager.h"
 #include "cCubePC.h"
+#include "cBoxman.h"
 #include "cGrid.h"
 #include "cCamera.h"
 

@@ -1,6 +1,7 @@
 #pragma once
 
 class cCubePC;
+class cBoxman;
 class cCamera;
 class cGrid;
 
@@ -34,17 +35,15 @@ public:
 	void			Setup();
 	void			Update();
 	void			Render();
-	void			SetGrid();
-	void			DrawGrid();
 
 	void WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
-	cCubePC*				m_pCubePC;
-	cCamera*				m_pCamera;		
-	cGrid*					m_pGrid;
-	vector<ST_PC_VERTEX>	m_vecGridVertex;
-	vector<ST_PC_VERTEX>	m_vecIndVertex;
+	cCubePC*					m_pCubePC;
+	cCamera*					m_pCamera;		
+	cGrid*						m_pGrid;
+	cBoxman*					m_pBoxman;
+	vector<D3DXVECTOR3>			m_vecOriginalBox;
 
 };
 
