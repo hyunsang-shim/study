@@ -97,44 +97,29 @@ void cBoxman::Update()
 void cBoxman::Render()
 {
 
-	D3DXMATRIXA16		matRot;
-	D3DXMATRIXA16		matScale;
-	D3DXMATRIXA16		matTrans;
-	D3DXMATRIXA16		matRT;
-	D3DXMATRIXA16		matRootRT;
+	D3DXMATRIXA16		matLocalSRT;
+	D3DXMATRIXA16		matRootS;
+	D3DXMATRIXA16		matRootR;
+	D3DXMATRIXA16		matRootT;
 
 	g_pD3DDevice->SetFVF(ST_PC_VERTEX::FVF);
 
 	// root position. initially 0,0,0
-	D3DXMatrixIdentity(&matRootRT);
-	D3DXMatrixRotationY(&matRot, m_fRootRotationY);
-	matRootRT = matRootRT;
+	// root Scale -> local Scale * Rotate * Transformation -> root Rotation * root Transformation
+	D3DXMatrixIdentity(&matRootS);
+	D3DXMatrixIdentity(&matRootR);
+	D3DXMatrixIdentity(&matRootT);
+	D3DXMatrixIdentity(&matLocalSRT);
 
 	// Body
-	D3DXMatrixTranslation(&matTrans, m_vecRootPosition.x, m_vecRootPosition.y + 2, m_vecRootPosition.z);
-	
-	m_matBodySRT = matRootRT;
-	m_matWorld =  matRootRT * matTrans;
-	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecPC_BODY.size() / 3, &m_vecPC_BODY[0], sizeof(ST_PC_VERTEX));
-
 
 	// Head
-	D3DXMatrixTranslation(&matTrans, m_vecRootPosition.x, m_vecRootPosition.y + 3.8, m_vecRootPosition.z);
 
-	matRT = matTrans;
-	//m_matWorld = matRT * matRootRT;
-	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecPC_HEAD.size() / 3, &m_vecPC_HEAD[0], sizeof(ST_PC_VERTEX));
-	
+	// L-Arm
+	// R-Arm
 
-	// Left Arm
-	D3DXMatrixTranslation(&matTrans, m_vecRootPosition.x+1.5, m_vecRootPosition.y +2, m_vecRootPosition.z);
-
-	matRT = matTrans;
-	//m_matWorld = matRT * matRootRT;
-	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecPC_ARM.size() / 3, &m_vecPC_ARM[0], sizeof(ST_PC_VERTEX));
+	// L-Leg
+	// R-Leg
 
 
 	//// Right Arm
@@ -185,4 +170,9 @@ void cBoxman::SetRootDirection(D3DXVECTOR3 direction)
 void cBoxman::SetRootRotationY(double valueY)
 {
 	m_fRootRotationY = valueY;
+}
+
+void cBoxman::SetRootScale(double scale)
+{
+	m_fRootScale = scale;
 }

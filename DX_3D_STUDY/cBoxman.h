@@ -12,6 +12,7 @@ public:
 	void SetRootPosition(D3DXVECTOR3 Position);
 	void SetRootDirection(D3DXVECTOR3 direction);
 	void SetRootRotationY(double valueY);
+	void SetRootScale(double scale);
 
 private:
 	D3DXVECTOR3				m_vecRootPosition;
@@ -26,9 +27,9 @@ private:
 	vector<ST_PC_VERTEX>	m_vecPC_LEG;
 	vector<ST_PC_VERTEX>	m_vecPC_BODY;
 
-	double					m_fRootRotationY;
-	D3DXMATRIXA16			m_matBodySRT;
+	double					m_fRootRotationY;		
 	D3DXMATRIXA16			m_matWorld;
+	double					m_fRootScale;
 
 };
 
