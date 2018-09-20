@@ -4,19 +4,22 @@
 
 class cCubePC;
 class cCamera;
+class cGrid;
 
 cMainGame::cMainGame()
-	: m_pCubePC(NULL),
-	m_vEye(0, 0, -5),
-	m_vLookAt(0, 0, 0),
-	m_vUp(0, 1, 0),
-	m_vBoxPosition(0, 0, 0),
-	m_fCameraDistance(5.0f),
-	m_isLButtonDown(false),
-	m_vCamRotAngle(0, 0, 0),
-	m_fBoxRotY(0.0f),
-	m_vBoxDirection(0, 0, 1),
-	m_fBoxScale(1.0f)
+	: m_pCubePC(NULL)
+	, m_pCamera(NULL)
+	, m_pGrid(NULL)
+	, m_vEye(0, 0, -5)
+	, m_vLookAt(0, 0, 0)
+	, m_vUp(0, 1, 0)
+	, m_vBoxPosition(0, 0, 0)
+	, m_fCameraDistance(5.0f)
+	, m_isLButtonDown(false)
+	, m_vCamRotAngle(0, 0, 0)
+	, m_fBoxRotY(0.0f)
+	, m_vBoxDirection(0, 0, 1)
+	, m_fBoxScale(1.0f)
 
 {
 	g_pDeviceManager;
@@ -31,6 +34,7 @@ cMainGame::~cMainGame()
 {	
 	SAFE_DELETE(m_pCubePC);
 	SAFE_DELETE(m_pCamera);
+	SAFE_DELETE(m_pGrid);
 	g_pDeviceManager->Destroy();
 }
 
@@ -43,6 +47,9 @@ void cMainGame::Setup()
 
 	m_pCamera = new cCamera;
 	m_pCamera->Setup();
+
+	m_pGrid = new cGrid;
+	m_pGrid->Setup();
 
 
 	SetGrid();
@@ -63,6 +70,7 @@ void cMainGame::Update(){
 	{
 		m_fBoxRotY += 0.1f;
 	}
+
 
 
 	// 박스의 이동
@@ -96,15 +104,16 @@ void cMainGame::Update(){
 	}
 
 
-
-
-
-
 	if (m_pCubePC)
 	{
+		D3DXMATRIXA16 matRotY;
+		D3DXMatrixIdentity(&matRotY);
+		D3DXMatrixRotationY(&matRotY, m_fBoxRotY);
+		m_vBoxDirection = D3DXVECTOR3(0, 0, 1.0f);
+		D3DXVec3TransformNormal(&m_vBoxDirection, &m_vBoxDirection, &matRotY);
 		m_pCubePC->SetBoxScale(m_fBoxScale);
 		m_pCubePC->SetBoxRotationY(m_fBoxRotY);
-		m_pCubePC->SetBoxPosition(m_vBoxPosition);		
+		m_pCubePC->SetBoxPosition(m_vBoxPosition);
 
 		m_pCubePC->Update();
 	}
@@ -115,6 +124,8 @@ void cMainGame::Update(){
 
 		m_pCamera->Update();
 	}
+
+	
 }
 
 void cMainGame::Render()
@@ -124,10 +135,8 @@ void cMainGame::Render()
 	g_pD3DDevice->BeginScene();
 
 	// Draw Sonething
-	SetGrid();
-	DrawGrid();
+	m_pGrid->Render();
 	m_pCubePC->Render();	
-	
 
 	g_pD3DDevice->EndScene();
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
@@ -136,67 +145,19 @@ void cMainGame::Render()
 
 void cMainGame::SetGrid()
 {
-	// 그리드 표시용
-	int nNumHalfTile = 10;
-	double fInterval = 1.0f;
-	double fMax = nNumHalfTile * fInterval;
-	double fMin = -nNumHalfTile * fInterval;
-
-	for (int i = 1; i <= nNumHalfTile; i++)
-	{
-		ST_PC_VERTEX	v;
-
-		if (i % 5 == 0)
-			v.color = D3DCOLOR_XRGB(200,200,200);
-		else		
-			v.color = D3DCOLOR_XRGB(120,120,120);
-
-		v.p = D3DXVECTOR3(fMin, 0, i * fInterval);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(fMax, 0, i * fInterval);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(fMin, 0, -i * fInterval);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(fMax, 0, -i * fInterval);			m_vecGridVertex.push_back(v);
-
-
-		v.p = D3DXVECTOR3(i * fInterval, 0, fMin);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(i * fInterval, 0, fMax);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(-i * fInterval, 0, fMin);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(-i * fInterval, 0, fMax);			m_vecGridVertex.push_back(v);
-
-	}
-
-	// 가운데 선은 비어있게 되니까 채워준다.
-	// z축은 빨간색
-	ST_PC_VERTEX	v;
-	v.color = D3DCOLOR_XRGB(255, 0,0);
-	v.p = D3DXVECTOR3(0, 0, fMin);
-	m_vecGridVertex.push_back(v);
-
-	v.p = D3DXVECTOR3(0, 0, fMax);
-	m_vecGridVertex.push_back(v);
 	
 
-	// X축은 파란색
-	v.color = D3DCOLOR_XRGB(0, 0, 255);
-	v.p = D3DXVECTOR3(fMin, 0, 0 );
-	m_vecGridVertex.push_back(v);
-
-	v.p = D3DXVECTOR3(fMax, 0, 0);
-	m_vecGridVertex.push_back(v);
-	
-
-	// y축은 녹색
-	v.color = D3DCOLOR_XRGB(0, 255, 0);
-	v.p = D3DXVECTOR3(0, fMin, 0);
-	m_vecGridVertex.push_back(v);
-
-	v.p = D3DXVECTOR3(0, fMax, 0);
-	m_vecGridVertex.push_back(v);
 }
 
 void cMainGame::DrawGrid()
 {
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_LINELIST, m_vecGridVertex.size() / 2, &m_vecGridVertex[0], sizeof(ST_PC_VERTEX));
+	
+
+	
+	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecIndVertex.size() / 3, &m_vecIndVertex[0], sizeof(ST_PC_VERTEX));
 }
+
+
 
 void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {

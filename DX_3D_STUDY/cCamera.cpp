@@ -43,7 +43,7 @@ void cCamera::Update()
 	// 휠 움직임에 따른 카메라 거리값 갱신
 	m_vEye = D3DXVECTOR3(0, m_fCameraDistance, -m_fCameraDistance);
 
-	m_vLookAt = m_vBoxPosition;
+	//m_vLookAt = m_vBoxPosition;
 	D3DXVec3TransformCoord(&m_vEye, &m_vEye, &matR);
 
 	D3DXMATRIXA16 matView;

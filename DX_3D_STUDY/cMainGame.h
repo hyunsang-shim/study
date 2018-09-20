@@ -2,6 +2,7 @@
 
 class cCubePC;
 class cCamera;
+class cGrid;
 
 class cMainGame
 {
@@ -40,8 +41,10 @@ public:
 
 private:
 	cCubePC*				m_pCubePC;
-	cCamera*				m_pCamera;							
+	cCamera*				m_pCamera;		
+	cGrid*					m_pGrid;
 	vector<ST_PC_VERTEX>	m_vecGridVertex;
+	vector<ST_PC_VERTEX>	m_vecIndVertex;
 
 };
 

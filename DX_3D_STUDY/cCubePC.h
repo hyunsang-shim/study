@@ -12,6 +12,8 @@ private:
 	vector<D3DXVECTOR3>		vecVerTex_Box;
 	vector<int>				vecVerTex_Box_Index;
 	D3DXMATRIXA16			m_matWorld;
+	D3DXMATRIXA16			m_matTrans;
+	D3DXMATRIXA16			m_matRotY;
 
 	D3DXVECTOR3				m_vBoxDirection;
 	D3DXVECTOR3				m_vBoxPosition;		// 주로 메인에게 전달한다.

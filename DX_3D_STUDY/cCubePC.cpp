@@ -48,8 +48,11 @@ void cCubePC::Setup()
 
 void cCubePC::Update()
 {
+	
+	D3DXMatrixRotationY(&m_matRotY, m_fBoxRotY);	
+	D3DXMatrixTranslation(&m_matTrans, m_vBoxPosition.x, m_vBoxPosition.y, m_vBoxPosition.z);
 
-
+	m_matWorld = m_matRotY * m_matTrans;
 }
 
 void cCubePC::Render()

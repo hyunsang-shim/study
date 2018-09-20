@@ -68,8 +68,18 @@ struct ST_PC_VERTEX
 };
 
 
+struct ST_PNT_VERTEX
+{
+	D3DXVECTOR3			p;
+	D3DXVECTOR3			nomal;
+	D3DXVECTOR2			texture;
+	enum{ FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
+};
+
 
 #include "cDeviceManager.h"
 #include "cCubePC.h"
+#include "cGrid.h"
 #include "cCamera.h"
+
 
