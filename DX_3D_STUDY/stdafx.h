@@ -30,9 +30,6 @@ using namespace std;
 #define PI 3.141592f
 #define EPSILON 0.00001f
 
-
-
-
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 
 // 다이렉트X 9 용 라이브러리 추가
@@ -58,6 +55,20 @@ public: \
 		return &instance;\
 	}
 
+//텍스쳐 위치 확인용.
+// 마인크래프트 64 * 32 텍스쳐용
+#define	x1 1 / 8.0
+#define	x2 2 / 8.0
+#define	x3 3 / 8.0
+#define	x4 4 / 8.0
+#define	x5 5 / 8.0
+#define	x6 6 / 8.0
+#define	x7 7 / 8.0	
+
+#define	y1 1 / 4.0
+#define	y2 2 / 4.0
+#define	y3 3 / 4.0
+
 
 struct ST_PC_VERTEX
 {
@@ -71,10 +82,28 @@ struct ST_PC_VERTEX
 struct ST_PNT_VERTEX
 {
 	D3DXVECTOR3			p;
-	D3DXVECTOR3			nomal;
+	D3DXVECTOR3			normal;
 	D3DXVECTOR2			texture;
 	enum{ FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
 };
+
+struct ST_PT_VERTEX
+{
+	D3DXVECTOR3			p;
+	D3DXVECTOR2			texture1;	 // UV Coord
+	enum { FVF = D3DFVF_XYZ | D3DFVF_TEX1 };
+};
+
+
+#define SYNTHESIZE (varType, varName, FunName) \
+protected : varType varName; \
+public : inline varType Get##FunName(void) const {return varName;} \
+public : inline void Set##FunName(varType var) { varName = var; }
+
+#define SYNTHESIZE_PASS_BY_REF(varType, varName, FunName) \
+protected : varType varName; \
+public : inline varType& Get##FunName(void) {return varName;} \
+public : inline void Set##FunName(varType var) { varName = var; }
 
 
 #include "cDeviceManager.h"
@@ -82,5 +111,6 @@ struct ST_PNT_VERTEX
 #include "cBoxman.h"
 #include "cGrid.h"
 #include "cCamera.h"
+#include "cCubeman.h"
 
 

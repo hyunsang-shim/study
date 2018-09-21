@@ -6,12 +6,15 @@ class cCubePC;
 class cBoxman;
 class cCamera;
 class cGrid;
+class cCubeman;
 
 cMainGame::cMainGame()
 	: m_pCubePC(NULL)
 	, m_pCamera(NULL)
 	, m_pGrid(NULL)
+	, m_pTexture(NULL)
 	, m_vecOriginalBox(NULL)
+	, m_pCubeman(NULL)
 	, m_vEye(3, 5, -5)
 	, m_vLookAt(0, 0, 0)
 	, m_vUp(0, 1, 0)
@@ -37,6 +40,7 @@ cMainGame::~cMainGame()
 	SAFE_DELETE(m_pCubePC);
 	SAFE_DELETE(m_pCamera);
 	SAFE_DELETE(m_pGrid);
+	SAFE_DELETE(m_pCubeman);
 	g_pDeviceManager->Destroy();
 }
 
@@ -58,11 +62,15 @@ void cMainGame::Setup()
 	m_pBoxman->Setup();
 
 
-	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
+
+	m_pCubeman = new cCubeman;
+	m_pCubeman->Setup();
 }
 
-void cMainGame::Update(){
 
+void cMainGame::Update(){
+	
+	
 
 	//박스의 회전
 	if (GetKeyState('A') & 0x8000)
@@ -133,10 +141,12 @@ void cMainGame::Update(){
 		D3DXMatrixRotationY(&matRotY, m_fBoxRotY);				
 		D3DXVec3TransformNormal(&vBoxmanRootDirection, &vBoxmanRootDirection, &matRotY);
 
+		m_pBoxman->SetRootScale(m_fBoxScale);
+		m_pBoxman->SetRootRotationY(m_fBoxRotY);
+		m_pBoxman->SetRootPosition(m_vBoxPosition);
 		m_pBoxman->SetRootDirection(vBoxmanRootDirection);
 
-		m_pBoxman->SetRootRotationY(m_fBoxRotY);
-
+		m_pBoxman->Update();
 
 	}
 
@@ -147,19 +157,35 @@ void cMainGame::Update(){
 		m_pCamera->Update();
 	}
 
-	
+	if (m_pCubeman)
+		m_pCubeman->Update();	
 }
 
 void cMainGame::Render()
 {	
 	g_pD3DDevice->Clear(NULL, NULL, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(64,64,64), 1.0f, 0);
-
 	g_pD3DDevice->BeginScene();
+	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
 
-	// Draw Sonething
-	m_pGrid->Render();
+	// Draw Something
+	//m_pGrid->Render();
 	//m_pCubePC->Render();	
-	m_pBoxman->Render();
+	//m_pBoxman->Render();
+	if (m_pCubeman)
+		m_pCubeman->Render();
+	
+	// sample code
+	//{
+	//	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
+	//	D3DXMATRIXA16	matWorld;
+	//	D3DXMatrixIdentity(&matWorld);
+	//	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+	//	g_pD3DDevice->SetTexture(0, m_pTexture);	// 텍스쳐 사용 선언
+	//	g_pD3DDevice->SetFVF(ST_PT_VERTEX::FVF);
+	//	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex.size() / 3, &m_vecVertex[0], sizeof(ST_PT_VERTEX));
+
+	//	g_pD3DDevice->SetTexture(0, NULL);	// 텍스쳐 사용 하지 않음 선언
+	//}
 
 	g_pD3DDevice->EndScene();
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);

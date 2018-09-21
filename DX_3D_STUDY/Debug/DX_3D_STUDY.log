@@ -1,0 +1,3 @@
+﻿  stdafx.cpp
+k:\work\git\dx_3d_study\stdafx.h(27): warning C4067: 전처리기 지시문 다음에 예기치 않은 토큰이 있습니다. 줄 바꿈 문자가 필요합니다.
+k:\work\git\dx_3d_study\ccharacter.h(4): error C2504: 'cCubeNode': 기본 클래스를 정의하지 않았습니다.
