@@ -6,7 +6,6 @@ class cCubePC;
 class cBoxman;
 class cCamera;
 class cGrid;
-class cCubeman;
 
 cMainGame::cMainGame()
 	: m_pCubePC(NULL)
@@ -14,7 +13,7 @@ cMainGame::cMainGame()
 	, m_pGrid(NULL)
 	, m_pTexture(NULL)
 	, m_vecOriginalBox(NULL)
-	, m_pCubeman(NULL)
+//	, m_pCubeman(NULL)
 	, m_vEye(3, 5, -5)
 	, m_vLookAt(0, 0, 0)
 	, m_vUp(0, 1, 0)
@@ -37,10 +36,11 @@ cMainGame::cMainGame()
 
 cMainGame::~cMainGame()
 {	
-	SAFE_DELETE(m_pCubePC);
+	//SAFE_DELETE(m_pCubePC);
 	SAFE_DELETE(m_pCamera);
 	SAFE_DELETE(m_pGrid);
-	SAFE_DELETE(m_pCubeman);
+	//SAFE_DELETE(m_pCubeman);
+	SAFE_DELETE(m_pBoxman)
 	g_pDeviceManager->Destroy();
 }
 
@@ -48,8 +48,8 @@ void cMainGame::Setup()
 {
 	srand(time(NULL));
 
-	m_pCubePC = new cCubePC;
-	m_pCubePC->Setup();
+	/*m_pCubePC = new cCubePC;
+	m_pCubePC->Setup();*/
 
 	m_pCamera = new cCamera;
 	m_pCamera->Setup();
@@ -57,14 +57,13 @@ void cMainGame::Setup()
 	m_pGrid = new cGrid;
 	m_pGrid->Setup();
 
-	m_pBoxman = new cBoxman;
-	m_vecOriginalBox = m_pCubePC->GetOriginVertexList();
+	m_pBoxman = new cBoxman;	
 	m_pBoxman->Setup();
 
 
 
-	m_pCubeman = new cCubeman;
-	m_pCubeman->Setup();
+	//m_pCubeman = new cCubeman;
+	//m_pCubeman->Setup();
 }
 
 
@@ -116,7 +115,7 @@ void cMainGame::Update(){
 	}
 
 
-	if (m_pCubePC)
+	/*if (m_pCubePC)
 	{
 		D3DXMATRIXA16 matRotY;
 		D3DXMatrixIdentity(&matRotY);
@@ -128,7 +127,7 @@ void cMainGame::Update(){
 		m_pCubePC->SetBoxPosition(m_vBoxPosition);
 
 		m_pCubePC->Update();
-	}
+	}*/
 
 	if (m_pBoxman)
 	{
@@ -157,8 +156,8 @@ void cMainGame::Update(){
 		m_pCamera->Update();
 	}
 
-	if (m_pCubeman)
-		m_pCubeman->Update();	
+	/*if (m_pCubeman)
+		m_pCubeman->Update();	*/
 }
 
 void cMainGame::Render()
@@ -168,11 +167,13 @@ void cMainGame::Render()
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
 
 	// Draw Something
-	//m_pGrid->Render();
+	m_pGrid->Render();
 	//m_pCubePC->Render();	
-	//m_pBoxman->Render();
+	m_pBoxman->Render();
+	
+	/* 강사님 추상화 클래스 방식
 	if (m_pCubeman)
-		m_pCubeman->Render();
+		m_pCubeman->Render();*/
 	
 	// sample code
 	//{

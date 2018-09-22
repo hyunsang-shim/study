@@ -57,17 +57,17 @@ public: \
 
 //텍스쳐 위치 확인용.
 // 마인크래프트 64 * 32 텍스쳐용
-#define	x1 1 / 8.0
-#define	x2 2 / 8.0
-#define	x3 3 / 8.0
-#define	x4 4 / 8.0
-#define	x5 5 / 8.0
-#define	x6 6 / 8.0
-#define	x7 7 / 8.0	
+#define	x1 1 / 8.0000f
+#define	x2 2 / 8.0000f
+#define	x3 3 / 8.0000f
+#define	x4 4 / 8.0000f
+#define	x5 5 / 8.0000f
+#define	x6 6 / 8.0000f
+#define	x7 7 / 8.0000f
 
-#define	y1 1 / 4.0
-#define	y2 2 / 4.0
-#define	y3 3 / 4.0
+#define	y1 1 / 4.0000f
+#define	y2 2 / 4.0000f
+#define	y3 3 / 4.0000f
 
 
 struct ST_PC_VERTEX
@@ -95,15 +95,15 @@ struct ST_PT_VERTEX
 };
 
 
-#define SYNTHESIZE (varType, varName, FunName) \
-protected : varType varName; \
-public : inline varType Get##FunName(void) const {return varName;} \
-public : inline void Set##FunName(varType var) { varName = var; }
-
-#define SYNTHESIZE_PASS_BY_REF(varType, varName, FunName) \
-protected : varType varName; \
-public : inline varType& Get##FunName(void) {return varName;} \
-public : inline void Set##FunName(varType var) { varName = var; }
+//#define SYNTHESIZE (varType, varName, FunName) \
+//protected : varType varName; \
+//public : inline varType Get##FunName(void) const {return varName;} \
+//public : inline void Set##FunName(varType var) { varName = var; }
+//
+//#define SYNTHESIZE_PASS_BY_REF(varType, varName, FunName) \
+//protected : varType varName; \
+//public : inline varType& Get##FunName(void) {return varName;} \
+//public : inline void Set##FunName(varType var) { varName = var; }
 
 
 #include "cDeviceManager.h"
@@ -111,6 +111,6 @@ public : inline void Set##FunName(varType var) { varName = var; }
 #include "cBoxman.h"
 #include "cGrid.h"
 #include "cCamera.h"
-#include "cCubeman.h"
+//#include "cCubeman.h"
 
 
