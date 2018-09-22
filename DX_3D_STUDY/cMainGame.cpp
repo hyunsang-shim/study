@@ -22,7 +22,7 @@ cMainGame::cMainGame()
 	, m_isLButtonDown(false)
 	, m_vCamRotAngle(0, 0, 0)
 	, m_fBoxRotY(0.0f)
-	, m_vBoxDirection(0, 0, 1)
+	, m_vBoxDirection(0, 0, -1)
 	, m_fBoxScale(1.0f)
 
 {
@@ -48,8 +48,8 @@ void cMainGame::Setup()
 {
 	srand(time(NULL));
 
-	/*m_pCubePC = new cCubePC;
-	m_pCubePC->Setup();*/
+	m_pCubePC = new cCubePC;
+	m_pCubePC->Setup();
 
 	m_pCamera = new cCamera;
 	m_pCamera->Setup();
@@ -115,7 +115,7 @@ void cMainGame::Update(){
 	}
 
 
-	/*if (m_pCubePC)
+	if (m_pCubePC)
 	{
 		D3DXMATRIXA16 matRotY;
 		D3DXMatrixIdentity(&matRotY);
@@ -127,7 +127,7 @@ void cMainGame::Update(){
 		m_pCubePC->SetBoxPosition(m_vBoxPosition);
 
 		m_pCubePC->Update();
-	}*/
+	}
 
 	if (m_pBoxman)
 	{
