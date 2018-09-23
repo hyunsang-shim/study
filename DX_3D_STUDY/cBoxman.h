@@ -15,8 +15,11 @@ public:
 	void SetRootDirection(D3DXVECTOR3 direction);
 	void SetTextureUV_HEAD();
 	void SetTextureUV_BODY();
-	void SetTextureUV_ARM();
-	void SetTextureUV_LEG();
+	void SetTextureUV_ARM_L();
+	void SetTextureUV_ARM_R();
+	void SetTextureUV_LEG_L();
+	void SetTextureUV_LEG_R();
+	void SetSwingState(bool value);
 	
 
 private:
@@ -24,6 +27,12 @@ private:
 	double					m_fRootRotationY;
 	D3DXVECTOR3				m_vecRootPosition;
 	D3DXVECTOR3				m_vRootDirection;
+
+	bool					m_Swing;
+	float					m_fRotArmL;
+	float					m_fRotArmR;
+	float					m_fRotLegL;
+	float					m_fRotLegR;
 
 	// 루트 매트릭스
 	D3DXMATRIXA16			m_matRootS;
@@ -33,8 +42,10 @@ private:
 
 	// 각 부위별 정점 저장용
 	vector<D3DXVECTOR3>		m_vecHEAD;
-	vector<D3DXVECTOR3>		m_vecARM;
-	vector<D3DXVECTOR3>		m_vecLEG;
+	vector<D3DXVECTOR3>		m_vecARM_L;
+	vector<D3DXVECTOR3>		m_vecARM_R;
+	vector<D3DXVECTOR3>		m_vecLEG_L;
+	vector<D3DXVECTOR3>		m_vecLEG_R;
 	vector<D3DXVECTOR3>		m_vecBODY;
 
 	// 공용 박스 그리기용 정점 순서 배열
@@ -42,14 +53,18 @@ private:
 	
 	// 각 부위별 정점+텍스쳐UV좌표 저장용
 	vector<ST_PT_VERTEX>	m_vecPT_HEAD;
-	vector<ST_PT_VERTEX>	m_vecPT_ARM;
-	vector<ST_PT_VERTEX>	m_vecPT_LEG;
+	vector<ST_PT_VERTEX>	m_vecPT_ARM_L;
+	vector<ST_PT_VERTEX>	m_vecPT_ARM_R;
+	vector<ST_PT_VERTEX>	m_vecPT_LEG_L;
+	vector<ST_PT_VERTEX>	m_vecPT_LEG_R;
 	vector<ST_PT_VERTEX>	m_vecPT_BODY;
 	
 	// 각 부위별 텍스쳐 좌표 저장용 (임시)
 	vector<D3DXVECTOR2>		m_vTexture_HEAD;
-	vector<D3DXVECTOR2>		m_vTexture_ARM;
-	vector<D3DXVECTOR2>		m_vTexture_LEG;
+	vector<D3DXVECTOR2>		m_vTexture_ARM_L;
+	vector<D3DXVECTOR2>		m_vTexture_ARM_R;
+	vector<D3DXVECTOR2>		m_vTexture_LEG_L;
+	vector<D3DXVECTOR2>		m_vTexture_LEG_R;
 	vector<D3DXVECTOR2>		m_vTexture_BODY;
 	
 	// 각 부위별 매트릭스 세팅 및 계산용

@@ -162,7 +162,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
 			if (g_pMainGame)
+			{
 				g_pMainGame->Render();
+
+				TCHAR tmp[100];
+				wsprintf(tmp, _T("흔들기 %s"), (g_pMainGame->swing ? _T("TRUE") : _T("FALSE")));
+				TextOut(hdc, 10, 10, tmp, lstrlen(tmp));
+			}	
+			
+			
             EndPaint(hWnd, &ps);
         }
         break;

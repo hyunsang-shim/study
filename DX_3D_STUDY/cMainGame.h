@@ -21,9 +21,11 @@ private:
 
 	POINT						m_ptPrevMouse;
 	bool						m_isLButtonDown;
+	bool						m_isMButtonDown;
 	double						m_fCameraDistance;
 
 	D3DXVECTOR3					m_vCamRotAngle;
+	double						m_fCamTransY;
 	D3DXVECTOR3					m_vAxisXTextPos;
 	D3DXVECTOR3					m_vAxisZTextPos;
 
@@ -36,6 +38,10 @@ public:
 	void						Setup();
 	void						Update();
 	void						Render();
+
+	bool						isMoving;
+	bool						isRotating;
+	bool						swing;
 
 	void						WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

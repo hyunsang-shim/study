@@ -20,6 +20,9 @@ public:
 	void			Update();
 	void			SetCameraDistance(double value);
 	void			SetCameraRotationAngle(D3DXVECTOR3 Angle);
+	D3DXVECTOR3		GetCamPosY();
+	void			SetCameraPosY(double posY);
 	void			SetBoxPosition(D3DXVECTOR3 position);
+	
 };
 

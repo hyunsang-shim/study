@@ -64,6 +64,18 @@ void cCamera::SetCameraRotationAngle(D3DXVECTOR3 Angle)
 	m_vCamRotAngle.y = Angle.y;
 }
 
+D3DXVECTOR3 cCamera::GetCamPosY()
+{
+	return m_vEye;
+}
+
+void cCamera::SetCameraPosY(double posY)
+{
+	m_vEye.y = posY;
+}
+
+
+
 void cCamera::SetBoxPosition(D3DXVECTOR3 position)
 {
 	m_vBoxPosition.x = position.x;

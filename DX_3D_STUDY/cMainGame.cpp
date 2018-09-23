@@ -13,17 +13,20 @@ cMainGame::cMainGame()
 	, m_pGrid(NULL)
 	, m_pTexture(NULL)
 	, m_vecOriginalBox(NULL)
-//	, m_pCubeman(NULL)
+	//	, m_pCubeman(NULL)
 	, m_vEye(3, 5, -5)
 	, m_vLookAt(0, 0, 0)
 	, m_vUp(0, 1, 0)
 	, m_vBoxPosition(0, 0, 0)
 	, m_fCameraDistance(5.0f)
 	, m_isLButtonDown(false)
+	, m_isMButtonDown(false)
 	, m_vCamRotAngle(0, 0, 0)
+	, m_fCamTransY(0)
 	, m_fBoxRotY(0.0f)
 	, m_vBoxDirection(0, 0, -1)
 	, m_fBoxScale(1.0f)
+	, swing(false)
 
 {
 	g_pDeviceManager;
@@ -74,33 +77,43 @@ void cMainGame::Update(){
 	//박스의 회전
 	if (GetKeyState('A') & 0x8000)
 	{
+		isRotating = true;
 		m_fBoxRotY -= 0.1f;
 	}
-
-	if (GetKeyState('D') & 0x8000)
+	else if (GetKeyState('D') & 0x8000)
 	{
+		isRotating = true;
 		m_fBoxRotY += 0.1f;
 	}
-
+	else 
+		isRotating = false;
 
 
 	// 박스의 이동
 
 	if (GetKeyState('W') & 0x8000)
 	{
-		m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.1f);
+		isMoving = true;
+		m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * -0.1f);
 	}
-
-	if (GetKeyState('S') & 0x8000)
+	else if (GetKeyState('S') & 0x8000)
 	{
-		m_vBoxPosition = m_vBoxPosition - (m_vBoxDirection * 0.1f);
+		isMoving = true;		
+		m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.1f);		
 	}
+	else
+		isMoving = false;
 
+	m_pBoxman->SetSwingState(isMoving | isRotating);
+
+	// 캐릭터에 이동 상태를 전달한다.
+	
 
 
 	//박스의 스케일
-	if (GetKeyState('Z') & 0x8000)
+	/*if (GetKeyState('Z') & 0x8000)
 	{
+		
 		m_fBoxScale += 0.1f;
 		if (m_fBoxScale > 2.0f)
 			m_fBoxScale = 2.0f;
@@ -108,11 +121,10 @@ void cMainGame::Update(){
 
 	if (GetKeyState('X') & 0x8000)
 	{
-
 		m_fBoxScale -= 0.1f;
 		if (m_fBoxScale < 0.2f)
 			m_fBoxScale = 0.2f;
-	}
+	}*/
 
 
 	if (m_pCubePC)
@@ -206,6 +218,12 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONUP:
 		m_isLButtonDown = false;
 		break;
+	case WM_MBUTTONDOWN:
+		m_isMButtonDown = true;
+		break;
+	case WM_MBUTTONUP:
+		m_isMButtonDown = false;
+		break;
 	case WM_MOUSEMOVE:
 		if (m_isLButtonDown)
 		{
@@ -225,6 +243,20 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			m_pCamera->SetCameraRotationAngle(m_vCamRotAngle);
 		}
+		else if (m_isMButtonDown)
+		{
+			POINT ptCurMouse;
+			ptCurMouse.y = HIWORD(lParam);
+			double fDeltaY = (double)ptCurMouse.y - m_ptPrevMouse.y;
+
+			// y축 이동량에 기반하여 카메라를 위 또는 아래로 이동시킨다.
+			m_fCamTransY += m_pCamera->GetCamPosY().y + fDeltaY / 100.0f ;
+			
+			m_ptPrevMouse = ptCurMouse;
+
+			m_pCamera->SetCameraPosY(m_fCamTransY);
+
+		}
 		break;
 	case WM_MOUSEWHEEL:
 		m_fCameraDistance -= (GET_WHEEL_DELTA_WPARAM(wParam) / 30.0f);
@@ -236,5 +268,16 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		m_pCamera->SetCameraDistance(m_fCameraDistance);
 
 		break;		
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_SPACE:
+			if (swing)			
+				swing = false;							
+			else
+				swing = true;
+
+		}
+		break;
 	}
 }
