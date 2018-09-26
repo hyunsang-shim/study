@@ -26,7 +26,15 @@ cMainGame::cMainGame()
 	, m_fBoxRotY(0.0f)
 	, m_vBoxDirection(0, 0, -1)
 	, m_fBoxScale(1.0f)
-	, swing(false)
+	, m_isMoving(false)
+	, m_isRunning(false)
+	, m_isRotating(false)
+	, m_isJumping(false)
+	, m_isJumping_Top(false)
+	, m_isCamFollow(false)
+
+
+
 
 {
 	g_pDeviceManager;
@@ -63,7 +71,20 @@ void cMainGame::Setup()
 	m_pBoxman = new cBoxman;	
 	m_pBoxman->Setup();
 
+	// 스킨 제작자 주소 표시
+	m_pFont = NULL;
+	HRESULT hr = D3DXCreateFont(g_pD3DDevice, 20, 10, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, _T("Consolas"), &m_pFont);
 
+	message = "D.VA 스킨 출처 : https://blog.naver.com/netkama26/220746453079\n조작:\nW - 앞으로\t S - 뒤로\nA - 왼쪽으로 회전 \t D - 오른쪽으로 회전\nSpace Bar - 점프 \tShift - 달리기\nC - 카메라 모드 토글(고정 카메라 <=> TPS 카메라 )";
+	if (!SUCCEEDED(hr))
+	{
+		TCHAR tmp[128] = { _T("Can not Create and/or Initialize Font. Requested font face name : Consolas") };
+	
+		MessageBox(g_hWnd, _T("Error : Creating Font Failed"), tmp, MB_OK);
+		return;
+	}
+
+	GetClientRect(g_hWnd, &m_RectTxtArea);
 
 	//m_pCubeman = new cCubeman;
 	//m_pCubeman->Setup();
@@ -77,54 +98,104 @@ void cMainGame::Update(){
 	//박스의 회전
 	if (GetKeyState('A') & 0x8000)
 	{
-		isRotating = true;
+		m_isRotating = true;
 		m_fBoxRotY -= 0.1f;
 	}
 	else if (GetKeyState('D') & 0x8000)
 	{
-		isRotating = true;
+		m_isRotating = true;
 		m_fBoxRotY += 0.1f;
 	}
 	else 
-		isRotating = false;
+		m_isRotating = false;
 
 
 	// 박스의 이동
+	double fMin = m_pGrid->GetGridMinMax().left;
+	double fMax = m_pGrid->GetGridMinMax().right;
 
 	if (GetKeyState('W') & 0x8000)
 	{
-		isMoving = true;
-		m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * -0.1f);
+		m_isMoving = true;
+		if (GetKeyState(VK_SHIFT) & 0x8000)
+		{
+			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * -0.18f);
+			m_isRunning = true;
+		}
+		else
+		{
+			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * -0.1f);
+			m_isRunning = false;
+
+		}
+		
+		// 캐릭터가 그리드 밖으로 못나가도록 범위를 지정한다.
+		if (m_vBoxPosition.x >= fMax)
+			m_vBoxPosition.x = fMax;
+		else if (m_vBoxPosition.x <= fMin)
+			m_vBoxPosition.x = fMin;
+
+		if (m_vBoxPosition.z >= fMax)
+			m_vBoxPosition.z = fMax;
+		else if (m_vBoxPosition.z <= fMin)
+			m_vBoxPosition.z = fMin;
+
 	}
 	else if (GetKeyState('S') & 0x8000)
 	{
-		isMoving = true;		
-		m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.1f);		
+		m_isMoving = true;		
+		if (GetKeyState(VK_SHIFT) & 0x8000)
+		{
+			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.18f);
+			m_isRunning = true;
+		}
+		else
+		{
+			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.1f);
+			m_isRunning = false;
+		}
+
+		if (m_vBoxPosition.x >= fMax)
+			m_vBoxPosition.x = fMax;
+		else if (m_vBoxPosition.x <= fMin)
+			m_vBoxPosition.x = fMin;
+
+		if (m_vBoxPosition.z >= fMax)
+			m_vBoxPosition.z = fMax;
+		else if (m_vBoxPosition.z <= fMin)
+			m_vBoxPosition.z = fMin;
+
 	}
 	else
-		isMoving = false;
+		m_isMoving = false;
 
-	m_pBoxman->SetSwingState(isMoving | isRotating);
-
-	// 캐릭터에 이동 상태를 전달한다.
 	
-
-
-	//박스의 스케일
-	/*if (GetKeyState('Z') & 0x8000)
+	// 박스의 점프
+	if (m_isJumping && !m_isJumping_Top)
 	{
-		
-		m_fBoxScale += 0.1f;
-		if (m_fBoxScale > 2.0f)
-			m_fBoxScale = 2.0f;
+		if (m_vBoxPosition.y < 1.0 + EPSILON)
+			m_vBoxPosition.y += 0.125f;
+		else
+		{
+			m_isJumping_Top = true;
+		}
+	}
+	else if (m_isJumping && m_isJumping_Top)
+	{
+		if (m_vBoxPosition.y >= 0.0f + EPSILON)
+			m_vBoxPosition.y -= 0.125f;
+		else
+		{
+			m_vBoxPosition.y = 0.0000000f;
+			m_isJumping = false;
+			m_isJumping_Top = false;
+		}
 	}
 
-	if (GetKeyState('X') & 0x8000)
-	{
-		m_fBoxScale -= 0.1f;
-		if (m_fBoxScale < 0.2f)
-			m_fBoxScale = 0.2f;
-	}*/
+	// 캐릭터에 이동 상태를 전달한다.		
+	m_pBoxman->SetMoveState(m_isMoving | m_isRotating, m_isRunning);
+	m_pBoxman->SetjumpState(m_isJumping, m_isJumping_Top);
+
 
 
 	if (m_pCubePC)
@@ -164,7 +235,6 @@ void cMainGame::Update(){
 	if (m_pCamera)
 	{
 		m_pCamera->SetBoxPosition(m_vBoxPosition);
-
 		m_pCamera->Update();
 	}
 
@@ -183,6 +253,12 @@ void cMainGame::Render()
 	//m_pCubePC->Render();	
 	m_pBoxman->Render();
 	
+
+	if (m_pFont)
+	{
+		m_pFont->DrawTextA(NULL, message.c_str(), -1, &m_RectTxtArea, DT_LEFT, D3DCOLOR_XRGB(200, 200, 200));
+			//DrawTextW(NULL, LPCSTR(message.c_str()), lstrlen(message), &m_RectTxtArea, DT_LEFT, D3DCOLOR_XRGB(128, 128, 128));
+	}
 	/* 강사님 추상화 클래스 방식
 	if (m_pCubeman)
 		m_pCubeman->Render();*/
@@ -243,7 +319,8 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			m_pCamera->SetCameraRotationAngle(m_vCamRotAngle);
 		}
-		else if (m_isMButtonDown)
+		
+		if (m_isMButtonDown)
 		{
 			POINT ptCurMouse;
 			ptCurMouse.y = HIWORD(lParam);
@@ -272,12 +349,27 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case VK_SPACE:
-			if (swing)			
-				swing = false;							
+			if (m_isJumping)
+				break;
 			else
-				swing = true;
+			{
+				m_isJumping = true;
+				m_isJumping_Top = false;
+				m_pBoxman->SetjumpState(true, false);
+			}
 
+			break;
+		case 'C':
+			if (m_isCamFollow)			
+				m_isCamFollow = false;
+			else
+				m_isCamFollow = true;
+
+
+			m_pCamera->ChangeCameraMode(m_isCamFollow);
+			break;
 		}
 		break;
+	
 	}
 }

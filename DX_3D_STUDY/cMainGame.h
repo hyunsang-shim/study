@@ -34,14 +34,20 @@ private:
 
 	D3DXVECTOR3					m_vBoxDirection = { 0,0,1 };
 
+
+	ID3DXFont					*m_pFont;
+	RECT						m_RectTxtArea;
+	string						message;
 public:
 	void						Setup();
 	void						Update();
 	void						Render();
 
-	bool						isMoving;
-	bool						isRotating;
-	bool						swing;
+	bool						m_isMoving;
+	bool						m_isRunning;
+	bool						m_isRotating;
+	bool						m_isJumping;	
+	bool						m_isJumping_Top;
 
 	void						WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -54,6 +60,7 @@ private:
 	cGrid*						m_pGrid;
 	cBoxman*					m_pBoxman;
 	vector<D3DXVECTOR3>			m_vecOriginalBox;
+	bool						m_isCamFollow;				// 카메라를 따라가게 할 것인지에 대한 플래그 값.
 
 
 

@@ -164,10 +164,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (g_pMainGame)
 			{
 				g_pMainGame->Render();
-
-				TCHAR tmp[100];
-				wsprintf(tmp, _T("Èçµé±â %s"), (g_pMainGame->swing ? _T("TRUE") : _T("FALSE")));
-				TextOut(hdc, 10, 10, tmp, lstrlen(tmp));
 			}	
 			
 			

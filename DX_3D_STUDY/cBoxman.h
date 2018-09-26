@@ -19,7 +19,8 @@ public:
 	void SetTextureUV_ARM_R();
 	void SetTextureUV_LEG_L();
 	void SetTextureUV_LEG_R();
-	void SetSwingState(bool value);
+	void SetMoveState(bool move, bool run);
+	void SetjumpState(bool value1, bool value2);
 	
 
 private:
@@ -28,7 +29,12 @@ private:
 	D3DXVECTOR3				m_vecRootPosition;
 	D3DXVECTOR3				m_vRootDirection;
 
-	bool					m_Swing;
+	bool					m_isMoving;
+	bool					m_isRunning;
+	bool					m_isJumping;
+	bool					m_isJumping_Top;
+	float					m_vSwingFactor;
+	
 	float					m_fRotArmL;
 	float					m_fRotArmR;
 	float					m_fRotLegL;

@@ -16,8 +16,8 @@ void cGrid::Setup()
 	// 그리드 표시용
 	int nNumHalfTile = 10;
 	double fInterval = 1.0f;
-	double fMax = nNumHalfTile * fInterval;
-	double fMin = -nNumHalfTile * fInterval;
+	m_fMax = nNumHalfTile * fInterval;
+	m_fMin = -nNumHalfTile * fInterval;
 
 	for (int i = 1; i <= nNumHalfTile; i++)
 	{
@@ -28,16 +28,16 @@ void cGrid::Setup()
 		else
 			v.color = D3DCOLOR_XRGB(120, 120, 120);
 
-		v.p = D3DXVECTOR3(fMin, 0, i * fInterval);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(fMax, 0, i * fInterval);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(fMin, 0, -i * fInterval);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(fMax, 0, -i * fInterval);			m_vecGridVertex.push_back(v);
+		v.p = D3DXVECTOR3(m_fMin, 0, i * fInterval);			m_vecGridVertex.push_back(v);
+		v.p = D3DXVECTOR3(m_fMax, 0, i * fInterval);			m_vecGridVertex.push_back(v);
+		v.p = D3DXVECTOR3(m_fMin, 0, -i * fInterval);			m_vecGridVertex.push_back(v);
+		v.p = D3DXVECTOR3(m_fMax, 0, -i * fInterval);			m_vecGridVertex.push_back(v);
 
 
-		v.p = D3DXVECTOR3(i * fInterval, 0, fMin);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(i * fInterval, 0, fMax);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(-i * fInterval, 0, fMin);			m_vecGridVertex.push_back(v);
-		v.p = D3DXVECTOR3(-i * fInterval, 0, fMax);			m_vecGridVertex.push_back(v);
+		v.p = D3DXVECTOR3(i * fInterval, 0, m_fMin);			m_vecGridVertex.push_back(v);
+		v.p = D3DXVECTOR3(i * fInterval, 0, m_fMax);			m_vecGridVertex.push_back(v);
+		v.p = D3DXVECTOR3(-i * fInterval, 0, m_fMin);			m_vecGridVertex.push_back(v);
+		v.p = D3DXVECTOR3(-i * fInterval, 0, m_fMax);			m_vecGridVertex.push_back(v);
 
 	}
 
@@ -45,27 +45,27 @@ void cGrid::Setup()
 	// z축은 빨간색
 	ST_PC_VERTEX	v;
 	v.color = D3DCOLOR_XRGB(255, 0, 0);
-	v.p = D3DXVECTOR3(0, 0, fMin*5);
+	v.p = D3DXVECTOR3(0, 0, m_fMin*5);
 	m_vecGridVertex.push_back(v);
 
-	v.p = D3DXVECTOR3(0, 0, fMax*5);
+	v.p = D3DXVECTOR3(0, 0, m_fMax*5);
 	m_vecGridVertex.push_back(v);
 
 	// X축은 파란색
 	v.color = D3DCOLOR_XRGB(0, 0, 255);
-	v.p = D3DXVECTOR3(fMin*5, 0, 0);
+	v.p = D3DXVECTOR3(m_fMin*5, 0, 0);
 	m_vecGridVertex.push_back(v);
 
-	v.p = D3DXVECTOR3(fMax*5, 0, 0);
+	v.p = D3DXVECTOR3(m_fMax*5, 0, 0);
 	m_vecGridVertex.push_back(v);
 
 
 	// y축은 녹색
 	v.color = D3DCOLOR_XRGB(0, 255, 0);
-	v.p = D3DXVECTOR3(0, fMin*5, 0);
+	v.p = D3DXVECTOR3(0, m_fMin*5, 0);
 	m_vecGridVertex.push_back(v);
 
-	v.p = D3DXVECTOR3(0, fMax*5, 0);
+	v.p = D3DXVECTOR3(0, m_fMax*5, 0);
 	m_vecGridVertex.push_back(v);
 
 
@@ -216,12 +216,13 @@ void cGrid::Setup()
 
 void cGrid::DrawGrid()
 {
-	g_pD3DDevice->SetFVF(ST_PT_VERTEX::FVF);
+	g_pD3DDevice->SetFVF(ST_PC_VERTEX::FVF);
 
 	D3DXMATRIXA16 m_matWorld;
 	D3DXMatrixIdentity(&m_matWorld);
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld);
 	g_pD3DDevice->DrawPrimitiveUP(D3DPT_LINELIST, m_vecGridVertex.size() / 2, &m_vecGridVertex[0], sizeof(ST_PC_VERTEX));
+	g_pD3DDevice->SetTexture(0, NULL);
 }
 
 void cGrid::DrawIndicator()
@@ -234,7 +235,7 @@ void cGrid::DrawIndicator()
 	D3DXMatrixIdentity(&matRot);
 
 
-	g_pD3DDevice->SetFVF(ST_PT_VERTEX::FVF);
+	g_pD3DDevice->SetFVF(ST_PC_VERTEX::FVF);
 
 
 	//// Draw Z-Axis Indicator
@@ -271,4 +272,14 @@ void cGrid::Render()
 {
 	DrawGrid();
 	DrawIndicator();
+}
+
+RECT cGrid::GetGridMinMax()
+{
+	RECT ret;
+	ret.right = m_fMax;
+	ret.left = m_fMin;
+	ret.top = m_fMin;
+	ret.bottom = m_fMax;
+	return ret;
 }

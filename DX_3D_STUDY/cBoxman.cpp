@@ -4,7 +4,11 @@ cBoxman::cBoxman()
 	: m_vecRootPosition(0, 0, 0)
 	, m_vRootDirection(0,0,-1)
 	, m_fRootRotationY(0.0f)
-	, m_Swing(false)
+	, m_isMoving(false)
+	, m_isRunning(false)
+	, m_vSwingFactor(0.05f)
+	, m_isJumping(false)
+	, m_isJumping_Top(false)
 	, m_fRotArmL(0.0f)
 	, m_fRotArmR(0.0f)
 	, m_fRotLegL(0.0f)
@@ -166,26 +170,39 @@ void cBoxman::Update()
 	D3DXMatrixTranslation(&m_matBodyT, 0, 1.8, 0);
 	m_matWorld_Body = m_matRootS * m_matBodyS * m_matBodyR * m_matBodyT * m_matRootR * m_matRootT;
 
-	// ¿ÞÆÈ
+	if (m_isRunning)
+		m_vSwingFactor = 0.1f;
+	else
+		m_vSwingFactor = 0.05f;
 	
-	if (m_Swing)
+	// ¿ÞÆÈ
+	if (m_isJumping)
+	{
+		m_fRotArmL = 0.7f * DirFactor;
+	}	
+	else if (m_isMoving)
 	{
 		if (m_fRotArmL + EPSILON > 0.7f || m_fRotArmL + EPSILON < -0.7f)
 			DirFactor *= -1;
 
-		m_fRotArmL += 0.05f * DirFactor;
+		m_fRotArmL += m_vSwingFactor * DirFactor;
 	}
 	else
 		m_fRotArmL = 0.0f;
+	
 	
 	D3DXMatrixRotationX(&m_matArmLR, m_fRotArmL);
 	D3DXMatrixTranslation(&m_matArmLT, 0.6, 2.4, 0);
 	m_matWorld_ArmL = m_matRootS * m_matArmLS * m_matArmLR * m_matArmLT * m_matRootR * m_matRootT;
 
 	// ¿À¸¥ÆÈ
-	if (m_Swing)
+	if (m_isJumping)
+	{
+		m_fRotArmR = -0.7f * DirFactor;
+	}
+	else if (m_isMoving)
 	{		
-		m_fRotArmR -= 0.05f * DirFactor;
+		m_fRotArmR -= m_vSwingFactor * DirFactor;
 	}
 	else
 		m_fRotArmR = 0.0f;
@@ -195,9 +212,13 @@ void cBoxman::Update()
 	m_matWorld_ArmR = m_matRootS * m_matArmRS * m_matArmRR * m_matArmRT * m_matRootR * m_matRootT;
 
 	// ¿Þ´Ù¸®
-	if (m_Swing)
+	if (m_isJumping)
 	{
-		m_fRotLegL -= 0.05f * DirFactor;
+		m_fRotLegL = -0.7f * DirFactor;
+	}
+	else if (m_isMoving)
+	{
+		m_fRotLegL -= m_vSwingFactor * DirFactor;
 	}
 	else
 		m_fRotLegL = 0.0f;
@@ -207,14 +228,18 @@ void cBoxman::Update()
 	m_matWorld_LegL = m_matRootS * m_matLegLS * m_matLegLR * m_matLegLT * m_matRootR * m_matRootT;
 
 	//// ¿À¸¥´Ù¸®
-	if (m_Swing)
+	if (m_isJumping)
 	{
-		m_fRotLegR += 0.05f * DirFactor;
+		m_fRotLegR = 0.7f * DirFactor;
+	}
+	else if (m_isMoving)
+	{
+		m_fRotLegR += m_vSwingFactor * DirFactor;
 	}
 	else
 		m_fRotLegR = 0.0f;
 
-	D3DXMatrixRotationX(&m_matLegRR, m_fRotLegR);
+	D3DXMatrixRotationX(&m_matLegRR, m_fRotLegR);	
 	D3DXMatrixTranslation(&m_matLegRT, -0.2, 1.2, 0);
 	m_matWorld_LegR = m_matRootS * m_matLegRS * m_matLegRR * m_matLegRT * m_matRootR * m_matRootT;
 
@@ -226,7 +251,7 @@ void cBoxman::Render()
 
 	g_pD3DDevice->SetFVF(ST_PT_VERTEX::FVF);
 	g_pD3DDevice->SetTexture(0, m_pTexture);
-
+	
 	// root position. initially 0,0,0
 	// root Scale -> local Scale * Rotate * Transformation -> root Rotation * root Transformation
 
@@ -380,43 +405,42 @@ void cBoxman::SetTextureUV_ARM_L()
 	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x5 + x1 / 2.0, x5));
 	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x5 + x1 / 2.0, 1));
 	//back
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x7, 1));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6 + x1 / 2.0, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6 + x1 / 2.0, 1));
 	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x7, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6 + x1 / 2.0, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6 + x1 / 2.0, 1));
 	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x7, 1));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x7, x5));
+	//left
 	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6 + x1 / 2.0, 1));
 	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6 + x1 / 2.0, x5));
-	//left
 	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6 + x1 / 2.0, 1));
 	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, 1));
 
 	//right
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x5 + x1 / 2.0, 1));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x5 + x1 / 2.0, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x5, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x5 + x1 / 2.0, 1));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x5, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x5, 1));
 	//top
 	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, y2));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x5 + x1 / 2.0, y2));
 	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x5+ x1 / 2.0, y2));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x5 + x1 / 2.0, x5));
 	//bottom
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6 + x1 / 2.0, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6 + x1 / 2.0, y2));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, y2));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6 + x1 / 2.0, x5));
+	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, y2));
 	m_vTexture_ARM_L.push_back(D3DXVECTOR2(x6, x5));
 }
-
 
 void cBoxman::SetTextureUV_ARM_R()
 {
@@ -436,135 +460,143 @@ void cBoxman::SetTextureUV_ARM_R()
 	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6 + x1 / 2.0, 1));
 	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6 + x1 / 2.0, x5));
 	//left
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x5, 1));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x5, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x5 + x1 / 2.0, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x5, 1));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x5 + x1 / 2.0, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x5 + x1 / 2.0, 1));
 
 	//right
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6 + x1 / 2.0, 1));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6 + x1 / 2.0, x5));
 	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6 + x1 / 2.0, 1));
 	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, 1));
+
 	//top
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x5 + x1 / 2.0, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x5 + x1 / 2.0, y2));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, y2));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x5 + x1 / 2.0, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, y2));
 	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
 	//bottom
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6 + x1 / 2.0, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6 + x1 / 2.0, y2));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, y2));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6 + x1 / 2.0, x5));
+	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, y2));
 	m_vTexture_ARM_R.push_back(D3DXVECTOR2(x6, x5));
 }
-
 
 void cBoxman::SetTextureUV_LEG_L()
 {
 	m_vTexture_LEG_L.clear();
 	// front
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, 1));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 / 2.0, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, 1));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 / 2.0, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 / 2.0, 1));
 	//back
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 + x1 / 2.0, 1));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x2, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 + x1 / 2.0, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 + x1 / 2.0, 1));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x2, 1));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x2, x5));
 	//left
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 + x1 / 2.0, 1));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 + x1 / 2.0, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 + x1 / 2.0, 1));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, 1));
 	//right
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 / 2.0, 1));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 / 2.0, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(0, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 / 2.0, 1));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(0, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(0, 1));
 	//top
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, y2));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 / 2.0, y2));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 / 2.0, y2));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 / 2.0, x5));
 	//bottom
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 + x1 / 2.0, y2));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 + x1 / 2.0, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1 + x1 / 2.0, y2));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, x5));
+	m_vTexture_LEG_L.push_back(D3DXVECTOR2(x1, y2));
 }
 
 void cBoxman::SetTextureUV_LEG_R()
 {
 	m_vTexture_LEG_R.clear();
 	// front
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 / 2.0, 1));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 / 2.0, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 / 2.0, 1));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, 1));
 	//back
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x2, 1));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 + x1 / 2.0, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x2, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x2, 1));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 + x1 / 2.0, 1));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 + x1 / 2.0, x5));
 	//left
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(0, 1));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(0, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 / 2.0, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(0, 1));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 / 2.0, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 / 2.0, 1));
 	//right
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, 1));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 + x1 / 2.0, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, 1));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 + x1 / 2.0, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 +x1 / 2.0, 1));
 	//top
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 / 2.0, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 / 2.0, y2));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, y2));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 / 2.0, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, y2));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, x5));
 	//bottom
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
-	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x6, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, y2));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 + x1 / 2.0, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1, y2));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 + x1 / 2.0, x5));
+	m_vTexture_LEG_R.push_back(D3DXVECTOR2(x1 + x1 / 2.0, y2));
 }
 
-void cBoxman::SetSwingState(bool value)
+void cBoxman::SetMoveState(bool move, bool run)
 {
-	m_Swing = value;
+	m_isMoving = move;
+	m_isRunning = run;
 }
+
+void cBoxman::SetjumpState(bool value1, bool value2)
+{
+	m_isJumping = value1;
+	m_isJumping_Top = value2;
+}
+
 
 void cBoxman::SetRootRotationY(double valueY)
 {
