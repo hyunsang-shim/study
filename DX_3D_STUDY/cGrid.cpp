@@ -217,6 +217,7 @@ void cGrid::Setup()
 void cGrid::DrawGrid()
 {
 	g_pD3DDevice->SetFVF(ST_PC_VERTEX::FVF);
+	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
 
 	D3DXMATRIXA16 m_matWorld;
 	D3DXMatrixIdentity(&m_matWorld);
@@ -236,7 +237,7 @@ void cGrid::DrawIndicator()
 
 
 	g_pD3DDevice->SetFVF(ST_PC_VERTEX::FVF);
-
+	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
 
 	//// Draw Z-Axis Indicator
 	D3DXMatrixScaling(&matScale, 0.5, 0.5, 1.5);

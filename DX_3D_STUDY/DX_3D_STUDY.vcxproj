@@ -151,6 +151,7 @@
     <ClInclude Include="cCubePC.h" />
     <ClInclude Include="cDeviceManager.h" />
     <ClInclude Include="cGrid.h" />
+    <ClInclude Include="cHexagon.h" />
     <ClInclude Include="cMainGame.h" />
     <ClInclude Include="DX_3D_STUDY.h" />
     <ClInclude Include="Resource.h" />
@@ -163,6 +164,7 @@
     <ClCompile Include="cCubePC.cpp" />
     <ClCompile Include="cDeviceManager.cpp" />
     <ClCompile Include="cGrid.cpp" />
+    <ClCompile Include="cHexagon.cpp" />
     <ClCompile Include="cMainGame.cpp" />
     <ClCompile Include="DX_3D_STUDY.cpp" />
     <ClCompile Include="stdafx.cpp">

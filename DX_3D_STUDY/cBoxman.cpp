@@ -2,7 +2,7 @@
 
 cBoxman::cBoxman()
 	: m_vecRootPosition(0, 0, 0)
-	, m_vRootDirection(0,0,-1)
+	, m_vRootDirection(0, 0, -1)
 	, m_fRootRotationY(0.0f)
 	, m_isMoving(false)
 	, m_isRunning(false)
@@ -13,6 +13,7 @@ cBoxman::cBoxman()
 	, m_fRotArmR(0.0f)
 	, m_fRotLegL(0.0f)
 	, m_fRotLegR(0.0f)
+
 {
 }
 
@@ -21,13 +22,13 @@ cBoxman::~cBoxman()
 {
 }
 
-void cBoxman::Setup()
+void cBoxman::Setup(TCHAR* filename)
 {
 	ST_PT_VERTEX	v;
-	ST_PC_VERTEX	v2;
+
 
 	//텍스쳐 정의
-	D3DXCreateTextureFromFile(g_pD3DDevice, _T("D.VA.png"), &m_pTexture);
+	D3DXCreateTextureFromFile(g_pD3DDevice, filename, &m_pTexture);
 
 	// for head
 	m_vecHEAD.push_back(D3DXVECTOR3(-0.4f, -0.4f, -0.4f));	m_vecHEAD.push_back(D3DXVECTOR3(-0.4f, 0.4f, -0.4f));
@@ -248,7 +249,6 @@ void cBoxman::Update()
 
 void cBoxman::Render()
 {
-
 	g_pD3DDevice->SetFVF(ST_PT_VERTEX::FVF);
 	g_pD3DDevice->SetTexture(0, m_pTexture);
 	

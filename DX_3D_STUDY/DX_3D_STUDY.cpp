@@ -6,7 +6,6 @@
 #include "cMainGame.h"
 
 #define MAX_LOADSTRING 100
-
 cMainGame*		g_pMainGame;
 HWND			g_hWnd;
 

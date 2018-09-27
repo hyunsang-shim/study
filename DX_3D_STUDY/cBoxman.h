@@ -5,7 +5,7 @@ public:
 	cBoxman();
 	~cBoxman();
 		
-	void Setup();
+	void Setup(TCHAR* filename);
 	void Update();
 	void Render();
 		
@@ -28,6 +28,7 @@ private:
 	double					m_fRootRotationY;
 	D3DXVECTOR3				m_vecRootPosition;
 	D3DXVECTOR3				m_vRootDirection;
+	D3DMATERIAL9			m_matWhite;
 
 	bool					m_isMoving;
 	bool					m_isRunning;

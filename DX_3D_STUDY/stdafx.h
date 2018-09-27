@@ -5,6 +5,8 @@
 
 #pragma once
 
+// 콘솔 디버그 메시지 창
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 #include "targetver.h"
 
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용은 Windows 헤더에서 제외합니다.
@@ -111,6 +113,7 @@ struct ST_PT_VERTEX
 #include "cBoxman.h"
 #include "cGrid.h"
 #include "cCamera.h"
+#include "cHexagon.h"
 //#include "cCubeman.h"
 
 
