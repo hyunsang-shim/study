@@ -24,13 +24,13 @@ void cHexagon::Setup()
 		float tmp = D3DX_PI / 3.0f * i;
 		point.p = D3DXVECTOR3(radius * cos(tmp), 0.5f, radius * -sin(tmp));
 		m_vecHexagonVertex.push_back(point);
-
 	}
-
-
 	
+	//for Debug
+	/*
 	for (int i = 0; i < m_vecHexagonVertex.size(); i++)
-		printf("%d : %3f, %3f, %3f\n", i, m_vecHexagonVertex[i].p.x, m_vecHexagonVertex[i].p.y, m_vecHexagonVertex[i].p.z);
+	printf("%d : %3f, %3f, %3f\n", i, m_vecHexagonVertex[i].p.x, m_vecHexagonVertex[i].p.y, m_vecHexagonVertex[i].p.z);
+	*/
 }
 
 void cHexagon::Render()

@@ -11,7 +11,8 @@ class cHexagon;
 cMainGame::cMainGame()
 	: m_pCubePC(NULL)
 	, m_pCamera(NULL)
-	, m_vpBoxman(NULL)	
+	, m_vecNormalBoxman(NULL)
+	, m_vecBesierBoxman(NULL)
 	, m_pGrid(NULL)
 	, m_pTexture(NULL)
 	, m_vecOriginalBox(NULL)
@@ -20,7 +21,7 @@ cMainGame::cMainGame()
 	, m_vEye(3, 5, -5)
 	, m_vLookAt(0, 0, 0)
 	, m_vUp(0, 1, 0)
-	, m_vvecBoxPosition(NULL)
+	, m_vBoxPosition(0,0,0)
 	, m_fCameraDistance(5.0f)
 	, m_isLButtonDown(false)
 	, m_isMButtonDown(false)
@@ -44,18 +45,25 @@ cMainGame::cMainGame()
 
 }
 
-
 cMainGame::~cMainGame()
 {	
 	//SAFE_DELETE(m_pCubePC);
 	SAFE_DELETE(m_pCamera);
 	SAFE_DELETE(m_pGrid);
 	//SAFE_DELETE(m_pCubeman);
-	if (m_vpBoxman.size() >= 1)
+
+	if (m_vecBesierBoxman.size() >= 1)
 	{
-		for (int i = 0; i < m_vpBoxman.size(); i++)
-			SAFE_DELETE(m_vpBoxman[i]);
-	}		
+		for (int i = 0; i < m_vecBesierBoxman.size(); i++)
+			SAFE_DELETE(m_vecBesierBoxman[i].boxman);
+	}
+
+	if (m_vecNormalBoxman.size() >= 1)
+	{
+		for (int i = 0; i < m_vecNormalBoxman.size(); i++)
+			SAFE_DELETE(m_vecNormalBoxman[i].boxman);
+	}
+
 	g_pDeviceManager->Destroy();
 }
 
@@ -72,20 +80,41 @@ void cMainGame::Setup()
 	m_pGrid = new cGrid;
 	m_pGrid->Setup();
 
-	m_vpBoxman.push_back(new cBoxman);
-	TCHAR fileName[64];
-	memset(fileName, 0, sizeof(fileName));
-	wsprintf(fileName, _T("%s"), _T("D.VA.png"));	
-	m_vpBoxman[0]->Setup(fileName);
-	
-	
 	InitMaterial();
 	InitLights();
+
+
 	m_pHexagon = new cHexagon;
 	m_pHexagon->Setup();
 	m_vWaypoints = m_pHexagon->GetPoints();
 
 	
+	for (int i = 0; i < 6; i++)
+	{
+		if (i % 2 == 0)
+		{
+			// 일반 경로를 따라가는 박스맨 저장소에 넣을 박스맨들을 생성 & 넣는다.
+			BESIER_BOXMAN normalboxman;
+			normalboxman.boxman = new cBoxman;
+			normalboxman.boxman->Setup(_T("D.VA.png"));
+			normalboxman.m_vBoxPosition.x = m_vWaypoints[i].x;
+			normalboxman.m_vBoxPosition.y = m_vWaypoints[i].y;
+			normalboxman.m_vBoxPosition.z = m_vWaypoints[i].z;
+			m_vecNormalBoxman.push_back(normalboxman);
+		}
+		else
+		{
+			// 베지어 경로를 따라가는 박스맨 저장소에 넣을 박스맨들을 생성 & 넣는다.
+			BESIER_BOXMAN besierboxman;
+			besierboxman.boxman = new cBoxman;
+			besierboxman.boxman->Setup(_T("Megumin.png"));
+			besierboxman.m_vBoxPosition.x = m_vWaypoints[i].x;
+			besierboxman.m_vBoxPosition.y = m_vWaypoints[i].y;
+			besierboxman.m_vBoxPosition.z = m_vWaypoints[i].z;
+			m_vecBesierBoxman.push_back(besierboxman);
+
+		}
+	}
 
 
 
@@ -116,10 +145,8 @@ void cMainGame::Setup()
 
 void cMainGame::Update(){
 	
-	
-
 	//박스의 회전
-	if (GetKeyState('A') & 0x8000)
+	/*if (GetKeyState('A') & 0x8000)
 	{
 		m_isRotating = true;
 		m_fBoxRotY -= 0.1f;
@@ -130,10 +157,10 @@ void cMainGame::Update(){
 		m_fBoxRotY += 0.1f;
 	}
 	else 
-		m_isRotating = false;
-
-
+		m_isRotating = false;*/
+	
 	// 박스의 이동
+	/*
 	double fMin = m_pGrid->GetGridMinMax().left;
 	double fMax = m_pGrid->GetGridMinMax().right;
 
@@ -204,9 +231,10 @@ void cMainGame::Update(){
 	}
 	else
 		m_isMoving = false;
-
-	
+		*/
+		
 	// 박스의 점프
+	/*
 	if (m_isJumping && !m_isJumping_Top)
 	{
 		for (int i = 0; i < m_vvecBoxPosition.size(); i++)
@@ -233,15 +261,19 @@ void cMainGame::Update(){
 			}
 		}
 	}
+	*/
 
 	// 캐릭터에 이동 상태를 전달한다.		
+	/*
 	for (int i = 0; i < m_vvecBoxPosition.size(); i++)
 	{
 		m_vpBoxman[i]->SetMoveState(m_isMoving | m_isRotating, m_isRunning);
 		m_vpBoxman[i]->SetjumpState(m_isJumping, m_isJumping_Top);
 	}
+	*/
 
-
+	// 캐릭터(Boxmax)의 루트 역할을 하는 박스.
+	/*
 	if (m_pCubePC)
 	{
 		D3DXMATRIXA16 matRotY;
@@ -257,40 +289,27 @@ void cMainGame::Update(){
 		}
 		m_pCubePC->Update();
 	}
+	*/
 
-	if (m_vpBoxman.size() != 0)
-	{
-		for (int i = 0; i < m_vvecBoxPosition.size(); i++)
-		{
-			m_vpBoxman[i]->SetRootPosition(m_vvecBoxPosition[i]);
+	// 일반 경로를 따라가는 박스맨 vector 저장소 업데이트	
+	
 
+	// 베지어 곡선용 박스맨 vector 저장소 업데이트
+	
+	
 
-			D3DXMATRIXA16 matRotY;
-			D3DXVECTOR3 vBoxmanRootDirection(0, 0, 1.0f);
-			D3DXMatrixIdentity(&matRotY);
-			D3DXMatrixRotationY(&matRotY, m_fBoxRotY);
-			D3DXVec3TransformNormal(&vBoxmanRootDirection, &vBoxmanRootDirection, &matRotY);
-
-			m_vpBoxman[i]->SetRootScale(m_fBoxScale);
-			m_vpBoxman[i]->SetRootRotationY(m_fBoxRotY);
-			m_vpBoxman[i]->SetRootPosition(m_vvecBoxPosition[i]);
-			m_vpBoxman[i]->SetRootDirection(vBoxmanRootDirection);
-
-			m_vpBoxman[i]->Update();
-		}
-	}
-
-
-
+	//카메라 업데이트
 	if (m_pCamera)
 	{
-		m_pCamera->SetBoxPosition(m_vvecBoxPosition[0]);
+		m_pCamera->SetBoxPosition(m_vBoxPosition);
 		m_pCamera->Update();
 	}
 
-
-	/*if (m_pCubeman)
-		m_pCubeman->Update();	*/
+	// 강사님 캐릭터 그리기
+	/*
+	if (m_pCubeman)
+		m_pCubeman->Update();
+	*/
 }
 
 void cMainGame::Render()
@@ -303,6 +322,19 @@ void cMainGame::Render()
 	m_pGrid->Render();
 	m_pHexagon->Render();
 	//m_pCubePC->Render();	
+	
+	//베지어 곡선 경로 boxman 그리기
+	for (int i = 0; i < 1; i++)
+	{
+		m_vecBesierBoxman[i].boxman->Render();
+	}
+
+	// 일반 경로 boxman 그리기
+	for (int i = 0; i <1; i++)
+	{
+		m_vecNormalBoxman[i].boxman->Render();
+	}
+
 
 	g_pD3DDevice->SetMaterial(&m_matWhite);
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
@@ -329,8 +361,7 @@ void cMainGame::Render()
 	}
 
 
-	for (int i = 0; i < m_vpBoxman.size(); i++)
-			m_vpBoxman[i]->Render();
+	//m_pBoxman->Render();
 	
 
 	if (m_pFont)
@@ -477,7 +508,7 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		m_pCamera->SetCameraDistance(m_fCameraDistance);
 
 		break;		
-	case WM_KEYDOWN:
+/*	case WM_KEYDOWN:
 		switch (wParam)
 		{
 		case VK_SPACE:
@@ -487,8 +518,7 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				m_isJumping = true;
 				m_isJumping_Top = false;
-				for (int i = 0; i < m_vpBoxman.size(); i++)
-					m_vpBoxman[i]->SetjumpState(true, false);
+				m_pBoxman->SetjumpState(true, false);
 			}
 
 			break;
@@ -501,26 +531,12 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			m_pCamera->ChangeCameraMode(m_isCamFollow);
 			break;
+*/
 		case 'L':
 			if (m_swDirLight)
 				m_swDirLight = false;
 			else
 				m_swDirLight = true;
-			break;
-		case VK_RETURN:			
-		{
-			m_vpBoxman.push_back(new cBoxman);
-			TCHAR fileName[64];
-			memset(fileName, 0, sizeof(fileName));
-			if (m_vpBoxman.size() % 2 == 0)
-				wsprintf(fileName, _T("%s"), _T("D.VA.png"));
-			else
-				wsprintf(fileName, _T("%s"), _T("Megumin.png"));
-			m_vpBoxman[m_vpBoxman.size()-1]->Setup(fileName);
+			break;		
 		}
-			break;
-		}
-		break;
-	
-	}
 }

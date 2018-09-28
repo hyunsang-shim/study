@@ -1,34 +1,11 @@
-﻿cl : 명령줄 warning D9028: 최소 다시 빌드에 실패했습니다. 정상 빌드로 되돌립니다.
-  cMainGame.cpp
-k:\work\git\dx_3d_study\cmaingame.cpp(56): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(64): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(66): warning C4316: 'cCubePC': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
-k:\work\git\dx_3d_study\cmaingame.cpp(75): warning C4316: 'cBoxman': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
-k:\work\git\dx_3d_study\cmaingame.cpp(145): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(151): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(158): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(161): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(163): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(166): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(168): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(177): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(185): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(192): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(195): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(197): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(200): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(202): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(212): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(224): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(238): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(249): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(254): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(263): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(271): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(332): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(447): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(448): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(490): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\cmaingame.cpp(512): warning C4316: 'cBoxman': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+﻿  cMainGame.cpp
+k:\work\git\dx_3d_study\cmaingame.cpp(57): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(63): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(72): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(74): warning C4316: 'cCubePC': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+k:\work\git\dx_3d_study\cmaingame.cpp(98): warning C4316: 'cBoxman': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+k:\work\git\dx_3d_study\cmaingame.cpp(109): warning C4316: 'cBoxman': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+k:\work\git\dx_3d_study\cmaingame.cpp(478): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(479): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.exe
   DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.pdb (Full PDB)
