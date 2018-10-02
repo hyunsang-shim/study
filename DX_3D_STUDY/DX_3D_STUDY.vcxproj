@@ -154,9 +154,12 @@
     <ClInclude Include="cHexagon.h" />
     <ClInclude Include="cMainGame.h" />
     <ClInclude Include="DX_3D_STUDY.h" />
+    <ClInclude Include="MaterialLoader.h" />
+    <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cBoxman.cpp" />
@@ -167,12 +170,15 @@
     <ClCompile Include="cHexagon.cpp" />
     <ClCompile Include="cMainGame.cpp" />
     <ClCompile Include="DX_3D_STUDY.cpp" />
+    <ClCompile Include="MaterialLoader.cpp" />
+    <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX_3D_STUDY.rc" />

@@ -1,4 +1,19 @@
 #pragma once
+
+typedef struct boxman_pt {
+	vector<ST_PT_VERTEX>	HEAD;
+	vector<ST_PT_VERTEX>	ARM_L;
+	vector<ST_PT_VERTEX>	ARM_R;
+	vector<ST_PT_VERTEX>	LEG_L;
+	vector<ST_PT_VERTEX>	LEG_R;
+	vector<ST_PT_VERTEX>	BODY;
+}BOXMAN_PT;
+
+typedef struct objfromfile {
+	vector<ST_PNT_VERTEX>	ObjFromFile;
+}OBJ_FROM_FILE;
+
+
 class cBoxman
 {
 public:
@@ -59,12 +74,7 @@ private:
 	vector<int>				vecVerTex_Box_Index;
 	
 	// 각 부위별 정점+텍스쳐UV좌표 저장용
-	vector<ST_PT_VERTEX>	m_vecPT_HEAD;
-	vector<ST_PT_VERTEX>	m_vecPT_ARM_L;
-	vector<ST_PT_VERTEX>	m_vecPT_ARM_R;
-	vector<ST_PT_VERTEX>	m_vecPT_LEG_L;
-	vector<ST_PT_VERTEX>	m_vecPT_LEG_R;
-	vector<ST_PT_VERTEX>	m_vecPT_BODY;
+	BOXMAN_PT				strBoxman;
 	
 	// 각 부위별 텍스쳐 좌표 저장용 (임시)
 	vector<D3DXVECTOR2>		m_vTexture_HEAD;

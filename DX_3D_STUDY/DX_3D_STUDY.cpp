@@ -8,6 +8,7 @@
 #define MAX_LOADSTRING 100
 cMainGame*		g_pMainGame;
 HWND			g_hWnd;
+ObjLoader*		g_pObjLoader;
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -45,6 +46,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	g_pMainGame->Setup();		
 	g_pDeviceManager;
 	SetTimer(g_hWnd, 1000, 100, NULL);
+	g_pObjLoader = new ObjLoader;
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_DX_3D_STUDY));
 
@@ -68,7 +70,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		else
 		{
 			g_pMainGame->Update();
-
 			g_pMainGame->Render();
 		}
     }
@@ -152,9 +153,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		g_pMainGame->WndProc(hWnd, message, wParam, lParam);
 	}
 
-	
     switch (message)
     {   
+	case WM_CREATE:
+//		ObjLoader::ParseObj(".\\obj\\Box.obj");
+		break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;

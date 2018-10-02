@@ -13,8 +13,8 @@ cBoxman::cBoxman()
 	, m_fRotArmR(0.0f)
 	, m_fRotLegL(0.0f)
 	, m_fRotLegR(0.0f)
-
 {
+
 }
 
 
@@ -94,7 +94,7 @@ void cBoxman::Setup(TCHAR* filename)
 	{
 		v.p = m_vecHEAD[vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_HEAD[i];
-		m_vecPT_HEAD.push_back(v);
+		strBoxman.HEAD.push_back(v);
 	}
 
 	// for Body
@@ -102,7 +102,7 @@ void cBoxman::Setup(TCHAR* filename)
 	{
 		v.p = m_vecBODY[vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_BODY[i];
-		m_vecPT_BODY.push_back(v);
+		strBoxman.BODY.push_back(v);
 	}
 
 	// for Arms
@@ -110,7 +110,7 @@ void cBoxman::Setup(TCHAR* filename)
 	{
 		v.p = m_vecARM_L[vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_ARM_L[i];
-		m_vecPT_ARM_L.push_back(v);
+		strBoxman.ARM_L.push_back(v);
 	}
 
 
@@ -118,7 +118,7 @@ void cBoxman::Setup(TCHAR* filename)
 	{
 		v.p = m_vecARM_R[vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_ARM_R[i];
-		m_vecPT_ARM_R.push_back(v);
+		strBoxman.ARM_R.push_back(v);
 	}
 
 	// for Legs
@@ -126,14 +126,14 @@ void cBoxman::Setup(TCHAR* filename)
 	{
 		v.p = m_vecLEG_L[vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_LEG_L[i];
-		m_vecPT_LEG_L.push_back(v);
+		strBoxman.LEG_L.push_back(v);
 	}
 
 	for (int i = 0; i < vecVerTex_Box_Index.size(); i++)
 	{
 		v.p = m_vecLEG_R[vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_LEG_R[i];
-		m_vecPT_LEG_R.push_back(v);
+		strBoxman.LEG_R.push_back(v);
 	}
 
 
@@ -257,27 +257,27 @@ void cBoxman::Render()
 
 	// ¸Ó¸®
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_Head);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecPT_HEAD.size() / 3, &m_vecPT_HEAD[0], sizeof(ST_PT_VERTEX));
+	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.HEAD.size() / 3, &strBoxman.HEAD[0], sizeof(ST_PT_VERTEX));
 
 	////¸ö
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_Body);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecPT_BODY.size() / 3, &m_vecPT_BODY[0], sizeof(ST_PT_VERTEX));
+	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.BODY.size() / 3, &strBoxman.BODY[0], sizeof(ST_PT_VERTEX));
 	//
 	//// ¿ÞÆÈ
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_ArmL);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecPT_ARM_L.size() / 3, &m_vecPT_ARM_L[0], sizeof(ST_PT_VERTEX));
+	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.ARM_L.size() / 3, &strBoxman.ARM_L[0], sizeof(ST_PT_VERTEX));
 	//
 	//// ¿À¸¥ÆÈ
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_ArmR);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecPT_ARM_R.size() / 3, &m_vecPT_ARM_R[0], sizeof(ST_PT_VERTEX));
+	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.ARM_R.size() / 3, &strBoxman.ARM_R[0], sizeof(ST_PT_VERTEX));
 	//
 	//// ¿Þ´Ù¸®
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_LegL);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecPT_LEG_L.size() / 3, &m_vecPT_LEG_L[0], sizeof(ST_PT_VERTEX));
+	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.LEG_L.size() / 3, &strBoxman.LEG_L[0], sizeof(ST_PT_VERTEX));
 	//
 	//// ¿À¸¥´Ù¸®
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_LegR);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecPT_LEG_R.size() / 3, &m_vecPT_LEG_R[0], sizeof(ST_PT_VERTEX));
+	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.LEG_R.size() / 3, &strBoxman.LEG_R[0], sizeof(ST_PT_VERTEX));
 
 
 	g_pD3DDevice->SetTexture(0, NULL);
@@ -596,7 +596,6 @@ void cBoxman::SetjumpState(bool value1, bool value2)
 	m_isJumping = value1;
 	m_isJumping_Top = value2;
 }
-
 
 void cBoxman::SetRootRotationY(double valueY)
 {

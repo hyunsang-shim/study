@@ -18,6 +18,7 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <map>
@@ -97,6 +98,20 @@ struct ST_PT_VERTEX
 };
 
 
+typedef struct dx3dmaterial {
+	
+	D3DXCOLOR Ambient;
+	D3DXCOLOR Diffuse;
+	D3DXCOLOR Specular;
+	D3DXCOLOR Emissive;
+	float Ns;
+	float Power;
+	float Illumination;
+
+} MATERIAL;
+
+
+
 //#define SYNTHESIZE (varType, varName, FunName) \
 //protected : varType varName; \
 //public : inline varType Get##FunName(void) const {return varName;} \
@@ -114,6 +129,7 @@ struct ST_PT_VERTEX
 #include "cGrid.h"
 #include "cCamera.h"
 #include "cHexagon.h"
+#include "ObjLoader.h"
 //#include "cCubeman.h"
 
 
