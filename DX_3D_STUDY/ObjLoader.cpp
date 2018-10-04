@@ -28,6 +28,8 @@ vector<OBJ_IMPORTER> ObjLoader::ParseObj(char* Filename)
 	vector<D3DXVECTOR2>				texture;
 	vector<D3DXVECTOR3>				normal;
 
+	
+
 
 	FILE *fsObjFile;
 	char inputTemp[MAX_SIZE];	
@@ -44,6 +46,7 @@ vector<OBJ_IMPORTER> ObjLoader::ParseObj(char* Filename)
 
 		while (fgets(inputTemp, MAX_SIZE, fsObjFile))
 		{
+
 			if (strstr(inputTemp, "mtllib"))
 			{
 				sscanf_s(inputTemp, "%*s %s", materialFileName, sizeof(materialFileName));
@@ -89,13 +92,12 @@ vector<OBJ_IMPORTER> ObjLoader::ParseObj(char* Filename)
 				tmp.p = vertex[v3 - 1];
 				tmp.texture = texture[t3 - 1];
 				tmp.normal = normal[n3 - 1];
-
 				vec_vertexPNT.push_back(tmp);
 
 			}
-			if (strlen(inputTemp) == 1 && inputTemp[0] == 'g')
+			else if (strlen(inputTemp) == 1 && inputTemp[0] == 'g')
 			{	
-
+				
 				if (!obj_ret[0].vertexPNT.empty())
 					obj_ret.push_back(tmp_obj);
 				else
@@ -103,6 +105,8 @@ vector<OBJ_IMPORTER> ObjLoader::ParseObj(char* Filename)
 
 			}
 			cnt++;
+
+			ZeroMemory(inputTemp, MAX_SIZE);
 		}
 	}
 	else
@@ -195,7 +199,7 @@ map<string, MATERIAL> ObjLoader::GetMaterial(char * Filename) {
 		for (int i = 0; i < mtl_mtl.size(); i++)
 			materialMap.insert(make_pair(mtl_name[i], mtl_mtl[i]));
 
-		fcloseall();
+		fclose(fsMtlFile);
 
 		return materialMap;
 	}

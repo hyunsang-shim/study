@@ -101,7 +101,9 @@ void cCubePC::Render()
 	g_pD3DDevice->SetMaterial(&m_material);
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld);
 	g_pD3DDevice->SetFVF(ST_PNT_VERTEX::FVF);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex.size() / 3, &m_vecVertex[0], sizeof(ST_PNT_VERTEX));
+	for (int i = 0; i < m_vecVertex.size(); i++)
+		g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex[i].vertexPNT.size() / 3, &m_vecVertex[i].vertexPNT[0], sizeof(ST_PNT_VERTEX));
+
 
 	g_pD3DDevice->SetTexture(0, NULL);	// 텍스쳐 사용 하지 않음 선언
 
