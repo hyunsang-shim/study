@@ -25,6 +25,7 @@
 #include <set>
 #include <list>
 #include <time.h>
+#include <map>
 
 using namespace std;
 #include <assert.h>>
@@ -97,18 +98,24 @@ struct ST_PT_VERTEX
 	enum { FVF = D3DFVF_XYZ | D3DFVF_TEX1 };
 };
 
-
 typedef struct dx3dmaterial {
-	
-	D3DXCOLOR Ambient;
-	D3DXCOLOR Diffuse;
-	D3DXCOLOR Specular;
-	D3DXCOLOR Emissive;
-	float Ns;
-	float Power;
-	float Illumination;
+	D3DXCOLOR				Ambient;
+	D3DXCOLOR				Diffuse;
+	D3DXCOLOR				Specular;
+	D3DXCOLOR				Emissive;
+	float					Ns;
+	float					Power;
+	float					Illumination;
+	LPDIRECT3DTEXTURE9		Texture;
 
 } MATERIAL;
+
+typedef struct importObject {
+	vector<string>					objGroupName;
+	vector<ST_PNT_VERTEX>			vertexPNT;
+	map<string, MATERIAL>			material;
+	vector<LPDIRECT3DTEXTURE9>		textures;
+} OBJ_IMPORTER;
 
 
 

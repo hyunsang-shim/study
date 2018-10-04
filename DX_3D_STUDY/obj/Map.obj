@@ -1,6 +1,6 @@
 # Max2Obj Version 4.0 Mar 10th, 2001
 #
-mtllib ./Map.mtl
+mtllib ./obj/Map.mtl
 g
 # object Rectangle01 to come ...
 #

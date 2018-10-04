@@ -6,8 +6,9 @@ public:
 	ObjLoader();
 	~ObjLoader();
 
-	static vector<ST_PNT_VERTEX> ParseObj(char* FileName);
-	static MATERIAL GetMaterial(char* Filename);
+	static vector<OBJ_IMPORTER> ParseObj(char* FileName);
+	static map<string, MATERIAL> GetMaterial(char* Filename);
+	static LPDIRECT3DTEXTURE9 GetTexture(char* fileName);
 private:
 
 };

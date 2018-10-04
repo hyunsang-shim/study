@@ -32,6 +32,7 @@ cMainGame::cMainGame()
 	, m_vBoxDirection(0, 0, -1)
 	, m_fBoxScale(1.0f)
 	, m_swDirLight(true)
+	, m_swSpotLight(true)
 	, m_isMoving(false)
 	, m_isRunning(false)
 	, m_isRotating(false)
@@ -74,6 +75,8 @@ void cMainGame::Setup()
 
 	m_pCubePC = new cCubePC;
 	m_pCubePC->Setup();
+
+	
 
 	m_pCamera = new cCamera;
 	m_pCamera->Setup();
@@ -309,7 +312,7 @@ void cMainGame::Update(){
 		D3DXMatrixRotationY(&matRotY, m_fBoxRotY);
 		m_vBoxDirection = D3DXVECTOR3(0, 0, 1.0f);
 		D3DXVec3TransformNormal(&m_vBoxDirection, &m_vBoxDirection, &matRotY);		
-		m_pCubePC->SetBoxScale(0.25f);					// 테스트용으로 만든 것이 10짜리니까 0.1로 
+		m_pCubePC->SetBoxScale(0.01f);					// 테스트용으로 만든 것이 10짜리니까 0.1로 
 		m_pCubePC->SetBoxRotationY(m_fBoxRotY);
 		//printf("cMainGame : %f\t", m_fBoxRotY);
 		m_pCubePC->SetBoxPosition(m_vBoxPosition);		
@@ -401,6 +404,13 @@ void cMainGame::Render()
 		g_pD3DDevice->LightEnable(3, true);
 	}
 
+	if (m_swSpotLight)
+	{
+		g_pD3DDevice->LightEnable(0, true);
+	}
+	else
+		g_pD3DDevice->LightEnable(0, false);
+
 
 	//m_pBoxman->Render();
 	m_pCubePC->Render();
@@ -463,9 +473,9 @@ void cMainGame::InitLights()
 	SpotLight.Diffuse = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
 	SpotLight.Ambient = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
 	SpotLight.Specular = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-	SpotLight.Position = D3DXVECTOR3(5.0f, 5.0f, 5.0f);
+	SpotLight.Position = D3DXVECTOR3(2.0f, 25.0f, 2.0f);
 	SpotLight.Direction = D3DXVECTOR3(0, -1.0f, 0);
-	SpotLight.Range = 8.0f;
+	SpotLight.Range = 25.0f;
 	SpotLight.Falloff = 1.0f;
 	SpotLight.Attenuation0 = 0.001f;
 	SpotLight.Attenuation1 = 0.001f;
@@ -475,11 +485,11 @@ void cMainGame::InitLights()
 
 
 	PointLight.Type = D3DLIGHT_POINT;
-	PointLight.Diffuse = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	PointLight.Ambient = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	PointLight.Specular = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
-	PointLight.Position = D3DXVECTOR3(-5.0f, 3.0f, 5.0f);
-	PointLight.Range = 5.0f;
+	PointLight.Diffuse = D3DXCOLOR(0.75f, 0.0f, 0.75f, 1.0f);
+	PointLight.Ambient = D3DXCOLOR(0.75f, 0.0f, 0.75f, 1.0f);
+	PointLight.Specular = D3DXCOLOR(0.75f, 0.0f, 0.75f, 1.0f);
+	PointLight.Position = D3DXVECTOR3(0.0f, 5.0f, -5.0f);
+	PointLight.Range = 15.0f;
 	PointLight.Attenuation0 = 0.001f;
 	PointLight.Attenuation1 = 0.001f;
 	PointLight.Attenuation2 = 0.001f;
@@ -576,6 +586,12 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					m_swDirLight = false;
 				else
 					m_swDirLight = true;
+				break;
+			case 'P':
+				if (m_swSpotLight)
+					m_swSpotLight = false;
+				else
+					m_swSpotLight = true;
 				break;
 			}
 			

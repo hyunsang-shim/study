@@ -91,6 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeaderOutputFile>$(IntDir)..\..\..\PCH\$(TargetName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,6 +154,7 @@
     <ClInclude Include="cGrid.h" />
     <ClInclude Include="cHexagon.h" />
     <ClInclude Include="cMainGame.h" />
+    <ClInclude Include="cMap.h" />
     <ClInclude Include="DX_3D_STUDY.h" />
     <ClInclude Include="MaterialLoader.h" />
     <ClInclude Include="ObjLoader.h" />
@@ -169,6 +171,7 @@
     <ClCompile Include="cGrid.cpp" />
     <ClCompile Include="cHexagon.cpp" />
     <ClCompile Include="cMainGame.cpp" />
+    <ClCompile Include="cMap.cpp" />
     <ClCompile Include="DX_3D_STUDY.cpp" />
     <ClCompile Include="MaterialLoader.cpp" />
     <ClCompile Include="ObjLoader.cpp" />

@@ -5,6 +5,7 @@ class cBoxman;
 class cCamera;
 class cGrid;
 class cCubeman;
+class cMap;
 
 typedef struct besiertrail_boxman {
 	bool						m_isMoving;
@@ -73,6 +74,7 @@ public:
 
 
 	bool						m_swDirLight;
+	bool						m_swSpotLight;
 
 	void						WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -81,6 +83,7 @@ private:
 	cCamera*					m_pCamera;	
 	cCubeman*					m_pCubeman;
 	cBoxman*					m_pBoxman;
+	cMap*						m_pMap;
 	LPDIRECT3DTEXTURE9			m_pTexture;
 	vector<ST_PT_VERTEX>		m_vecVertex;
 	cGrid*						m_pGrid;

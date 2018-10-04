@@ -8,12 +8,13 @@ public:
 	~cCubePC();
 
 private:
-	vector<ST_PNT_VERTEX>	m_vecVertex;
+	vector<OBJ_IMPORTER>	m_vecVertex;
 	vector<D3DXVECTOR3>		vecVerTex_Box;
 	vector<D3DXVECTOR2>		vecVerTex_Texture;
 	vector<int>				vecVerTex_Box_Index;
 	D3DXMATRIXA16			m_matWorld;
 	D3DXMATRIXA16			m_matTrans;
+	D3DXMATRIXA16			m_matRotX;
 	D3DXMATRIXA16			m_matRotY;
 	D3DXMATRIXA16			m_matScale;
 
@@ -21,9 +22,10 @@ private:
 
 
 	D3DXVECTOR3				m_vBoxDirection;
-	D3DXVECTOR3				m_vBoxPosition;		// 주로 메인에게 전달한다.
-	double					m_fBoxScale;			// 메인에게 전달한다.
-	double					m_fBoxRotY;			// 주로 메인에게 전달한다.
+	D3DXVECTOR3				m_vBoxPosition;		// 주로 메인에서 전달받는다.
+	double					m_fBoxScale;			// 주로 메인에서 전달받는다.
+	double					m_fBoxRotX;			// 주로 메인에서 전달받는다.
+	double					m_fBoxRotY;			// 주로 메인에서 전달받는다.
 
 public:
 	void					Setup();

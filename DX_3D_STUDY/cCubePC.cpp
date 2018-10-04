@@ -4,8 +4,9 @@ class cCamera;
 cCubePC::cCubePC()
 	:m_vBoxDirection(0, 0, 1)
 	, m_vBoxPosition(0, 0, 10)
-	, m_fBoxScale(1.0f)
+	, m_fBoxScale(0.1f)
 	, m_fBoxRotY(0.1f)
+	, m_fBoxRotX(-D3DX_PI / 2)
 	, m_pTexture(NULL)
 {	 
 	D3DXMatrixIdentity(&m_matWorld);
@@ -21,15 +22,8 @@ void cCubePC::Setup()
 {
 	ST_PNT_VERTEX	v;
 	D3DXCreateTextureFromFile(g_pD3DDevice, _T(".\\obj\\box.jpg"), &m_pTexture);
-	m_vecVertex = ObjLoader::ParseObj(".\\obj\\box.obj");
-	MATERIAL tmp;
-	tmp = ObjLoader::GetMaterial(".\\obj\\box.mtl");
+	m_vecVertex = ObjLoader::ParseObj(".\\obj\\map.obj");
 
-	m_material.Ambient = D3DXCOLOR(tmp.Ambient.r, tmp.Ambient.g, tmp.Ambient.b, 1.0f);
-	m_material.Diffuse = D3DXCOLOR(tmp.Diffuse.r, tmp.Diffuse.g, tmp.Diffuse.b, 1.0f);
-	m_material.Specular = D3DXCOLOR(tmp.Specular.r, tmp.Specular.g, tmp.Specular.b, 1.0f);
-	m_material.Emissive = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	m_material.Power = tmp.Power;
 	/*
 	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, -1.0f));
 	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, 1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, -1.0f, -1.0f));
@@ -94,9 +88,10 @@ void cCubePC::Update()
 {
 	D3DXMatrixIdentity(&m_matScale);
 	D3DXMatrixScaling(&m_matScale, m_fBoxScale, m_fBoxScale, m_fBoxScale);
+	D3DXMatrixRotationX(&m_matRotX, m_fBoxRotX);
 	D3DXMatrixRotationY(&m_matRotY, m_fBoxRotY);	
 	D3DXMatrixTranslation(&m_matTrans, m_vBoxPosition.x, m_vBoxPosition.y, m_vBoxPosition.z);
-	m_matWorld = m_matScale * m_matRotY * m_matTrans;
+	m_matWorld = m_matScale * m_matRotX * m_matRotY * m_matTrans;
 }
 
 void cCubePC::Render()
