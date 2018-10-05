@@ -24,64 +24,6 @@ void cCubePC::Setup()
 	D3DXCreateTextureFromFile(g_pD3DDevice, _T(".\\obj\\box.jpg"), &m_pTexture);
 	m_vecVertex = ObjLoader::ParseObj(".\\obj\\map.obj");
 
-	/*
-	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, -1.0f));
-	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, 1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, -1.0f, -1.0f));
-
-	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, 1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
-	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, 1.0f, 1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, -1.0f, 1.0f));
-
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(2);
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(2);	vecVerTex_Box_Index.push_back(3);
-	
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(5);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(7);	vecVerTex_Box_Index.push_back(6);
-	
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(5);	vecVerTex_Box_Index.push_back(1);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(0);
-	
-	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(2);	vecVerTex_Box_Index.push_back(6);
-	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(7);
-	
-	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(5);	vecVerTex_Box_Index.push_back(6);
-	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(2);
-	
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(3);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(7);
-	
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y2));		vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y1));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x2, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y2));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x2, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(x2, y2));
-	
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x3, y2));		vecVerTex_Texture.push_back(D3DXVECTOR2(x4, y1));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x3, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(x3, y2));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x4, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(x4, y1));
-
-	vecVerTex_Texture.push_back(D3DXVECTOR2(0, y2));		vecVerTex_Texture.push_back(D3DXVECTOR2(0, y1));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(0, y2));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y2));
-
-	vecVerTex_Texture.push_back(D3DXVECTOR2(0, y2));		vecVerTex_Texture.push_back(D3DXVECTOR2(0, y1));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(0, y2));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y2));
-
-	vecVerTex_Texture.push_back(D3DXVECTOR2(0, y2));		vecVerTex_Texture.push_back(D3DXVECTOR2(0, y1));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(0, y2));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y2));
-
-	vecVerTex_Texture.push_back(D3DXVECTOR2(0, y2));		vecVerTex_Texture.push_back(D3DXVECTOR2(0, y1));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(0, y2));
-	vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y1));		vecVerTex_Texture.push_back(D3DXVECTOR2(x1, y2));
-	
-	
-
-	for (int i = 0; i < vecVerTex_Box_Index.size(); i++)
-	{
-		v.p = vecVerTex_Box[vecVerTex_Box_Index[i]];
-		v.texture = vecVerTex_Texture[vecVerTex_Box_Index[i]];
-		m_vecVertex.push_back(v);
-	}
-	*/
 }
 
 void cCubePC::Update()

@@ -17,8 +17,10 @@ vector<OBJ_IMPORTER> ObjLoader::ParseObj(char* Filename)
 	OBJ_IMPORTER					tmp_obj;
 
 	vector<string>					vec_objGroupName;
+	char							objGroupName[128];
 	vector<ST_PNT_VERTEX>			vec_vertexPNT;
-	char							materialFileName[128];
+	char							mtlLibName[128];
+	char							mtl_name[128];
 	map<string, MATERIAL>			map_material;
 	vector<LPDIRECT3DTEXTURE9>		vec_textures;
 	
@@ -49,12 +51,13 @@ vector<OBJ_IMPORTER> ObjLoader::ParseObj(char* Filename)
 
 			if (strstr(inputTemp, "mtllib"))
 			{
-				sscanf_s(inputTemp, "%*s %s", materialFileName, sizeof(materialFileName));
-				map_material = GetMaterial(materialFileName);
+				sscanf_s(inputTemp, "%*s %s", mtlLibName, sizeof(mtlLibName));
+				map_material = GetMaterial(mtlLibName);
 			}
 			else if (strstr(inputTemp, "g "))
 			{
-				sscanf_s(inputTemp, "%*s %s", tmp_obj.objGroupName, sizeof(tmp_obj.objGroupName));
+				sscanf_s(inputTemp, "%*s %s", objGroupName, sizeof(objGroupName));
+				tmp_obj.objGroupName.push_back(objGroupName);
 			}
 			else if (strstr(inputTemp, "v "))
 			{
@@ -95,16 +98,29 @@ vector<OBJ_IMPORTER> ObjLoader::ParseObj(char* Filename)
 				vec_vertexPNT.push_back(tmp);
 
 			}
-			else if (strlen(inputTemp) == 1 && inputTemp[0] == 'g')
+			else if (strstr(inputTemp, "usemtl "))
+			{
+				sscanf_s(inputTemp, "%*s %s", &mtl_name, sizeof(mtl_name));
+				string strMtl_Name = mtl_name;
+				tmp_obj.material.insert(make_pair(strMtl_Name, map_material.find(strMtl_Name)->second));
+			}
+
+
+			if (inputTemp[0] == 'g' && inputTemp[1] == '\n')
 			{	
 				
-				if (!obj_ret[0].vertexPNT.empty())
+				if (!obj_ret.empty() && !tmp_obj.vertexPNT.empty())
+				{
+					tmp_obj.vertexPNT = vec_vertexPNT;
+					tmp_obj.textures = vec_textures;
+					tmp_obj.material = map_material;
+
 					obj_ret.push_back(tmp_obj);
+				}
 				else
 					obj_ret.resize(++cnt);
 
 			}
-			cnt++;
 
 			ZeroMemory(inputTemp, MAX_SIZE);
 		}
@@ -116,7 +132,7 @@ vector<OBJ_IMPORTER> ObjLoader::ParseObj(char* Filename)
 		return obj_ret;
 	}
 
-	fcloseall();
+	fclose(fsObjFile);
 	
 	return obj_ret;
 

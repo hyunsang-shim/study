@@ -98,7 +98,7 @@ struct ST_PT_VERTEX
 	enum { FVF = D3DFVF_XYZ | D3DFVF_TEX1 };
 };
 
-typedef struct dx3dmaterial {
+typedef struct d3dxmaterial {
 	D3DXCOLOR				Ambient;
 	D3DXCOLOR				Diffuse;
 	D3DXCOLOR				Specular;
