@@ -8,6 +8,7 @@ class cCamera;
 class cGrid;
 class cHexagon;
 class ObjLoader;
+class cMap;
 
 cMainGame::cMainGame()
 	: m_pCubePC(NULL)
@@ -18,6 +19,7 @@ cMainGame::cMainGame()
 	, m_pTexture(NULL)
 	, m_vecOriginalBox(NULL)
 	, m_pHexagon(NULL)
+	, m_pMap(NULL)
 	//	, m_pCubeman(NULL)
 	, m_vEye(3, 5, -5)
 	, m_vLookAt(0, 0, 0)
@@ -73,9 +75,12 @@ void cMainGame::Setup()
 {
 	srand(time(NULL));
 
-	m_pCubePC = new cCubePC;
-	m_pCubePC->Setup();
+	//m_pCubePC = new cCubePC;
+	//m_pCubePC->Setup();
 
+	m_pMap = new cMap;
+	m_pMap->Setup();
+	return;
 	
 
 	m_pCamera = new cCamera;

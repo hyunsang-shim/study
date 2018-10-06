@@ -80,10 +80,10 @@ public:
 
 private:
 	cCubePC*					m_pCubePC;
+	cMap*						m_pMap;
 	cCamera*					m_pCamera;	
 	cCubeman*					m_pCubeman;
 	cBoxman*					m_pBoxman;
-	cMap*						m_pMap;
 	LPDIRECT3DTEXTURE9			m_pTexture;
 	vector<ST_PT_VERTEX>		m_vecVertex;
 	cGrid*						m_pGrid;

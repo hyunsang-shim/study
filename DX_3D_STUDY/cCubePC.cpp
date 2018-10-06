@@ -22,7 +22,7 @@ void cCubePC::Setup()
 {
 	ST_PNT_VERTEX	v;
 	D3DXCreateTextureFromFile(g_pD3DDevice, _T(".\\obj\\box.jpg"), &m_pTexture);
-	m_vecVertex = ObjLoader::ParseObj(".\\obj\\map.obj");
+	//ObjLoader::ParseObj(".\\obj\\map.obj");
 
 }
 

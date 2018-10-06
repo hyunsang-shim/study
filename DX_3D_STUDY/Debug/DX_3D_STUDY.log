@@ -1,10 +1,2 @@
-﻿  ObjLoader.cpp
-k:\work\git\dx_3d_study\objloader.cpp(39): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: 'fopen' 선언을 참조하십시오.
-k:\work\git\dx_3d_study\objloader.cpp(209): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\objloader.cpp(157): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: 'fopen' 선언을 참조하십시오.
-k:\work\git\dx_3d_study\objloader.cpp(141): warning C4101: 'tmpFloat' :참조되지 않은 지역 변수입니다.
-k:\work\git\dx_3d_study\objloader.cpp(216): warning C4715: 'ObjLoader::GetMaterial': 모든 제어 경로에서 값을 반환하지는 않습니다.
-  DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.exe
+﻿  DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.exe
   DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.pdb (Full PDB)

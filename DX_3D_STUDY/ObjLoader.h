@@ -6,10 +6,10 @@ public:
 	ObjLoader();
 	~ObjLoader();
 
-	static vector<OBJ_IMPORTER> ParseObj(char* FileName);
-	static map<string, MATERIAL> GetMaterial(char* Filename);
-	static LPDIRECT3DTEXTURE9 GetTexture(char* fileName);
+	static void ParseObj(string Filename);
+	static void GetMaterialLib(string Filename);
+	static void GetTextures(string Filename);
+	
 private:
 
 };
-

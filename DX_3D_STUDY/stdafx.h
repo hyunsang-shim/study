@@ -5,47 +5,15 @@
 
 #pragma once
 
-// 콘솔 디버그 메시지 창
-#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 #include "targetver.h"
 
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용은 Windows 헤더에서 제외합니다.
-// Windows 헤더 파일:
-#include <windows.h>
-
-// C 런타임 헤더 파일입니다.
-#include <stdlib.h>
-#include <malloc.h>
-#include <memory.h>
-#include <tchar.h>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <map>
-#include <set>
-#include <list>
-#include <time.h>
-#include <map>
-
-using namespace std;
-#include <assert.h>>
-
-
 #define PI 3.141592f
 #define EPSILON 0.00001f
 
-// TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
-
-// 다이렉트X 9 용 라이브러리 추가
-#include <d3dx9.h>
-#pragma comment(lib, "d3d9.lib")
-#pragma comment(lib, "d3dx9.lib")
-
-// 윈도우 핸들 전역변수화
-extern HWND g_hWnd;
-
 #define	SAFE_RELEASE(p) { if(p) p->Release(); p = NULL;}
 #define SAFE_DELETE(p)  { if(p) delete p; p = NULL;} 
+
 
 // 싱글톤 매크로 설정
 #define SINGLETONE(class_name) \
@@ -59,21 +27,64 @@ public: \
 		return &instance;\
 	}
 
+
 //텍스쳐 위치 확인용.
 // 마인크래프트 64 * 32 텍스쳐용
-#define	x1 1 / 8.0000f
-#define	x2 2 / 8.0000f
-#define	x3 3 / 8.0000f
-#define	x4 4 / 8.0000f
-#define	x5 5 / 8.0000f
-#define	x6 6 / 8.0000f
-#define	x7 7 / 8.0000f
+#define	UV_x1 1 / 8.0000f
+#define	UV_x2 2 / 8.0000f
+#define	UV_x3 3 / 8.0000f
+#define	UV_x4 4 / 8.0000f
+#define	UV_x5 5 / 8.0000f
+#define	UV_x6 6 / 8.0000f
+#define	UV_x7 7 / 8.0000f
 
-#define	y1 1 / 4.0000f
-#define	y2 2 / 4.0000f
-#define	y3 3 / 4.0000f
+#define	UV_y1 1 / 4.0000f
+#define	UV_y2 2 / 4.0000f
+#define	UV_y3 3 / 4.0000f
 
 
+// Windows 헤더 파일:
+#include <windows.h>
+
+// C 런타임 헤더 파일입니다.
+#include <stdlib.h>
+#include <malloc.h>
+#include <memory.h>
+#include <tchar.h>
+#include <time.h>
+
+// c++ 런타임 헤더 파일
+#include <fstream>
+#include <vector>
+#include <string>
+#include <map>
+#include <set>
+#include <list>
+#include <map>
+
+#include <assert.h>
+
+
+// 다이렉트X 9 용 라이브러리 추가
+#include <d3dx9.h>
+#pragma comment(lib, "d3d9.lib")
+#pragma comment(lib, "d3dx9.lib")
+
+
+
+
+using namespace std;
+
+
+// 콘솔 디버그 메시지 창
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+
+// 윈도우 핸들 전역변수화
+extern HWND g_hWnd;
+
+
+// D3DXVECTOR3		p;
+// D3DCOLOR		color;
 struct ST_PC_VERTEX
 {
 	D3DXVECTOR3		p;
@@ -82,15 +93,19 @@ struct ST_PC_VERTEX
 	enum { FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE };
 };
 
-
+// D3DXVECTOR3			p;
+// D3DXVECTOR3			normal;
+// D3DXVECTOR2			texture;
 struct ST_PNT_VERTEX
 {
 	D3DXVECTOR3			p;
 	D3DXVECTOR3			normal;
 	D3DXVECTOR2			texture;
-	enum{ FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
+	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
 };
 
+// D3DXVECTOR3			p;
+// D3DXVECTOR2			texture1;	 // UV Coord
 struct ST_PT_VERTEX
 {
 	D3DXVECTOR3			p;
@@ -98,6 +113,15 @@ struct ST_PT_VERTEX
 	enum { FVF = D3DFVF_XYZ | D3DFVF_TEX1 };
 };
 
+
+// D3DXCOLOR				Ambient;
+// D3DXCOLOR				Diffuse;
+// D3DXCOLOR				Specular;
+// D3DXCOLOR				Emissive;
+// float					Ns;
+// float					Power;
+// float					Illumination;
+// LPDIRECT3DTEXTURE9		Texture;
 typedef struct d3dxmaterial {
 	D3DXCOLOR				Ambient;
 	D3DXCOLOR				Diffuse;
@@ -110,6 +134,11 @@ typedef struct d3dxmaterial {
 
 } MATERIAL;
 
+
+// vector<string>					objGroupName;
+// vector<ST_PNT_VERTEX>			vertexPNT;
+// map<string, MATERIAL>			material;
+// vector<LPDIRECT3DTEXTURE9>		textures;
 typedef struct importObject {
 	vector<string>					objGroupName;
 	vector<ST_PNT_VERTEX>			vertexPNT;
@@ -119,6 +148,14 @@ typedef struct importObject {
 
 
 
+// vector<string>					textureName;
+// map<string, LPDIRECT3DTEXTURE9>  texture;
+typedef struct importTexture {
+	string					textureName;
+	LPDIRECT3DTEXTURE9		texture;
+} TEXTURE;
+
+// 강사님 스타일
 //#define SYNTHESIZE (varType, varName, FunName) \
 //protected : varType varName; \
 //public : inline varType Get##FunName(void) const {return varName;} \
@@ -130,6 +167,10 @@ typedef struct importObject {
 //public : inline void Set##FunName(varType var) { varName = var; }
 
 
+//#include "cCubeman.h"
+
+
+// 사용자 정의 헤더 파일
 #include "cDeviceManager.h"
 #include "cCubePC.h"
 #include "cBoxman.h"
@@ -137,6 +178,5 @@ typedef struct importObject {
 #include "cCamera.h"
 #include "cHexagon.h"
 #include "ObjLoader.h"
-//#include "cCubeman.h"
 
-
+#include "cMap.h"
