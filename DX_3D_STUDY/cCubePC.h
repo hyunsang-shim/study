@@ -8,7 +8,7 @@ public:
 	~cCubePC();
 
 private:
-	vector<OBJ_IMPORTER>	m_vecVertex;
+	vector<ST_PC_VERTEX>	m_vecVertex;
 	vector<D3DXVECTOR3>		vecVerTex_Box;
 	vector<D3DXVECTOR2>		vecVerTex_Texture;
 	vector<int>				vecVerTex_Box_Index;

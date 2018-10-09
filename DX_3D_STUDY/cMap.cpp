@@ -8,6 +8,7 @@ cMap::cMap()
 	, m_fBoxRotY(0.1f)
 	, m_fBoxRotX(-D3DX_PI / 2)
 	, m_pTexture(NULL)
+	, objFileName("obj/Map.obj")
 {
 	D3DXMatrixIdentity(&m_matWorld);
 }
@@ -20,8 +21,10 @@ cMap::~cMap()
 
 void cMap::Setup()
 {
-	ST_PNT_VERTEX	v;
-	ObjLoader::ParseObj("obj/Map.obj");
+	subMesh = ObjLoader::ParseObj(objFileName);
+	mtlLibrary = ObjLoader::GetMaterialLib(objFileName);
+
+	textures = ObjLoader::GetTextures(mtlLibrary);
 
 }
 
@@ -37,18 +40,24 @@ void cMap::Update()
 
 void cMap::Render()
 {
-	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld);
-	g_pD3DDevice->SetFVF(ST_PNT_VERTEX::FVF);
-	for (int i = 0; i < m_vecVertex.size(); i++)
-	{
 
-		g_pD3DDevice->SetMaterial(&m_material);
-		g_pD3DDevice->SetTexture(0, m_pTexture);
-		g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex[i].vertexPNT.size() / 3, &m_vecVertex[i].vertexPNT[0], sizeof(ST_PNT_VERTEX));
+
+	for (int i = 0; i < subMesh.size(); i++)
+	{
+		D3DMATERIAL9 a;
+
+		mtlLibrary.find("09_-_Default")->second;
+		g_pD3DDevice->SetTexture(0, textures.find(subMesh[i].texture)->second);
+		g_pD3DDevice->SetMaterial( mtlLibrary.find(subMesh[i].MaterialName)->second);
+		g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld);
+		g_pD3DDevice->SetFVF(ST_PNT_VERTEX::FVF);
+		
+			g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, subMesh[i].p / 3, &subMesh[i].p, sizeof(ST_PNT_VERTEX));
 	}
-	
+
 	g_pD3DDevice->SetTexture(0, NULL);	// 텍스쳐 사용 하지 않음 선언
 
+	
 }
 
 void cMap::SetBoxPosition(D3DXVECTOR3 boxPos)
@@ -66,9 +75,4 @@ void cMap::SetBoxScale(double scale)
 void cMap::SetBoxRotationY(double rotation)
 {
 	m_fBoxRotY = rotation;
-}
-
-vector<D3DXVECTOR3> cMap::GetOriginVertexList()
-{
-	return vecVerTex_Box;
 }

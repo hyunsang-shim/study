@@ -104,6 +104,7 @@ struct ST_PNT_VERTEX
 	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
 };
 
+
 // D3DXVECTOR3			p;
 // D3DXVECTOR2			texture1;	 // UV Coord
 struct ST_PT_VERTEX
@@ -114,46 +115,44 @@ struct ST_PT_VERTEX
 };
 
 
+// D3DXVECTOR3			p;
+// D3DXVECTOR3			normal;
+// D3DXVECTOR2			texture;
+// string				GroupName;
+// string				MaterialName;
+// enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
+struct ST_PNT_SubMesh
+{
+	D3DXVECTOR3			p;
+	D3DXVECTOR3			normal;
+	D3DXVECTOR2			texture;
+	string				GroupName;
+	string				MaterialName;
+	string				MaterialLibrary;
+	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
+};
+
+
+
 // D3DXCOLOR				Ambient;
 // D3DXCOLOR				Diffuse;
-// D3DXCOLOR				Specular;
-// D3DXCOLOR				Emissive;
+// D3DXCOLOR				Specular;	
 // float					Ns;
-// float					Power;
-// float					Illumination;
-// LPDIRECT3DTEXTURE9		Texture;
-typedef struct d3dxmaterial {
-	D3DXCOLOR				Ambient;
-	D3DXCOLOR				Diffuse;
-	D3DXCOLOR				Specular;
-	D3DXCOLOR				Emissive;
-	float					Ns;
-	float					Power;
-	float					Illumination;
-	LPDIRECT3DTEXTURE9		Texture;
-
-} MATERIAL;
-
-
-// vector<string>					objGroupName;
-// vector<ST_PNT_VERTEX>			vertexPNT;
-// map<string, MATERIAL>			material;
-// vector<LPDIRECT3DTEXTURE9>		textures;
-typedef struct importObject {
-	vector<string>					objGroupName;
-	vector<ST_PNT_VERTEX>			vertexPNT;
-	map<string, MATERIAL>			material;
-	vector<LPDIRECT3DTEXTURE9>		textures;
-} OBJ_IMPORTER;
-
-
-
-// vector<string>					textureName;
-// map<string, LPDIRECT3DTEXTURE9>  texture;
-typedef struct importTexture {
+// D3DXCOLOR				Ni;
+// float					Transparency;
+// int						Illumination;
+// string					textureName;
+struct MATERIAL {
+	D3DMATERIAL9			material;
 	string					textureName;
-	LPDIRECT3DTEXTURE9		texture;
-} TEXTURE;
+};
+
+// string					strMtlName;
+// struct MATERIAL			materials;
+struct MaterialLibrary {
+	string					strMtlName;
+	MATERIAL				materials;
+};
 
 // 강사님 스타일
 //#define SYNTHESIZE (varType, varName, FunName) \

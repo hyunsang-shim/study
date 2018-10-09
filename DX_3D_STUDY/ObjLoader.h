@@ -6,9 +6,9 @@ public:
 	ObjLoader();
 	~ObjLoader();
 
-	static void ParseObj(string Filename);
-	static void GetMaterialLib(string Filename);
-	static void GetTextures(string Filename);
+	static vector<ST_PNT_SubMesh> ParseObj(string Filename);
+	static map<string, MATERIAL> GetMaterialLib(string Filename);
+	static map<string, string> GetTextures(map<string, MATERIAL> MaterialLibraryName);
 	
 private:
 

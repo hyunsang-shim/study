@@ -1,2 +1,178 @@
-﻿  DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.exe
-  DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.pdb (Full PDB)
+﻿  stdafx.cpp
+cl : 명령줄 warning D9030: '/Gm'이(가) 다중 처리와 호환되지 않습니다. /MP 스위치를 무시합니다.
+  cMap.cpp
+d:\work\study\dx_3d_study\cmap.cpp(34): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmap.cpp(35): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmap.cpp(36): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmap.cpp(45): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\cmap.cpp(50): error C2664: 'std::_Tree_const_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const _Kty,_Ty>>>> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::find(const std::basic_string<char,std::char_traits<char>,std::allocator<char>> &) const': 인수 1을(를) 'D3DXVECTOR2'에서 'const std::basic_string<char,std::char_traits<char>,std::allocator<char>> &'(으)로 변환할 수 없습니다.
+          with
+          [
+              _Kty=std::string,
+              _Ty=std::string,
+              _Pr=std::less<std::string>,
+              _Alloc=std::allocator<std::pair<const std::string,std::string>>
+          ]
+  d:\work\study\dx_3d_study\cmap.cpp(50): note: 원인: 'D3DXVECTOR2'에서 'const std::basic_string<char,std::char_traits<char>,std::allocator<char>>'(으)로 변환할 수 없습니다.
+  d:\work\study\dx_3d_study\cmap.cpp(50): note: 이 변환을 수행할 수 있는 사용 가능한 사용자 정의 변환 연산자가 없거나 연산자를 호출할 수 없습니다.
+d:\work\study\dx_3d_study\cmap.cpp(50): error C2227: '->second' 왼쪽은 클래스/구조체/공용 구조체/제네릭 형식을 가리켜야 합니다.
+d:\work\study\dx_3d_study\cmap.cpp(50): error C2660: 'IDirect3DDevice9::SetTexture': 함수는 1개의 매개 변수를 사용하지 않습니다.
+d:\work\study\dx_3d_study\cmap.cpp(51): error C2664: 'HRESULT IDirect3DDevice9::SetMaterial(const D3DMATERIAL9 *)': 인수 1을(를) 'MATERIAL'에서 'const D3DMATERIAL9 *'(으)로 변환할 수 없습니다.
+  d:\work\study\dx_3d_study\cmap.cpp(51): note: 이 변환을 수행할 수 있는 사용 가능한 사용자 정의 변환 연산자가 없거나 연산자를 호출할 수 없습니다.
+d:\work\study\dx_3d_study\cmap.cpp(55): error C2065: 'm_vecVertex': 선언되지 않은 식별자입니다.
+d:\work\study\dx_3d_study\cmap.cpp(55): error C2660: 'IDirect3DDevice9::DrawPrimitiveUP': 함수는 3개의 매개 변수를 사용하지 않습니다.
+  cMainGame.cpp
+d:\work\study\dx_3d_study\cmaingame.cpp(61): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(67): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(76): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(81): warning C4316: 'cMap': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+d:\work\study\dx_3d_study\cmaingame.cpp(107): warning C4316: 'cBoxman': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+d:\work\study\dx_3d_study\cmaingame.cpp(118): warning C4316: 'cBoxman': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+d:\work\study\dx_3d_study\cmaingame.cpp(212): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(214): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(217): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(219): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(261): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(263): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(266): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(268): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(317): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(533): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cmaingame.cpp(534): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  cHexagon.cpp
+  cGrid.cpp
+d:\work\study\dx_3d_study\cgrid.cpp(31): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(32): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(33): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(34): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(37): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(38): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(39): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(40): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(48): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(51): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(56): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(59): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(65): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(68): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(79): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(81): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(86): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(88): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(93): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(95): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(100): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(102): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(105): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(107): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(109): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(112): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(114): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(116): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(127): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(129): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(134): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(136): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(141): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(143): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(148): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(150): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(153): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(155): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(157): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(160): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(162): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(164): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(175): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(177): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(182): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(184): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(189): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(191): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(196): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(198): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(201): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(203): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(205): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(208): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(210): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(212): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cgrid.cpp(281): warning C4244: '=': 'double'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(282): warning C4244: '=': 'double'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(283): warning C4244: '=': 'double'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cgrid.cpp(284): warning C4244: '=': 'double'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  cDeviceManager.cpp
+  cCubePC.cpp
+d:\work\study\dx_3d_study\ccubepc.cpp(43): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\ccubepc.cpp(57): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\ccubepc.cpp(58): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\ccubepc.cpp(59): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\ccubepc.cpp(71): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  cCamera.cpp
+d:\work\study\dx_3d_study\ccamera.cpp(49): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\ccamera.cpp(99): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  cBoxman.cpp
+d:\work\study\dx_3d_study\cboxman.cpp(93): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\cboxman.cpp(101): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\cboxman.cpp(109): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\cboxman.cpp(117): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\cboxman.cpp(125): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\cboxman.cpp(132): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\cboxman.cpp(159): warning C4244: '인수': 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cboxman.cpp(166): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cboxman.cpp(171): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cboxman.cpp(196): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cboxman.cpp(212): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cboxman.cpp(228): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cboxman.cpp(244): warning C4305: '인수': 'double'에서 'FLOAT'(으)로 잘립니다.
+d:\work\study\dx_3d_study\cboxman.cpp(607): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cboxman.cpp(608): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\work\study\dx_3d_study\cboxman.cpp(609): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  TextureLoader.cpp
+  ObjLoader.cpp
+d:\work\study\dx_3d_study\objloader.cpp(82): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(2254): note: 'sscanf' 선언을 참조하십시오.
+d:\work\study\dx_3d_study\objloader.cpp(166): error C2086: 'MATERIAL tmpMtl': 재정의
+  d:\work\study\dx_3d_study\objloader.cpp(126): note: 'tmpMtl' 선언을 참조하십시오.
+d:\work\study\dx_3d_study\objloader.cpp(192): error C2064: 항은 3개의 인수를 받아들이는 함수로 계산되지 않습니다.
+d:\work\study\dx_3d_study\objloader.cpp(219): error C2039: 'Diffuse': 'MATERIAL'의 멤버가 아닙니다.
+  d:\work\study\dx_3d_study\stdafx.h(145): note: 'MATERIAL' 선언을 참조하십시오.
+d:\work\study\dx_3d_study\objloader.cpp(219): error C2228: '.r' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+d:\work\study\dx_3d_study\objloader.cpp(220): error C2039: 'Diffuse': 'MATERIAL'의 멤버가 아닙니다.
+  d:\work\study\dx_3d_study\stdafx.h(145): note: 'MATERIAL' 선언을 참조하십시오.
+d:\work\study\dx_3d_study\objloader.cpp(220): error C2228: '.g' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+d:\work\study\dx_3d_study\objloader.cpp(221): error C2039: 'Diffuse': 'MATERIAL'의 멤버가 아닙니다.
+  d:\work\study\dx_3d_study\stdafx.h(145): note: 'MATERIAL' 선언을 참조하십시오.
+d:\work\study\dx_3d_study\objloader.cpp(221): error C2228: '.b' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+d:\work\study\dx_3d_study\objloader.cpp(222): error C2039: 'Diffuse': 'MATERIAL'의 멤버가 아닙니다.
+  d:\work\study\dx_3d_study\stdafx.h(145): note: 'MATERIAL' 선언을 참조하십시오.
+d:\work\study\dx_3d_study\objloader.cpp(222): error C2228: '.a' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+d:\work\study\dx_3d_study\objloader.cpp(248): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\objloader.cpp(262): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+d:\work\study\dx_3d_study\objloader.cpp(264): error C2679: 이항 '[': 오른쪽 피연산자로 'int' 형식을 사용하는 연산자가 없거나 허용되는 변환이 없습니다.
+  d:\util\visualstudio 2015\vc\include\map(336): note: 'MATERIAL &std::map<std::string,MATERIAL,std::less<_Kty>,std::allocator<std::pair<const _Kty,_Ty>>>::operator [](const std::basic_string<char,std::char_traits<char>,std::allocator<char>> &)'일 수 있습니다.
+          with
+          [
+              _Kty=std::string,
+              _Ty=MATERIAL
+          ]
+  d:\util\visualstudio 2015\vc\include\map(176): note: 또는       'MATERIAL &std::map<std::string,MATERIAL,std::less<_Kty>,std::allocator<std::pair<const _Kty,_Ty>>>::operator [](std::basic_string<char,std::char_traits<char>,std::allocator<char>> &&)'
+          with
+          [
+              _Kty=std::string,
+              _Ty=MATERIAL
+          ]
+  d:\work\study\dx_3d_study\objloader.cpp(264): note: 인수 목록 '(std::map<std::string,MATERIAL,std::less<_Kty>,std::allocator<std::pair<const _Kty,_Ty>>>, int)'을(를) 일치시키는 동안
+          with
+          [
+              _Kty=std::string,
+              _Ty=MATERIAL
+          ]
+d:\work\study\dx_3d_study\objloader.cpp(264): error C2228: '.textureName' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+d:\work\study\dx_3d_study\objloader.cpp(264): error C2088: '[': class에 맞지 않습니다.
+d:\work\study\dx_3d_study\objloader.cpp(264): error C2672: 'std::make_pair': 일치하는 오버로드된 함수가 없습니다.
+d:\work\study\dx_3d_study\objloader.cpp(264): error C2780: 'std::pair<_Unrefwrap<_Ty>::type,_Unrefwrap<_Ty2>::type> std::make_pair(_Ty1 &&,_Ty2 &&)': 인수가 2개 있어야 하는데 1개를 사용했습니다.
+  d:\util\visualstudio 2015\vc\include\utility(323): note: 'std::make_pair' 선언을 참조하십시오.
+  MaterialLoader.cpp
+  DX_3D_STUDY.cpp
+  코드를 생성하고 있습니다...

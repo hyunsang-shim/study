@@ -7,10 +7,11 @@ public:
 	~cMap();
 
 private:
-	vector<OBJ_IMPORTER>	m_vecVertex;
-	vector<D3DXVECTOR3>		vecVerTex_Box;
-	vector<D3DXVECTOR2>		vecVerTex_Texture;
-	vector<int>				vecVerTex_Box_Index;
+	vector<ST_PNT_SubMesh>	subMesh;
+	map<string, MATERIAL>	mtlLibrary;
+	map<string, string>		textures;
+
+	string					objFileName;	
 	D3DXMATRIXA16			m_matWorld;
 	D3DXMATRIXA16			m_matTrans;
 	D3DXMATRIXA16			m_matRotX;
@@ -33,7 +34,5 @@ public:
 	void					SetBoxPosition(D3DXVECTOR3 box_pos);
 	void					SetBoxScale(double scale);
 	void					SetBoxRotationY(double rotY);
-	D3DMATERIAL9			m_material;
-	vector<D3DXVECTOR3>		GetOriginVertexList();
 
 };
