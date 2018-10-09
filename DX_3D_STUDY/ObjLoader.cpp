@@ -30,10 +30,10 @@ void ObjLoader::ParseObj(string Filename)
 	string					s_groupName;
 	string					s_materialName;
 
-	printf("Filename : %s||\n", Filename);
-	printf("Filename.c_str() : %s||\n", Filename.c_str());
+	
 	ifstream fFile;
 	fFile.open(Filename, ios_base::in);
+
 
 	if (fFile.fail())
 	{
@@ -43,14 +43,38 @@ void ObjLoader::ParseObj(string Filename)
 	
 	
 	string			newline;
-	float			x, y, z;
 	int				v1, t1, n1;
 	int				v2, t2, n2;
 	int				v3, t3, n3;
+	char			indicator[64];
 
 	while (!fFile.eof())
 	{
 		getline(fFile, newline);
+
+		sscanf_s(newline.c_str(), "%s", indicator, sizeof(indicator));
+
+		if (strstr(indicator, "v "))
+		{
+			float x, y, z; 
+			sscanf_s(newline.c_str(), "%*s %f %f %f", &x, &y, &z);
+			v_Vertices.push_back(D3DXVECTOR3(x, y, z));
+		}
+		else if (strstr(indicator, "vt "))
+		{
+			float u, v, w;
+			sscanf_s(newline.c_str(), "%*s %f %f %f", &u, &v, &w));
+			v_UVW.push_back(D3DXVECTOR3(u, v, w));
+		}
+		else if (strstr(indicator, "vn "))
+		{
+			float x, y, z;
+			sscanf_s(newline.c_str(), "%*s %f %f %f", &x, &y, &z);
+			v_Normal.push_back(D3DXVECTOR3(x, y, z));
+		}
+
+
+
 	}
 
 
