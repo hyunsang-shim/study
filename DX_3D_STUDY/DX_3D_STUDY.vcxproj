@@ -149,6 +149,7 @@
     <ClInclude Include="cBoxman.h" />
     <ClInclude Include="cCamera.h" />
     <ClInclude Include="cCharacter.h" />
+    <ClInclude Include="cCubeObj.h" />
     <ClInclude Include="cCubePC.h" />
     <ClInclude Include="cDeviceManager.h" />
     <ClInclude Include="cGrid.h" />
@@ -166,6 +167,7 @@
   <ItemGroup>
     <ClCompile Include="cBoxman.cpp" />
     <ClCompile Include="cCamera.cpp" />
+    <ClCompile Include="cCubeObj.cpp" />
     <ClCompile Include="cCubePC.cpp" />
     <ClCompile Include="cDeviceManager.cpp" />
     <ClCompile Include="cGrid.cpp" />

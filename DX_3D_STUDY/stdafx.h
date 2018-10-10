@@ -115,44 +115,19 @@ struct ST_PT_VERTEX
 };
 
 
-// D3DXVECTOR3			p;
-// D3DXVECTOR3			normal;
-// D3DXVECTOR2			texture;
-// string				GroupName;
-// string				MaterialName;
-// enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
-struct ST_PNT_SubMesh
-{
-	D3DXVECTOR3			p;
-	D3DXVECTOR3			normal;
-	D3DXVECTOR2			texture;
-	string				GroupName;
-	string				MaterialName;
-	string				MaterialLibrary;
-	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
+struct SubMesh {	
+	string						sGroupName;
+	string						sMaterialName;
+	D3DMATERIAL9				mat9Material;
+	string						sTextureName;
+	LPDIRECT3DTEXTURE9			tx9Texture;
+	vector<ST_PNT_VERTEX>		vPNT_VERTEX;
+	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };	
 };
 
 
 
-// D3DXCOLOR				Ambient;
-// D3DXCOLOR				Diffuse;
-// D3DXCOLOR				Specular;	
-// float					Ns;
-// D3DXCOLOR				Ni;
-// float					Transparency;
-// int						Illumination;
-// string					textureName;
-struct MATERIAL {
-	D3DMATERIAL9			material;
-	string					textureName;
-};
 
-// string					strMtlName;
-// struct MATERIAL			materials;
-struct MaterialLibrary {
-	string					strMtlName;
-	MATERIAL				materials;
-};
 
 // 강사님 스타일
 //#define SYNTHESIZE (varType, varName, FunName) \

@@ -79,8 +79,7 @@ void cMainGame::Setup()
 	//m_pCubePC->Setup();
 
 	m_pMap = new cMap;
-	m_pMap->Setup();
-	return;
+	m_pMap->Setup();	
 	
 
 	m_pCamera = new cCamera;
@@ -93,37 +92,37 @@ void cMainGame::Setup()
 	InitLights();
 
 
-	m_pHexagon = new cHexagon;
+	/*m_pHexagon = new cHexagon;
 	m_pHexagon->Setup();
-	m_vWaypoints = m_pHexagon->GetPoints();
+	m_vWaypoints = m_pHexagon->GetPoints();*/
 
 	
-	for (int i = 0; i < 6; i++)
-	{
-		if (i % 2 == 0)
-		{
-			// 일반 경로를 따라가는 박스맨 저장소에 넣을 박스맨들을 생성 & 넣는다.
-			BESIER_BOXMAN normalboxman;
-			normalboxman.boxman = new cBoxman;
-			normalboxman.boxman->Setup(_T("D.VA.png"));
-			normalboxman.m_vBoxPosition.x = m_vWaypoints[i].x;
-			normalboxman.m_vBoxPosition.y = m_vWaypoints[i].y;
-			normalboxman.m_vBoxPosition.z = m_vWaypoints[i].z;
-			m_vecNormalBoxman.push_back(normalboxman);
-		}
-		else
-		{
-			// 베지어 경로를 따라가는 박스맨 저장소에 넣을 박스맨들을 생성 & 넣는다.
-			BESIER_BOXMAN besierboxman;
-			besierboxman.boxman = new cBoxman;
-			besierboxman.boxman->Setup(_T("Megumin.png"));
-			besierboxman.m_vBoxPosition.x = m_vWaypoints[i].x;
-			besierboxman.m_vBoxPosition.y = m_vWaypoints[i].y;
-			besierboxman.m_vBoxPosition.z = m_vWaypoints[i].z;
-			m_vecBesierBoxman.push_back(besierboxman);
-
-		}
-	}
+	//for (int i = 0; i < 6; i++)
+	//{
+	//	if (i % 2 == 0)
+	//	{
+	//		// 일반 경로를 따라가는 박스맨 저장소에 넣을 박스맨들을 생성 & 넣는다.
+	//		BESIER_BOXMAN normalboxman;
+	//		normalboxman.boxman = new cBoxman;
+	//		normalboxman.boxman->Setup(_T("D.VA.png"));
+	//		normalboxman.m_vBoxPosition.x = m_vWaypoints[i].x;
+	//		normalboxman.m_vBoxPosition.y = m_vWaypoints[i].y;
+	//		normalboxman.m_vBoxPosition.z = m_vWaypoints[i].z;
+	//		m_vecNormalBoxman.push_back(normalboxman);
+	//	}
+	//	else
+	//	{
+	//		// 베지어 경로를 따라가는 박스맨 저장소에 넣을 박스맨들을 생성 & 넣는다.
+	//		BESIER_BOXMAN besierboxman;
+	//		besierboxman.boxman = new cBoxman;
+	//		besierboxman.boxman->Setup(_T("Megumin.png"));
+	//		besierboxman.m_vBoxPosition.x = m_vWaypoints[i].x;
+	//		besierboxman.m_vBoxPosition.y = m_vWaypoints[i].y;
+	//		besierboxman.m_vBoxPosition.z = m_vWaypoints[i].z;
+	//		m_vecBesierBoxman.push_back(besierboxman);
+	//
+	//	}
+	//	}
 	
 
 	// 스킨 제작자 주소 표시
@@ -154,7 +153,6 @@ void cMainGame::Setup()
 void cMainGame::Update(){
 	
 
-
 	//박스의 회전
 	if (GetKeyState('A') & 0x8000)
 	{
@@ -171,8 +169,8 @@ void cMainGame::Update(){
 	
 	// 박스의 이동
 	
-	double fMin = m_pGrid->GetGridMinMax().left;
-	double fMax = m_pGrid->GetGridMinMax().right;
+//	double fMin = m_pGrid->GetGridMinMax().left;
+//	double fMax = m_pGrid->GetGridMinMax().right;
 
 	if (GetKeyState('W') & 0x8000)
 	{
@@ -196,7 +194,8 @@ void cMainGame::Update(){
 		}
 		
 		// 캐릭터가 그리드 밖으로 못나가도록 범위를 지정한다.
-		/*for (int i = 0; i < m_vvecBoxPosition.size(); i++)
+		/*
+		for (int i = 0; i < m_vvecBoxPosition.size(); i++)
 		{
 			if (m_vvecBoxPosition[i].x >= fMax)
 				m_vvecBoxPosition[i].x = fMax;
@@ -207,7 +206,7 @@ void cMainGame::Update(){
 				m_vvecBoxPosition[i].z = fMax;
 			else if (m_vvecBoxPosition[i].z <= fMin)
 				m_vvecBoxPosition[i].z = fMin;
-		}*/
+		}
 		if (m_vBoxPosition.x >= fMax)
 			m_vBoxPosition.x = fMax;
 		else if (m_vBoxPosition.x <= fMin)
@@ -217,7 +216,7 @@ void cMainGame::Update(){
 			m_vBoxPosition.z = fMax;
 		else if (m_vBoxPosition.z <= fMin)
 			m_vBoxPosition.z = fMin;
-
+			*/
 
 	}
 	else if (GetKeyState('S') & 0x8000)
@@ -256,7 +255,7 @@ void cMainGame::Update(){
 			else if (m_vvecBoxPosition[i].z <= fMin)
 				m_vvecBoxPosition[i].z = fMin;
 		}*/
-
+/*
 		if (m_vBoxPosition.x >= fMax)
 			m_vBoxPosition.x = fMax;
 		else if (m_vBoxPosition.x <= fMin)
@@ -265,7 +264,7 @@ void cMainGame::Update(){
 		if (m_vBoxPosition.z >= fMax)
 			m_vBoxPosition.z = fMax;
 		else if (m_vBoxPosition.z <= fMin)
-			m_vBoxPosition.z = fMin;
+			m_vBoxPosition.z = fMin;*/
 	}
 	else
 		m_isMoving = false;
@@ -329,18 +328,18 @@ void cMainGame::Update(){
 	}
 
 	//베지어 곡선 경로 boxman 업데이트
-	for (int i = 0; i < 1; i++)
+	/*for (int i = 0; i < 1; i++)
 	{
 		m_vecBesierBoxman[i].boxman->SetRootScale(m_fBoxScale);
 		m_vecBesierBoxman[i].boxman->Update();
-	}
+	}*/
 
 // 일반 경로 boxman 업데이트
-	for (int i = 0; i <1; i++)
+	/*for (int i = 0; i <1; i++)
 	{
 		m_vecNormalBoxman[i].boxman->SetRootScale(m_fBoxScale);
 		m_vecNormalBoxman[i].boxman->Update();
-	}
+	}*/
 	
 
 	//카메라 업데이트
@@ -370,6 +369,7 @@ void cMainGame::Render()
 
 	// Draw Something
 	m_pGrid->Render();
+	m_pMap->Render();
 	//m_pHexagon->Render();	
 	
 	//베지어 곡선 경로 boxman 그리기
@@ -418,8 +418,8 @@ void cMainGame::Render()
 
 
 	//m_pBoxman->Render();
-	m_pCubePC->Render();
-
+	//m_pCubePC->Render();
+	m_pMap->Render();
 
 	if (m_pFont)
 	{
