@@ -25,19 +25,12 @@ cNode * cBST::Find(int key)
 	return m_pRoot->Find(key);
 }
 
-cNode * cBST::FindParent(int key)
-{
-	return m_pRoot->FindParent(key);
-}
-
 void cBST::Delete(int key)
 {
 	// Key 값의 부모 노드를 찾는다.
 
 	// 부모 노드 저장용 변수 temp
-	cNode* temp = this->FindParent(key);
-
-	FindParent(key)->Delete(key, &temp);
+	m_pRoot->Delete(key, &m_pRoot);
 }
 
 void cBST::Print()

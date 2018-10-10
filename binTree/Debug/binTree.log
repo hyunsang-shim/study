@@ -1,2 +1,6 @@
-﻿  binTree.vcxproj -> K:\WORK\git\binTree\Debug\binTree.exe
-  binTree.vcxproj -> K:\WORK\git\binTree\Debug\binTree.pdb (Full PDB)
+﻿  cNode.cpp
+d:\work\study\bintree\cnode.cpp(123): warning C4715: 'cNode::FindParent': 모든 제어 경로에서 값을 반환하지는 않습니다.
+d:\work\study\bintree\cnode.cpp(85): warning C4715: 'cNode::Find': 모든 제어 경로에서 값을 반환하지는 않습니다.
+d:\work\study\bintree\cnode.cpp(184): warning C4715: 'cNode::GetMinNode': 모든 제어 경로에서 값을 반환하지는 않습니다.
+  binTree.vcxproj -> D:\WORK\study\binTree\Debug\binTree.exe
+  binTree.vcxproj -> D:\WORK\study\binTree\Debug\binTree.pdb (Full PDB)

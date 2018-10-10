@@ -135,44 +135,37 @@ void cNode::Print()
 
 void cNode::Delete(int key, cNode ** ppThis)
 {
-	cNode *target = (*ppThis)->m_pLChild;
+	cNode *target = (*ppThis)->Find(key);
 
-	if ((*ppThis)->GetLChild()->m_nKey == key)
+
+	
+	// 리프면 그냥 지운다.
+	if (target->GetLChild() == NULL)
 	{
-		//(*ppThis)->m_pLChild = NULL;
-		if (target->m_pLChild == NULL && target->m_pRChild == NULL)
+		if (target->GetRChild() == NULL)
 		{
-			(*ppThis)->m_pLChild == NULL;
-			free((*ppThis)->GetLChild());
+			// 리프이므로, 부모에게서 자신을 NULL로 만든다.
+			if ((*ppThis)->GetKey() == key)
+				(*ppThis)->SetLChild(NULL);
+			else
+			free(target);
 		}
 		else
-		{
-			target->Swap(target->GetMinNode());
-			while (target->m_pLChild != NULL && target->m_pRChild != NULL)
-			{
-
-			}
-
-		}
+			target->GetRChild()->GetMinNode();
+	}
+	else
+	{
+		target->Swap( ( (*ppThis)->Find(key) )->GetLChild()->GetMinNode());
 	}
 
-	//cNode *target = &(*(*ppThis)->Find(key));
-	//// 리프면 그냥 지운다.
-	//if (target->GetLChild() == NULL)
-	//{
-	//	if (target->GetRChild() == NULL)
-	//	{
-	//		// 리프이므로, 부모에게서 자신을 NULL로 만든다.
-	//		if ((*ppThis)->GetLChild()->GetKey() == key)
-	//			(*ppThis)->SetLChild(NULL);
-	//		else
-	//		free(target);
-	//	}
-	//	else
-	//		target->GetRChild()->GetMinNode();
-	//}
-	//else
-	//	*(*ppThis)->Find(key)->GetLChild()->GetMinNode();
+	if (target->GetMinNode() == NULL)
+		free(target);
+	else
+	{
+		while ((target->GetMinNode() != NULL))
+			target->GetMinNode();
+		
+	}
 	
 }
 
@@ -184,14 +177,10 @@ cNode * cNode::GetMinNode()
 	// 호출자(삭제할 노드)의 Key 값을 대상 값으로 한다.
 	// 호출자의 왼쪽 노드 값을 최소 값에 넣고
 	// 그 뒤로 오른쪽 놈을 봐서 대상 값 보다 작고, 최대값이라면 리턴한다.
-	
-	if (this->m_pRChild == NULL)
-	{
-		printf("Min Node Found! => Key : %d   Data : %d\n", this->m_nKey, this->m_nData);
+	if (this->m_pRChild != NULL)
+		this->m_pRChild->GetMinNode();
+	else
 		return this;
-	}
-	else if (this->m_pRChild != NULL)
-		m_pRChild->GetMinNode();
 }
 
 void cNode::Swap(cNode * target)
