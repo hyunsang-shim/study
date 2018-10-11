@@ -36,6 +36,11 @@ public:
 	void SetTextureUV_LEG_R();
 	void SetMoveState(bool move, bool run);
 	void SetjumpState(bool value1, bool value2);
+	void SetCurPos(D3DXVECTOR3 newCurPos);
+	D3DXVECTOR3 GetCurPos();
+	void SetNextPos(D3DXVECTOR3 newNextPos);
+	D3DXVECTOR3 GetNextPos();
+
 	
 
 private:
@@ -44,6 +49,9 @@ private:
 	D3DXVECTOR3				m_vecRootPosition;
 	D3DXVECTOR3				m_vRootDirection;
 	D3DMATERIAL9			m_matWhite;
+	D3DXVECTOR3				m_CurPos;
+	D3DXVECTOR3				m_NextPos;
+	vector<D3DXVECTOR3>		m_waypoints;
 
 	bool					m_isMoving;
 	bool					m_isRunning;

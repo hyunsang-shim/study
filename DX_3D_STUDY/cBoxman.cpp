@@ -13,6 +13,8 @@ cBoxman::cBoxman()
 	, m_fRotArmR(0.0f)
 	, m_fRotLegL(0.0f)
 	, m_fRotLegR(0.0f)
+	, m_CurPos(D3DXVECTOR3())
+	, m_NextPos(D3DXVECTOR3())
 {
 
 }
@@ -157,7 +159,9 @@ void cBoxman::Update()
 	//루트의 S, R, T를 세팅은 MainGame에서 업데이트 해 준다.
 	D3DXMatrixScaling(&m_matRootS, m_vRootScale.x, m_vRootScale.y, m_vRootScale.z);
 	D3DXMatrixRotationY(&m_matRootR, m_fRootRotationY);
-	D3DXMatrixTranslation(&m_matRootT, m_vecRootPosition.x, m_vecRootPosition.y, m_vecRootPosition.z);
+	//D3DXMatrixTranslation(&m_matRootT, m_vecRootPosition.x, m_vecRootPosition.y, m_vecRootPosition.z);
+	m_CurPos = m_NextPos * 0.1f;
+	D3DXMatrixTranslation(&m_matRootT, m_CurPos.x, m_CurPos.y, m_CurPos.z);
 
 
 	// 각 부위별 S,R,T 매트릭스를 업데이트 하고, 최종 로컬 월드 매트릭스를 구한다.
@@ -595,6 +599,26 @@ void cBoxman::SetjumpState(bool value1, bool value2)
 {
 	m_isJumping = value1;
 	m_isJumping_Top = value2;
+}
+
+void cBoxman::SetCurPos(D3DXVECTOR3 newCurPos)
+{
+	m_vecRootPosition = newCurPos;
+}
+
+D3DXVECTOR3 cBoxman::GetCurPos()
+{
+	return m_CurPos;
+}
+
+void cBoxman::SetNextPos(D3DXVECTOR3 newNextPos)
+{
+	m_NextPos = newNextPos;
+}
+
+D3DXVECTOR3 cBoxman::GetNextPos()
+{
+	return m_NextPos;
 }
 
 void cBoxman::SetRootRotationY(double valueY)

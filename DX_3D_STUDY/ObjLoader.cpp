@@ -11,26 +11,35 @@ ObjLoader::~ObjLoader()
 {
 }
 
-vector<SubMesh> ObjLoader::ParseObj()
+vector<SubMesh> ObjLoader::ParseObj(string filename)
 {
 	ifstream					in;
 	string						newline;
 	char						indicator[64];
 	bool						isGroupStart = false;
-	string						filename("box");
-
-
+	
 	vector<SubMesh>				ret;		// 리턴 할 구조체 vector
 	SubMesh						tmpSubMesh; // 리턴용에 push할 임시 구조체
 	ST_PNT_VERTEX				tmpPNT;
 	vector<D3DXVECTOR3>			vertex;
 	vector<D3DXVECTOR3>			normal;
 	vector<D3DXVECTOR2>			UV;
-	
 
-	
+	string						path;
+	string						fNameNoExt;
+	size_t						found;
+	size_t						found_dot;
 
-	in.open("./obj/" + filename + ".obj", ios::in);
+	path = filename;
+
+	found = path.find_last_of("/");
+	if (found != path.npos)
+		path.erase(found + 1);
+
+	fNameNoExt = filename;
+
+	fNameNoExt = filename.substr(found+1, filename.find_last_of(".") - path.length());
+	in.open(filename, ios::in);
 
 	while (!in.eof())
 	{
@@ -45,6 +54,7 @@ vector<SubMesh> ObjLoader::ParseObj()
 			float x, y, z;
 			sscanf_s(newline.c_str(), "%*s %f %f %f", &x, &y, &z);
 			vertex.push_back(D3DXVECTOR3(x, y, z));
+			
 		}
 		else if (tmp == "vt")
 		{
@@ -60,16 +70,28 @@ vector<SubMesh> ObjLoader::ParseObj()
 		}
 		else if (tmp == "f")
 		{
-			int vx = 0, vy = 0, vz = 0;
-			int u = 0, v = 0, w = 0;
-			int vnx = 0, vny = 0, vnz = 0;
+			int v1 = 0, v2 = 0, v3 = 0;
+			int uv1 = 0, uv2 = 0, uv3 = 0;
+			int vn1 = 0, vn2 = 0, vn3 = 0;
 
 			sscanf(newline.c_str(),
-				"%*s %d/%d/%d %d/%d/%d %d/%*d/%d", &vx, &u, &vnx, &vy, &v, &vny, &vz, &vnz);
-			tmpPNT.p = D3DXVECTOR3(vertex[vx-1].x, vertex[vy-1].y, vertex[vz-1].z);
-			tmpPNT.normal = D3DXVECTOR3(normal[vnx-1].x, normal[vny-1].y, normal[vnz-1].z);
-			tmpPNT.texture = D3DXVECTOR2(UV[u-1].x, UV[v-1].y);
+				"%*s %d/%d/%d %d/%d/%d %d/%d/%d", &v1, &uv1, &vn1, &v2, &uv2, &vn2, &v3, &uv3, &vn3);
+
+			tmpPNT.p = D3DXVECTOR3(vertex[v1 - 1].x, vertex[v1 - 1].y, vertex[v1 - 1].z);			
+			tmpPNT.normal = D3DXVECTOR3(normal[vn1 - 1].x, normal[vn1 - 1].y, normal[vn1 - 1].z);
+			tmpPNT.texture = D3DXVECTOR2(UV[uv1 - 1].x, UV[uv1 - 1].y);
 			tmpSubMesh.vPNT_VERTEX.push_back(tmpPNT);
+
+			tmpPNT.p = D3DXVECTOR3(vertex[v2 - 1].x, vertex[v2 - 1].y, vertex[v2 - 1].z);
+			tmpPNT.normal = D3DXVECTOR3(normal[vn2 - 1].x, normal[vn2 - 1].y, normal[vn2 - 1].z);
+			tmpPNT.texture = D3DXVECTOR2(UV[uv2 - 1].x, UV[uv2 - 1].y);
+			tmpSubMesh.vPNT_VERTEX.push_back(tmpPNT);
+
+			tmpPNT.p = D3DXVECTOR3(vertex[v3 - 1].x, vertex[v3 - 1].y, vertex[v3 - 1].z);
+			tmpPNT.normal = D3DXVECTOR3(normal[vn3 - 1].x, normal[vn3 - 1].y, normal[vn3 - 1].z);
+			tmpPNT.texture = D3DXVECTOR2(UV[uv3 - 1].x, UV[uv3 - 1].y);
+			tmpSubMesh.vPNT_VERTEX.push_back(tmpPNT);
+
 		}
 		else if (tmp == "g")
 		{
@@ -84,7 +106,9 @@ vector<SubMesh> ObjLoader::ParseObj()
 				if (isGroupStart)
 				{
 					ret.push_back(tmpSubMesh);
-					::ZeroMemory(&tmpPNT, sizeof(tmpPNT));
+					ZeroMemory(&tmpSubMesh, sizeof(tmpSubMesh));
+					ZeroMemory(&tmpPNT, sizeof(tmpPNT));
+					//printf("added Object [ %s ] with Material [ %s ]\n", ret[ret.size()-1].sGroupName.c_str(), ret[ret.size()-1].sTextureName.c_str());					::ZeroMemory(&tmpPNT, sizeof(tmpPNT));
 				}
 				else
 					isGroupStart = !isGroupStart;
@@ -97,22 +121,13 @@ vector<SubMesh> ObjLoader::ParseObj()
 
 			sscanf_s(newline.c_str(), "%*s %s", &usemtl, sizeof(usemtl));
 			tmpSubMesh.sMaterialName = usemtl;
-			tmpSubMesh.mat9Material= GetMaterial(filename, usemtl, &tmpSubMesh);
+			
+			tmpSubMesh.mat9Material= GetMaterial( (path + fNameNoExt + ".mtl"), usemtl, &tmpSubMesh);
 		}
 
 	}
 
 	in.close();
-	for (int i = 0; i < ret.size(); i++)
-	{
-		printf("Groupname [ %s ] === Material [ %s ] === Texture Name [ %s ]\n", ret[i].sGroupName, ret[i].sMaterialName, ret[i].sTextureName);
-		for (int k = 0; k < ret[i].vPNT_VERTEX.size(); k++)
-		{
-			printf("PNT#%03d : x %d  y %d  z %d\n", k, ret[i].vPNT_VERTEX[k].p.x, ret[i].vPNT_VERTEX[k].p.y, ret[i].vPNT_VERTEX[k].p.z);
-		}
-	}
-
-
 
 	return ret;
 }
@@ -123,9 +138,18 @@ D3DMATERIAL9 ObjLoader::GetMaterial(string filename, string MatName, SubMesh *De
 	string			newline;
 	char			indicator[64];
 	D3DMATERIAL9	ret;
-	ZeroMemory(&ret, sizeof(ret));
+	string			path;
 
-	in.open("./obj/" + filename + ".mtl", ios::in);
+	ZeroMemory(&ret, sizeof(ret));
+	
+	path = filename;
+	
+	size_t found = path.find_last_of("/");
+	if(found != path.npos)
+		path.erase(found + 1);
+	
+
+	in.open(filename, ios::in);
 	while (!in.eof())
 	{
 		getline(in, newline);
@@ -138,7 +162,7 @@ D3DMATERIAL9 ObjLoader::GetMaterial(string filename, string MatName, SubMesh *De
 			while (newline[0] != '#')
 			{
 				getline(in, newline);				
-				sscanf_s(newline.c_str(), "%*s %s", indicator, sizeof(indicator));
+				sscanf_s(newline.c_str(), "%s", indicator, sizeof(indicator));
 				tmp = indicator;
 
 				if (strstr(indicator, "Ka"))
@@ -146,35 +170,35 @@ D3DMATERIAL9 ObjLoader::GetMaterial(string filename, string MatName, SubMesh *De
 					sscanf_s(newline.c_str(), "%*s %f %f %f", &ret.Ambient.r, &ret.Ambient.g, &ret.Ambient.b);
 					ret.Ambient.a = 1.0f;
 				}
+				else if (strstr(indicator, "map_Kd"))
+				{
+					string mapname;
+					char map[64];
+					sscanf_s(newline.c_str(), "%*s %s", map, sizeof(map));
+					mapname = map;
+					D3DXCreateTextureFromFileA(g_pD3DDevice, (path + mapname).c_str(), &Dest->tx9Texture);
+					Dest->sTextureName = mapname;
+				}
 				else if (strstr(indicator, "Kd"))
 				{
-					sscanf_s(newline.c_str(), "%*s %f %f %f", ret.Diffuse.r, ret.Diffuse.g, ret.Diffuse.b);
+					sscanf_s(newline.c_str(), "%*s %f %f %f", &ret.Diffuse.r, &ret.Diffuse.g, &ret.Diffuse.b);
 					ret.Diffuse.a = 1.0f;
 				}
 				else if (strstr(indicator, "Ks"))
 				{
-					sscanf_s(newline.c_str(), "%*s %f %f %f", ret.Specular.r, ret.Specular.g, ret.Specular.b);
+					sscanf_s(newline.c_str(), "%*s %f %f %f", &ret.Specular.r, &ret.Specular.g, &ret.Specular.b);
 					ret.Specular.a = 1.0f;
 				}
 				else if (strstr(indicator, "d"))
 				{
-					sscanf_s(newline.c_str(), "%*s %f", ret.Power);
+					sscanf_s(newline.c_str(), "%*s %f", &ret.Power);
 				}
-				else if (strstr(indicator, "illum"))
-				{
-					sscanf_s(newline.c_str(), "%*s %f", ret.Emissive);
-				}
-				else if (strstr(indicator, "map_Kd"))
-				{
-					string mapname;
-					sscanf_s(newline.c_str(), "%*s %s", mapname);
-					D3DXCreateTextureFromFileA(g_pD3DDevice, mapname.c_str(), &Dest->tx9Texture);
-					Dest->sTextureName = mapname;
-				}
+				
 			}
 		}
 	}
 
+	ret.Emissive = { 0.0f, 0.0f, 0.0f, 1.0f };
 	return ret;
 
 }

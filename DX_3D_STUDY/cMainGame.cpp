@@ -92,9 +92,11 @@ void cMainGame::Setup()
 	InitLights();
 
 
-	/*m_pHexagon = new cHexagon;
-	m_pHexagon->Setup();
-	m_vWaypoints = m_pHexagon->GetPoints();*/
+	
+	/* m_pHexagon = new cHexagon;
+	 m_pHexagon->Setup();
+	 m_vWaypoints = m_pHexagon->GetPoints();*/
+
 
 	
 	//for (int i = 0; i < 6; i++)
@@ -105,9 +107,10 @@ void cMainGame::Setup()
 	//		BESIER_BOXMAN normalboxman;
 	//		normalboxman.boxman = new cBoxman;
 	//		normalboxman.boxman->Setup(_T("D.VA.png"));
-	//		normalboxman.m_vBoxPosition.x = m_vWaypoints[i].x;
-	//		normalboxman.m_vBoxPosition.y = m_vWaypoints[i].y;
-	//		normalboxman.m_vBoxPosition.z = m_vWaypoints[i].z;
+	//		normalboxman.boxman->SetRootPosition(D3DXVECTOR3(m_vWaypoints[i].x, m_vWaypoints[i].y, m_vWaypoints[i].z));
+	//		normalboxman.boxman->SetRootDirection(m_vWaypoints[i + 1] - m_vWaypoints[i]);
+	//		normalboxman.boxman->SetCurPos(m_vWaypoints[i]);
+	//		normalboxman.boxman->SetNextPos(m_vWaypoints[i + 1]);			
 	//		m_vecNormalBoxman.push_back(normalboxman);
 	//	}
 	//	else
@@ -126,7 +129,7 @@ void cMainGame::Setup()
 	
 
 	// 스킨 제작자 주소 표시
-	m_pFont = NULL;
+	/*m_pFont = NULL;
 	HRESULT hr = D3DXCreateFont(g_pD3DDevice, 20, 10, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, _T("Consolas"), &m_pFont);
 
 	message = "D.VA 스킨 출처 : https://blog.naver.com/netkama26/220746453079\n";
@@ -142,7 +145,7 @@ void cMainGame::Setup()
 	
 		MessageBox(g_hWnd, _T("Error : Creating Font Failed"), tmp, MB_OK);
 		return;
-	}
+	}*/
 
 	GetClientRect(g_hWnd, &m_RectTxtArea);
 
@@ -328,18 +331,22 @@ void cMainGame::Update(){
 	}
 
 	//베지어 곡선 경로 boxman 업데이트
-	/*for (int i = 0; i < 1; i++)
-	{
-		m_vecBesierBoxman[i].boxman->SetRootScale(m_fBoxScale);
-		m_vecBesierBoxman[i].boxman->Update();
-	}*/
+	//for (int i = 0; i < 1; i++)
+	//{
+	//	m_vecBesierBoxman[i].boxman->SetRootScale(m_fBoxScale);
+	//	m_vecBesierBoxman[i].boxman->Update();
+	//}
 
-// 일반 경로 boxman 업데이트
-	/*for (int i = 0; i <1; i++)
+	// 일반 경로 boxman 업데이트
+	if (!m_vecNormalBoxman.empty())
 	{
-		m_vecNormalBoxman[i].boxman->SetRootScale(m_fBoxScale);
-		m_vecNormalBoxman[i].boxman->Update();
-	}*/
+		for (int i = 0; i < m_vecNormalBoxman.size(); i++)
+		{
+			m_vecNormalBoxman[i].boxman->SetRootScale(m_fBoxScale);
+			//if (m_vecNormalBoxman[i].boxman->GetCurPos() + D3DXVECTOR3(EPSILON, EPSILON, EPSILON) < m_vecNormalBoxman[i].boxman->GetNextPos())
+			m_vecNormalBoxman[i].boxman->Update();
+		}
+	}
 	
 
 	//카메라 업데이트
@@ -350,8 +357,9 @@ void cMainGame::Update(){
 	}
 
 
-	// 박스의 스케일 조정 (파일 읽기 적용 시
-	
+	// map update
+	if (m_pMap)
+		m_pMap->Update();
 
 
 	// 강사님 캐릭터 그리기
@@ -368,9 +376,17 @@ void cMainGame::Render()
 
 
 	// Draw Something
-	m_pGrid->Render();
-	m_pMap->Render();
-	//m_pHexagon->Render();	
+	if (m_pGrid)
+		m_pGrid->Render();
+
+	if (m_pMap)
+		m_pMap->Render();
+
+	if (m_pHexagon)
+		m_pHexagon->Render();	
+
+	
+		
 	
 	//베지어 곡선 경로 boxman 그리기
 	for (int i = 0; i < 1; i++)
@@ -419,19 +435,18 @@ void cMainGame::Render()
 
 	//m_pBoxman->Render();
 	//m_pCubePC->Render();
-	m_pMap->Render();
 
-	if (m_pFont)
-	{
-		m_pFont->DrawTextA(NULL, message.c_str(), -1, &m_RectTxtArea, DT_LEFT, D3DCOLOR_XRGB(200, 200, 200));
-	}
+	//if (m_pFont)
+	//{
+	//	m_pFont->DrawTextA(NULL, message.c_str(), -1, &m_RectTxtArea, DT_LEFT, D3DCOLOR_XRGB(200, 200, 200));
+	//}
 
 	// 강사님 추상화 클래스 방식
 	/* 
 	if (m_pCubeman)
 		m_pCubeman->Render();
 	
-	 sample code
+	// sample code
 	{
 		g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
 		D3DXMATRIXA16	matWorld;
