@@ -125,6 +125,27 @@ struct SubMesh {
 	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };	
 };
 
+// string						meshName;
+// string						MaterialName;
+// string						TextureName;
+// D3DMATERIAL9					mat9Material;
+// string						sTextureName;
+// LPDIRECT3DTEXTURE9			tx9Texture;
+// vector<ST_PNT_VERTEX>		vPNT_VERTEX;
+struct ASE_Obj {
+	string						meshName;
+	string						MaterialName;
+	string						ParentNode;
+	D3DXMATRIXA16				ParentWorld;
+	D3DXMATRIXA16				ParentWorldInverse;
+	D3DXMATRIXA16				LocalWorld;
+	string						TextureName;
+	D3DMATERIAL9				mat9Material;
+	string						sTextureName;
+	LPDIRECT3DTEXTURE9			tx9Texture;
+	vector<ST_PNT_VERTEX>		vPNT_VERTEX;
+	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
+};
 
 
 
@@ -154,3 +175,5 @@ struct SubMesh {
 #include "ObjLoader.h"
 #include "cMap.h"
 #include "Asciitok.h"
+#include "cASELoader.h"
+#include "cASE_Char.h"

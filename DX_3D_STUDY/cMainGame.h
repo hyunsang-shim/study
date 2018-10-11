@@ -6,6 +6,9 @@ class cCamera;
 class cGrid;
 class cCubeman;
 class cMap;
+class cASE_Char;
+
+
 
 typedef struct besiertrail_boxman {
 	bool						m_isMoving;
@@ -87,13 +90,14 @@ private:
 	LPDIRECT3DTEXTURE9			m_pTexture;
 	vector<ST_PT_VERTEX>		m_vecVertex;
 	cGrid*						m_pGrid;
+	cASE_Char*					m_pASE_Char;
 	vector<BESIER_BOXMAN>		m_vecNormalBoxman;			// 일반 경로를 따라 가는 캐릭터 구조체 저장소
 	vector<BESIER_BOXMAN>		m_vecBesierBoxman;			// 베지어 곡선 경로를 따라 가는 캐릭터 구조체 저장소
 	vector<D3DXVECTOR3>			m_vecOriginalBox;
 	bool						m_isCamFollow;				// 카메라를 따라가게 할 것인지에 대한 플래그 값.
 	cHexagon*					m_pHexagon;
 	vector<D3DXVECTOR3>			m_vWaypoints;
-
+	
 
 
 };

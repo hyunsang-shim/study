@@ -60,9 +60,6 @@
     <ClInclude Include="ObjLoader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MaterialLoader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="TextureLoader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -73,6 +70,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Asciitok.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="cASELoader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="cASE_Char.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -107,9 +110,6 @@
     <ClCompile Include="ObjLoader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MaterialLoader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="TextureLoader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -117,6 +117,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="cCubeObj.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="cASELoader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="cASE_Char.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

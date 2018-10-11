@@ -9,6 +9,7 @@ class cGrid;
 class cHexagon;
 class ObjLoader;
 class cMap;
+class cASE_Char;
 
 cMainGame::cMainGame()
 	: m_pCubePC(NULL)
@@ -20,6 +21,7 @@ cMainGame::cMainGame()
 	, m_vecOriginalBox(NULL)
 	, m_pHexagon(NULL)
 	, m_pMap(NULL)
+	, m_pASE_Char(NULL)
 	//	, m_pCubeman(NULL)
 	, m_vEye(3, 5, -5)
 	, m_vLookAt(0, 0, 0)
@@ -54,6 +56,7 @@ cMainGame::~cMainGame()
 	//SAFE_DELETE(m_pCubePC);
 	SAFE_DELETE(m_pCamera);
 	SAFE_DELETE(m_pGrid);
+	SAFE_DELETE(m_pMap);
 	//SAFE_DELETE(m_pCubeman);
 
 	if (m_vecBesierBoxman.size() >= 1)
@@ -78,9 +81,12 @@ void cMainGame::Setup()
 	//m_pCubePC = new cCubePC;
 	//m_pCubePC->Setup();
 
-	m_pMap = new cMap;
-	m_pMap->Setup();	
+	//m_pMap = new cMap;
+	//m_pMap->Setup();	
 	
+	m_pASE_Char = new cASE_Char;
+	m_pASE_Char->Setup();
+
 
 	m_pCamera = new cCamera;
 	m_pCamera->Setup();
@@ -90,15 +96,11 @@ void cMainGame::Setup()
 
 	InitMaterial();
 	InitLights();
-
-
 	
 	/* m_pHexagon = new cHexagon;
 	 m_pHexagon->Setup();
 	 m_vWaypoints = m_pHexagon->GetPoints();*/
-
-
-	
+		
 	//for (int i = 0; i < 6; i++)
 	//{
 	//	if (i % 2 == 0)
@@ -127,7 +129,6 @@ void cMainGame::Setup()
 	//	}
 	//	}
 	
-
 	// 스킨 제작자 주소 표시
 	/*m_pFont = NULL;
 	HRESULT hr = D3DXCreateFont(g_pD3DDevice, 20, 10, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, _T("Consolas"), &m_pFont);
