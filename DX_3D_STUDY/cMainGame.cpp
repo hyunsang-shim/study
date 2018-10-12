@@ -78,15 +78,8 @@ void cMainGame::Setup()
 {
 	srand(time(NULL));
 
-	//m_pCubePC = new cCubePC;
-	//m_pCubePC->Setup();
-
-	//m_pMap = new cMap;
-	//m_pMap->Setup();	
-	
 	m_pASE_Char = new cASE_Char;
 	m_pASE_Char->Setup();
-
 
 	m_pCamera = new cCamera;
 	m_pCamera->Setup();
@@ -97,220 +90,13 @@ void cMainGame::Setup()
 	InitMaterial();
 	InitLights();
 	
-	/* m_pHexagon = new cHexagon;
-	 m_pHexagon->Setup();
-	 m_vWaypoints = m_pHexagon->GetPoints();*/
-		
-	//for (int i = 0; i < 6; i++)
-	//{
-	//	if (i % 2 == 0)
-	//	{
-	//		// 일반 경로를 따라가는 박스맨 저장소에 넣을 박스맨들을 생성 & 넣는다.
-	//		BESIER_BOXMAN normalboxman;
-	//		normalboxman.boxman = new cBoxman;
-	//		normalboxman.boxman->Setup(_T("D.VA.png"));
-	//		normalboxman.boxman->SetRootPosition(D3DXVECTOR3(m_vWaypoints[i].x, m_vWaypoints[i].y, m_vWaypoints[i].z));
-	//		normalboxman.boxman->SetRootDirection(m_vWaypoints[i + 1] - m_vWaypoints[i]);
-	//		normalboxman.boxman->SetCurPos(m_vWaypoints[i]);
-	//		normalboxman.boxman->SetNextPos(m_vWaypoints[i + 1]);			
-	//		m_vecNormalBoxman.push_back(normalboxman);
-	//	}
-	//	else
-	//	{
-	//		// 베지어 경로를 따라가는 박스맨 저장소에 넣을 박스맨들을 생성 & 넣는다.
-	//		BESIER_BOXMAN besierboxman;
-	//		besierboxman.boxman = new cBoxman;
-	//		besierboxman.boxman->Setup(_T("Megumin.png"));
-	//		besierboxman.m_vBoxPosition.x = m_vWaypoints[i].x;
-	//		besierboxman.m_vBoxPosition.y = m_vWaypoints[i].y;
-	//		besierboxman.m_vBoxPosition.z = m_vWaypoints[i].z;
-	//		m_vecBesierBoxman.push_back(besierboxman);
-	//
-	//	}
-	//	}
-	
-	// 스킨 제작자 주소 표시
-	/*m_pFont = NULL;
-	HRESULT hr = D3DXCreateFont(g_pD3DDevice, 20, 10, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, _T("Consolas"), &m_pFont);
-
-	message = "D.VA 스킨 출처 : https://blog.naver.com/netkama26/220746453079\n";
-	message += "조작:\nW - 앞으로\t S - 뒤로\n";
-	message += "A - 왼쪽으로 회전 \t D - 오른쪽으로 회전\n";
-	message += "Space Bar - 점프 \tShift - 달리기\n";
-	message += "C - 카메라 모드 토글(고정 카메라 <= > TPS 카메라)\n";
-	message += "L - 방향성 광원 토글(켜기 <= > 끄기)";
-
-	if (!SUCCEEDED(hr))
-	{
-		TCHAR tmp[128] = { _T("Can not Create and/or Initialize Font. Requested font face name : Consolas") };
-	
-		MessageBox(g_hWnd, _T("Error : Creating Font Failed"), tmp, MB_OK);
-		return;
-	}*/
-
 	GetClientRect(g_hWnd, &m_RectTxtArea);
 
-	//m_pCubeman = new cCubeman;
-	//m_pCubeman->Setup();
 }
 
 void cMainGame::Update(){
 	
 
-	//박스의 회전
-	if (GetKeyState('A') & 0x8000)
-	{
-		m_isRotating = true;
-		m_fBoxRotY -= 0.1f;
-	}
-	else if (GetKeyState('D') & 0x8000)
-	{
-		m_isRotating = true;
-		m_fBoxRotY += 0.1f;
-	}
-	else 
-		m_isRotating = false;
-	
-	// 박스의 이동
-	
-//	double fMin = m_pGrid->GetGridMinMax().left;
-//	double fMax = m_pGrid->GetGridMinMax().right;
-
-	if (GetKeyState('W') & 0x8000)
-	{
-		m_isMoving = true;
-		if (GetKeyState(VK_SHIFT) & 0x8000)
-		{
-			/*for (int i = 0; i < m_vvecBoxPosition.size(); i++)
-				m_vvecBoxPosition[i] = m_vvecBoxPosition[i] + (m_vBoxDirection * -0.18f);
-				m_isRunning = true;*/
-			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * -0.18f);
-			m_isRunning = true;
-		}
-		else
-		{
-			/*for (int i = 0; i < m_vvecBoxPosition.size(); i++)
-				m_vvecBoxPosition[i] = m_vvecBoxPosition[i] + (m_vBoxDirection * -0.1f);
-			m_isRunning = false;*/
-			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * -0.1f);
-			m_isRunning = false;
-
-		}
-		
-		// 캐릭터가 그리드 밖으로 못나가도록 범위를 지정한다.
-		/*
-		for (int i = 0; i < m_vvecBoxPosition.size(); i++)
-		{
-			if (m_vvecBoxPosition[i].x >= fMax)
-				m_vvecBoxPosition[i].x = fMax;
-			else if (m_vvecBoxPosition[i].x <= fMin)
-				m_vvecBoxPosition[i].x = fMin;
-
-			if (m_vvecBoxPosition[i].z >= fMax)
-				m_vvecBoxPosition[i].z = fMax;
-			else if (m_vvecBoxPosition[i].z <= fMin)
-				m_vvecBoxPosition[i].z = fMin;
-		}
-		if (m_vBoxPosition.x >= fMax)
-			m_vBoxPosition.x = fMax;
-		else if (m_vBoxPosition.x <= fMin)
-			m_vBoxPosition.x = fMin;
-
-		if (m_vBoxPosition.z >= fMax)
-			m_vBoxPosition.z = fMax;
-		else if (m_vBoxPosition.z <= fMin)
-			m_vBoxPosition.z = fMin;
-			*/
-
-	}
-	else if (GetKeyState('S') & 0x8000)
-	{
-		m_isMoving = true;		
-		if (GetKeyState(VK_SHIFT) & 0x8000)
-		{
-			/*for (int i = 0; i < m_vvecBoxPosition.size(); i++)
-			{
-				m_vvecBoxPosition[i] = m_vvecBoxPosition[i] + (m_vBoxDirection * 0.18f);
-				m_isRunning = true;
-			}*/
-			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.18f);
-			m_isRunning = true;
-		}
-		else
-		{
-			/*for (int i = 0; i < m_vvecBoxPosition.size(); i++)
-			{
-				m_vvecBoxPosition[i] = m_vvecBoxPosition[i] + (m_vBoxDirection * 0.1f);
-				m_isRunning = false;
-			}*/
-			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.1f);
-			m_isRunning = false;
-		}
-
-		/*for (int i = 0; i < m_vvecBoxPosition.size(); i++)
-		{
-			if (m_vvecBoxPosition[i].x >= fMax)
-				m_vvecBoxPosition[i].x = fMax;
-			else if (m_vvecBoxPosition[i].x <= fMin)
-				m_vvecBoxPosition[i].x = fMin;
-
-			if (m_vvecBoxPosition[i].z >= fMax)
-				m_vvecBoxPosition[i].z = fMax;
-			else if (m_vvecBoxPosition[i].z <= fMin)
-				m_vvecBoxPosition[i].z = fMin;
-		}*/
-/*
-		if (m_vBoxPosition.x >= fMax)
-			m_vBoxPosition.x = fMax;
-		else if (m_vBoxPosition.x <= fMin)
-			m_vBoxPosition.x = fMin;
-
-		if (m_vBoxPosition.z >= fMax)
-			m_vBoxPosition.z = fMax;
-		else if (m_vBoxPosition.z <= fMin)
-			m_vBoxPosition.z = fMin;*/
-	}
-	else
-		m_isMoving = false;
-		
-	// 박스의 점프
-	/*
-	if (m_isJumping && !m_isJumping_Top)
-	{
-		for (int i = 0; i < m_vvecBoxPosition.size(); i++)
-		{
-			if (m_vvecBoxPosition[i].y < 1.0 + EPSILON)
-				m_vvecBoxPosition[i].y += 0.125f;
-			else
-			{
-				m_isJumping_Top = true;
-			}
-		}
-	}
-	else if (m_isJumping && m_isJumping_Top)
-	{
-		for (int i = 0; i < m_vvecBoxPosition.size(); i++)
-		{
-			if (m_vvecBoxPosition[i].y >= 0.0f + EPSILON)
-				m_vvecBoxPosition[i].y -= 0.125f;
-			else
-			{
-				m_vvecBoxPosition[i].y = 0.0000000f;
-				m_isJumping = false;
-				m_isJumping_Top = false;
-			}
-		}
-	}
-	*/
-
-	// 캐릭터에 이동 상태를 전달한다.		
-	/*
-	for (int i = 0; i < m_vvecBoxPosition.size(); i++)
-	{
-		m_vpBoxman[i]->SetMoveState(m_isMoving | m_isRotating, m_isRunning);
-		m_vpBoxman[i]->SetjumpState(m_isJumping, m_isJumping_Top);
-	}
-	*/
 
 	// 캐릭터(Boxmax)의 루트 역할을 하는 박스.	
 	if (m_pCubePC)
@@ -320,7 +106,7 @@ void cMainGame::Update(){
 		D3DXMatrixRotationY(&matRotY, m_fBoxRotY);
 		m_vBoxDirection = D3DXVECTOR3(0, 0, 1.0f);
 		D3DXVec3TransformNormal(&m_vBoxDirection, &m_vBoxDirection, &matRotY);		
-		m_pCubePC->SetBoxScale(0.01f);					// 테스트용으로 만든 것이 10짜리니까 0.1로 
+		m_pCubePC->SetBoxScale(1.0f);
 		m_pCubePC->SetBoxRotationY(m_fBoxRotY);
 		//printf("cMainGame : %f\t", m_fBoxRotY);
 		m_pCubePC->SetBoxPosition(m_vBoxPosition);		
@@ -330,25 +116,6 @@ void cMainGame::Update(){
 		}*/
 		m_pCubePC->Update();
 	}
-
-	//베지어 곡선 경로 boxman 업데이트
-	//for (int i = 0; i < 1; i++)
-	//{
-	//	m_vecBesierBoxman[i].boxman->SetRootScale(m_fBoxScale);
-	//	m_vecBesierBoxman[i].boxman->Update();
-	//}
-
-	// 일반 경로 boxman 업데이트
-	if (!m_vecNormalBoxman.empty())
-	{
-		for (int i = 0; i < m_vecNormalBoxman.size(); i++)
-		{
-			m_vecNormalBoxman[i].boxman->SetRootScale(m_fBoxScale);
-			//if (m_vecNormalBoxman[i].boxman->GetCurPos() + D3DXVECTOR3(EPSILON, EPSILON, EPSILON) < m_vecNormalBoxman[i].boxman->GetNextPos())
-			m_vecNormalBoxman[i].boxman->Update();
-		}
-	}
-	
 
 	//카메라 업데이트
 	if (m_pCamera)
@@ -386,6 +153,11 @@ void cMainGame::Render()
 	if (m_pHexagon)
 		m_pHexagon->Render();	
 
+	if (m_pCubePC)
+		m_pCubePC->Render();
+
+	if (m_pASE_Char)
+		m_pASE_Char->Render();
 	
 		
 	

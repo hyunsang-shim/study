@@ -135,10 +135,15 @@ struct SubMesh {
 struct ASE_Obj {
 	string						meshName;
 	string						MaterialName;
-	string						ParentNode;
+	string						ParentNodeName;
 	D3DXMATRIXA16				ParentWorld;
 	D3DXMATRIXA16				ParentWorldInverse;
 	D3DXMATRIXA16				LocalWorld;
+	string						MyNodeName;
+	D3DXVECTOR3					LocalScale;
+	D3DXVECTOR3					LocalRotation; 
+	D3DXVECTOR3					LocalPosition;
+	unsigned short				Timevalue;
 	string						TextureName;
 	D3DMATERIAL9				mat9Material;
 	string						sTextureName;

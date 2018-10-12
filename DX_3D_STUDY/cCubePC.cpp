@@ -21,29 +21,32 @@ cCubePC::~cCubePC()
 void cCubePC::Setup()
 {
 	ST_PC_VERTEX	v;
-	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, -1.0f));
-	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, 1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, -1.0f, -1.0f));
+	//vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, -1.0f));
+	//vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, 1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, -1.0f, -1.0f));
 
-	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, 1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
-	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, 1.0f, 1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, -1.0f, 1.0f));
+	//vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, 1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+	//vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, 1.0f, 1.0f));		vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, -1.0f, 1.0f));
 
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(2);
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(2);	vecVerTex_Box_Index.push_back(3);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(5);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(7);	vecVerTex_Box_Index.push_back(6);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(5);	vecVerTex_Box_Index.push_back(1);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(0);
-	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(2);	vecVerTex_Box_Index.push_back(6);
-	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(7);
-	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(5);	vecVerTex_Box_Index.push_back(6);
-	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(2);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(3);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(7);
+	vecVerTex_Box.push_back(D3DXVECTOR3(0.29f, 0.28f, -0.25f));	vecVerTex_Box.push_back(D3DXVECTOR3(0.46f, 0.28f, -0.25f));
+	vecVerTex_Box.push_back(D3DXVECTOR3(0.41f, 0.28f, -0.14f));	vecVerTex_Box.push_back(D3DXVECTOR3(0.29f, 0.28f, -0.09f));
+
+	vecVerTex_Box.push_back(D3DXVECTOR3(0.18f, 0.28f, -0.14f));	vecVerTex_Box.push_back(D3DXVECTOR3(0.13f, 0.28f, 0.25f));
+	vecVerTex_Box.push_back(D3DXVECTOR3(0.18f, 0.28f, -0.37f));	vecVerTex_Box.push_back(D3DXVECTOR3(0.29f, 0.28f, -0.42f));
+	vecVerTex_Box.push_back(D3DXVECTOR3(0.41f, 0.28f, -0.37f));
+
+	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(2);	vecVerTex_Box_Index.push_back(1);
+	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(2);
+	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(3);
+	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(5);	vecVerTex_Box_Index.push_back(4);
+	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(5);
+	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(7);	vecVerTex_Box_Index.push_back(6);
+	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(8);	vecVerTex_Box_Index.push_back(7);
+	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(8);
 
 	for (int i = 0; i < vecVerTex_Box_Index.size(); i++)
 	{
 		v.p = vecVerTex_Box[vecVerTex_Box_Index[i]];
-		if (i % 6 == 0)
+		//if (i % 6 == 0)
 			v.color = D3DCOLOR_XRGB(rand() % 256, rand() % 256, rand() % 256);
 
 		m_vecVertex.push_back(v);

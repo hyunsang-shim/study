@@ -343,10 +343,10 @@
 		*INHERIT_POS 0 0 0
 		*INHERIT_ROT 0 0 0
 		*INHERIT_SCL 1 1 1
-		*TM_ROW0 0.0000	-0.9537	-0.3007			--> 순서가 중요. X Z Y 순으로 읽어서 적용 4번째 열은 0
-		*TM_ROW1 1.0000	0.0000	0.0000			--> 순서가 중요. X Z Y 순으로 읽어서 적용 4번째 열은 0
-		*TM_ROW2 0.0000	-0.3007	0.9537			--> 순서가 중요. X Z Y 순으로 읽어서 적용 4번째 열은 0
-		*TM_ROW3 0.0299	-0.0258	0.5602			--> 순서가 중요. X Z Y 순으로 읽어서 적용 4번째 열은 1
+		*TM_ROW0 0.0000	-0.9537	-0.3007			--> 1행 순서가 중요. X Z Y 순으로 읽어서 적용 4번째 열은 0
+		*TM_ROW1 1.0000	0.0000	0.0000			--> 3행 순서가 중요. X Z Y 순으로 읽어서 적용 4번째 열은 0
+		*TM_ROW2 0.0000	-0.3007	0.9537			--> 2행 순서가 중요. X Z Y 순으로 읽어서 적용 4번째 열은 0
+		*TM_ROW3 0.0299	-0.0258	0.5602			--> 4행 순서가 중요. X Z Y 순으로 읽어서 적용 4번째 열은 1
 		*TM_POS 0.0299	-0.0258	0.5602			--> 
 		*TM_ROTAXIS -0.1504	-0.1504	0.9771
 		*TM_ROTANGLE 1.5939
@@ -2900,7 +2900,7 @@
 			*MESH_FACE   78:    A:    2 B:    9 C:    6 AB:    1 BC:    1 CA:    1	 *MESH_SMOOTHING 1 	*MESH_MTLID 0
 			*MESH_FACE   79:    A:    3 B:    6 C:   22 AB:    1 BC:    1 CA:    1	 *MESH_SMOOTHING 1 	*MESH_MTLID 0
 		}
-		*MESH_NUMTVERTEX 55
+		*ME  SH_NUMTVERTEX 55
 		*MESH_TVERTLIST {
 			*MESH_TVERT 0	0.6007	0.2186	0.7033
 			*MESH_TVERT 1	0.5031	0.3058	0.9077
@@ -8524,9 +8524,9 @@
 		}
 		*MESH_NORMALS {
 			*MESH_FACENORMAL 0	-0.6319	0.3817	0.6745
-				*MESH_VERTEXNORMAL 2	-0.8782	0.0406	0.4765
-				*MESH_VERTEXNORMAL 0	0.0995	0.2148	0.9716
-				*MESH_VERTEXNORMAL 1	-0.4987	0.7675	0.4028
+				*MESH_VERTEXNORMAL 2	-0.8782	0.0406	0.4765  <- a
+				*MESH_VERTEXNORMAL 0	0.0995	0.2148	0.9716  <- c
+				*MESH_VERTEXNORMAL 1	-0.4987	0.7675	0.4028  <- b
 			*MESH_FACENORMAL 1	-0.6275	-0.0676	0.7756
 				*MESH_VERTEXNORMAL 3	-0.0485	-0.7427	0.6678
 				*MESH_VERTEXNORMAL 0	0.0995	0.2148	0.9716
