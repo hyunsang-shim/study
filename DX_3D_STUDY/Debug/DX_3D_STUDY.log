@@ -1,8 +1,11 @@
-﻿  cASELoader.cpp
-k:\work\git\dx_3d_study\caseloader.cpp(323): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dx_3d_study\caseloader.cpp(173): warning C4477: 'sscanf_s' : 서식 문자열 '%d'에 'int *' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'unsigned short *'입니다.
-  k:\work\git\dx_3d_study\caseloader.cpp(173): note: 서식 문자열에서 '%hd'을(를) 사용하는 것이 좋습니다.
-k:\work\git\dx_3d_study\caseloader.cpp(241): warning C4101: 'z' :참조되지 않은 지역 변수입니다.
-k:\work\git\dx_3d_study\caseloader.cpp(269): warning C4101: 'c' :참조되지 않은 지역 변수입니다.
-  DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.exe
-  DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.pdb (Full PDB)
+﻿cl : 명령줄 warning D9030: '/Gm'이(가) 다중 처리와 호환되지 않습니다. /MP 스위치를 무시합니다.
+  cASE_Char.cpp
+k:\work\git\dx_3d_study\case_char.cpp(35): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\dx_3d_study\case_char.cpp(39): error C2059: 구문 오류: ')'
+  cASELoader.cpp
+k:\work\git\dx_3d_study\caseloader.cpp(238): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\dx_3d_study\caseloader.cpp(420): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\dx_3d_study\caseloader.cpp(272): warning C4477: 'sscanf_s' : 서식 문자열 '%d'에 'int *' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'unsigned short *'입니다.
+  k:\work\git\dx_3d_study\caseloader.cpp(272): note: 서식 문자열에서 '%hd'을(를) 사용하는 것이 좋습니다.
+k:\work\git\dx_3d_study\caseloader.cpp(333): warning C4101: 'z' :참조되지 않은 지역 변수입니다.
+  코드를 생성하고 있습니다...

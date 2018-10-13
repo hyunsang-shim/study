@@ -156,6 +156,8 @@ void cMainGame::Render()
 	if (m_pCubePC)
 		m_pCubePC->Render();
 
+	g_pD3DDevice->SetMaterial(&m_matWhite);
+
 	if (m_pASE_Char)
 		m_pASE_Char->Render();
 	

@@ -135,10 +135,12 @@ struct SubMesh {
 struct ASE_Obj {
 	string						meshName;
 	string						MaterialName;
+	int							parentNodeIdx;
 	string						ParentNodeName;
 	D3DXMATRIXA16				ParentWorld;
 	D3DXMATRIXA16				ParentWorldInverse;
-	D3DXMATRIXA16				LocalWorld;
+	D3DXMATRIXA16				matMyLocal;
+	D3DXMATRIXA16				matMyWorld;
 	string						MyNodeName;
 	D3DXVECTOR3					LocalScale;
 	D3DXVECTOR3					LocalRotation; 
@@ -146,7 +148,6 @@ struct ASE_Obj {
 	unsigned short				Timevalue;
 	string						TextureName;
 	D3DMATERIAL9				mat9Material;
-	string						sTextureName;
 	LPDIRECT3DTEXTURE9			tx9Texture;
 	vector<ST_PNT_VERTEX>		vPNT_VERTEX;
 	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
