@@ -153,26 +153,62 @@ struct ASE_Obj {
 	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };
 };
 
+struct ST_RHWC_VERTEX
+{
+	D3DXVECTOR4	p;
+	D3DCOLOR	c;
+	enum { FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE };
+};
+
+struct ST_POS_SAMPLE
+{
+	int				n;
+	D3DXVECTOR3		v;
+	ST_POS_SAMPLE()
+		:n(0)
+		, v(0, 0, 0)
+	{
+	}
+};
+
+struct ST_ROT_SAMPLE
+{
+	int				n;
+	D3DXQUATERNION	q;
+	ST_ROT_SAMPLE()
+		: n(0)
+	{
+		D3DXQuaternionIdentity(&q);
+	}
+};
+
 
 
 
 // 강사님 스타일
-//#define SYNTHESIZE (varType, varName, FunName) \
-//protected : varType varName; \
-//public : inline varType Get##FunName(void) const {return varName;} \
-//public : inline void Set##FunName(varType var) { varName = var; }
-//
-//#define SYNTHESIZE_PASS_BY_REF(varType, varName, FunName) \
-//protected : varType varName; \
-//public : inline varType& Get##FunName(void) {return varName;} \
-//public : inline void Set##FunName(varType var) { varName = var; }
+#define SYNTHESIZE(varType,varName,funName)\
+protected: varType varName;\
+public: inline varType Get##funName(void) const {return varName;}\
+public: inline void Set##funName(varType var){varName = var;}
 
+#define SYNTHESIZE_PASS_BY_REF(varType,varName,funName)\
+protected: varType varName;\
+public: inline varType& Get##funName(void) {return varName;}\
+public: inline void Set##funName(varType& var){varName = var;}
 
-//#include "cCubeman.h"
+#define SAFE_ADD_REF(p) {if(p) p->AddRef();}
 
-
+#define SYNTHESIZE_ADD_REF(varType, varName, funName)\
+protected: varType varName;\
+public: virtual varType Get##funName(void) const {return varName;}\
+public: virtual void Set##funName(varType var){\
+if(varName != var){\
+SAFE_ADD_REF(var);\
+SAFE_RELEASE(varName);\
+varName=var;\
+}\
+}
 // 사용자 정의 헤더 파일
-#include "cDeviceManager.h"
 #include "cCubePC.h"
 #include "cBoxman.h"
 #include "cGrid.h"
@@ -183,3 +219,13 @@ struct ASE_Obj {
 #include "Asciitok.h"
 #include "cASELoader.h"
 #include "cASE_Char.h"
+// 강사님 ASE 로더
+#include "cObject.h"
+#include "cObjectManager.h"
+#include "cTextureManager_inst.h"
+#include "cFrame.h"
+#include "cAseLoader_inst.h"
+#include "cDeviceManager.h"
+
+
+//#include "cCubeman.h"

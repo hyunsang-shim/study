@@ -29,7 +29,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="Asciitok.h" />
     <ClInclude Include="cASELoader.h" />
+    <ClInclude Include="cAseLoader_inst.h" />
     <ClInclude Include="cASE_Char.h" />
     <ClInclude Include="cBoxman.h" />
     <ClInclude Include="cCamera.h" />
@@ -155,10 +156,15 @@
     <ClInclude Include="cCubeObj.h" />
     <ClInclude Include="cCubePC.h" />
     <ClInclude Include="cDeviceManager.h" />
+    <ClInclude Include="cFrame.h" />
     <ClInclude Include="cGrid.h" />
     <ClInclude Include="cHexagon.h" />
     <ClInclude Include="cMainGame.h" />
     <ClInclude Include="cMap.h" />
+    <ClInclude Include="cMtlTex.h" />
+    <ClInclude Include="cObject.h" />
+    <ClInclude Include="cObjectManager.h" />
+    <ClInclude Include="cTextureManager_inst.h" />
     <ClInclude Include="DX_3D_STUDY.h" />
     <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="Resource.h" />
@@ -168,16 +174,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cASELoader.cpp" />
+    <ClCompile Include="cAseLoader_inst.cpp" />
     <ClCompile Include="cASE_Char.cpp" />
     <ClCompile Include="cBoxman.cpp" />
     <ClCompile Include="cCamera.cpp" />
     <ClCompile Include="cCubeObj.cpp" />
     <ClCompile Include="cCubePC.cpp" />
     <ClCompile Include="cDeviceManager.cpp" />
+    <ClCompile Include="cFrame.cpp" />
     <ClCompile Include="cGrid.cpp" />
     <ClCompile Include="cHexagon.cpp" />
     <ClCompile Include="cMainGame.cpp" />
     <ClCompile Include="cMap.cpp" />
+    <ClCompile Include="cMtlTex.cpp" />
+    <ClCompile Include="cObject.cpp" />
+    <ClCompile Include="cObjectManager.cpp" />
+    <ClCompile Include="cTextureManager_inst.cpp" />
     <ClCompile Include="DX_3D_STUDY.cpp" />
     <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="stdafx.cpp">

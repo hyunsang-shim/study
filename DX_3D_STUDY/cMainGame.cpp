@@ -43,6 +43,7 @@ cMainGame::cMainGame()
 	, m_isJumping(false)
 	, m_isJumping_Top(false)
 	, m_isCamFollow(false)
+	, m_pRootFrame(NULL)		// °­»ç´Ô ASE ·Î´õ
 {
 	g_pDeviceManager;
 
@@ -52,7 +53,14 @@ cMainGame::cMainGame()
 }
 
 cMainGame::~cMainGame()
-{	
+{
+	SAFE_DELETE(m_pCubePC);
+	SAFE_DELETE(m_pTexture);
+
+	
+	SAFE_DELETE(m_pHexagon);
+	SAFE_DELETE(m_pASE_Char);
+
 	//SAFE_DELETE(m_pCubePC);
 	SAFE_DELETE(m_pCamera);
 	SAFE_DELETE(m_pGrid);
@@ -71,6 +79,13 @@ cMainGame::~cMainGame()
 			SAFE_DELETE(m_vecNormalBoxman[i].boxman);
 	}
 
+	// °­»ç´Ô ASE ·Î´õ
+	m_pRootFrame->Destroy();	
+	g_pObjectManager->Destroy();
+	g_pTextureManager->Destroy();
+
+
+
 	g_pDeviceManager->Destroy();
 }
 
@@ -78,9 +93,10 @@ void cMainGame::Setup()
 {
 	srand(time(NULL));
 
-	m_pASE_Char = new cASE_Char;
-	m_pASE_Char->Setup();
+	/*m_pASE_Char = new cASE_Char;
+	m_pASE_Char->Setup();*/
 
+	
 	m_pCamera = new cCamera;
 	m_pCamera->Setup();
 
@@ -91,6 +107,11 @@ void cMainGame::Setup()
 	InitLights();
 	
 	GetClientRect(g_hWnd, &m_RectTxtArea);
+
+
+	// °­»ç´Ô ASE·Î´õ
+	cAseLoader_inst loader;
+	m_pRootFrame = loader.Load("woman/woman_01_all.ASE");
 
 }
 
@@ -135,6 +156,10 @@ void cMainGame::Update(){
 	if (m_pCubeman)
 		m_pCubeman->Update();
 	*/
+
+	// °­»ç´Ô ASE·Î´õ
+	if (m_pRootFrame)
+		m_pRootFrame->Update(m_pRootFrame->GetKeyFrame(), NULL);
 }
 
 void cMainGame::Render()
@@ -161,6 +186,9 @@ void cMainGame::Render()
 	if (m_pASE_Char)
 		m_pASE_Char->Render();
 	
+
+	if (m_pRootFrame)
+		m_pRootFrame->Render();
 		
 	
 	//º£Áö¾î °î¼± °æ·Î boxman ±×¸®±â

@@ -36,7 +36,7 @@ void cASE_Char::Render()
 	{
 		if (ASEOBJ[i].meshName == "ponytail")
 		{
-			if (ASEOBJ[i].mat9Material != 1)
+			if (ASEOBJ[i].mat9Material.Power < 0.0000001f)
 			{
 				g_pD3DDevice->SetTexture(0, ASEOBJ[i].tx9Texture);	// 텍스쳐 사용 하지 않음 선언
 				g_pD3DDevice->SetMaterial(&ASEOBJ[i].mat9Material);

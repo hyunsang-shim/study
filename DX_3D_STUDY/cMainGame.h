@@ -8,6 +8,11 @@ class cCubeman;
 class cMap;
 class cASE_Char;
 
+// °­»ç´Ô ASE ·Î´õ
+class cFrame;
+
+
+
 
 
 typedef struct besiertrail_boxman {
@@ -98,6 +103,9 @@ private:
 	cHexagon*					m_pHexagon;
 	vector<D3DXVECTOR3>			m_vWaypoints;
 	
+
+	// °­»ç´Ô ASE ·Î´õ
+	cFrame*						m_pRootFrame;
 
 
 };
