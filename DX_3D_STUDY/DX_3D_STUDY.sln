@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX_3D_STUDY", "DX_3D_STUDY.vcxproj", "{0D35756A-5CD2-4CE5-804A-82421B73EC35}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX_3D", "..\..\..\download\지윤씨\DX_3D\DX_3D.vcxproj", "{73CE96D1-3EAC-4CD7-865F-290FD092699F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -23,14 +21,6 @@ Global
 		{0D35756A-5CD2-4CE5-804A-82421B73EC35}.Release|x64.Build.0 = Release|x64
 		{0D35756A-5CD2-4CE5-804A-82421B73EC35}.Release|x86.ActiveCfg = Release|Win32
 		{0D35756A-5CD2-4CE5-804A-82421B73EC35}.Release|x86.Build.0 = Release|Win32
-		{73CE96D1-3EAC-4CD7-865F-290FD092699F}.Debug|x64.ActiveCfg = Debug|x64
-		{73CE96D1-3EAC-4CD7-865F-290FD092699F}.Debug|x64.Build.0 = Debug|x64
-		{73CE96D1-3EAC-4CD7-865F-290FD092699F}.Debug|x86.ActiveCfg = Debug|Win32
-		{73CE96D1-3EAC-4CD7-865F-290FD092699F}.Debug|x86.Build.0 = Debug|Win32
-		{73CE96D1-3EAC-4CD7-865F-290FD092699F}.Release|x64.ActiveCfg = Release|x64
-		{73CE96D1-3EAC-4CD7-865F-290FD092699F}.Release|x64.Build.0 = Release|x64
-		{73CE96D1-3EAC-4CD7-865F-290FD092699F}.Release|x86.ActiveCfg = Release|Win32
-		{73CE96D1-3EAC-4CD7-865F-290FD092699F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

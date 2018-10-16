@@ -61,12 +61,19 @@ cFrame * cAseLoader_inst::Load(IN char * szFullPath)
 char * cAseLoader_inst::GetToken()
 {
 
+	static int BytesRead = 1;	// debug
+	static int LineCnt = 0;		// debug
 	int nReadCnt = 0;
 	bool isQuote = false;
 
 	while (true)
 	{
 		char c = fgetc(m_fp);
+
+		BytesRead++;	// debug
+		
+		if (c == '\n')
+			LineCnt++;
 
 		if (feof(m_fp)) break;
 
@@ -95,9 +102,12 @@ char * cAseLoader_inst::GetToken()
 	}
 
 	if (nReadCnt == 0)
+	{				
 		return NULL;
+	}
 
 	m_szToken[nReadCnt] = '\0';
+
 
 	return m_szToken;
 
@@ -121,7 +131,10 @@ bool cAseLoader_inst::IsWhite(IN char c)
 
 bool cAseLoader_inst::IsEqual(IN char * str1, IN char * str2)
 {
-	return strcmp(str1, str2) == 0;
+	if (str1 == NULL)
+		return FALSE;
+	else 
+		return strcmp(str1, str2) == 0;
 }
 
 void cAseLoader_inst::SkipBlock()
@@ -215,6 +228,8 @@ void cAseLoader_inst::ProcessMATERIAL(OUT cMtlTex * pMtlTex)
 		{
 			ProcessMAP_DIFFUSE(pMtlTex);
 		}
+
+		
 	} while (nLevel > 0);
 
 	pMtlTex->SetMaterial(stMtl);
@@ -223,6 +238,7 @@ void cAseLoader_inst::ProcessMATERIAL(OUT cMtlTex * pMtlTex)
 void cAseLoader_inst::ProcessMAP_DIFFUSE(OUT cMtlTex * pMtlTex)
 {	
 	int nLevel = 0;
+
 	do
 	{
 		char *szToken = GetToken();
@@ -352,6 +368,7 @@ void cAseLoader_inst::ProcessMESH(OUT cFrame * pFrame)
 	}
 
 	pFrame->SetVertex(vecVertex);
+	printf("ProcessMESH - Done\n");
 }
 
 void cAseLoader_inst::ProcessMESH_VERTEX_LIST(OUT vector<D3DXVECTOR3>& vecV)
