@@ -3,7 +3,9 @@
 
 
 cGrid::cGrid()
-	:m_pVB(NULL)
+	: m_pVB(NULL)
+	, m_pIB(NULL)
+	, m_pVBforIB(NULL)
 	, m_nNumLines(0)
 {
 }
@@ -72,23 +74,54 @@ void cGrid::Setup()
 
 	v.p = D3DXVECTOR3(0, m_fMax*5, 0);
 	vecGridVertex.push_back(v);
-		{
-			m_nNumLines = vecGridVertex.size() / 2;
-			g_pD3DDevice->CreateVertexBuffer(
-				vecGridVertex.size() * sizeof(ST_PC_VERTEX),
-				0,
-				ST_PC_VERTEX::FVF,
-				D3DPOOL_MANAGED,
-				&m_pVB,
-				NULL);
-			ST_PC_VERTEX* pV = NULL;
-			// 메모리 카피 시작
-			m_pVB->Lock(0, 0, (LPVOID*)&pV, 0);
-			// 메모리 카피
-			memcpy(pV, &vecGridVertex[0], vecGridVertex.size() * sizeof(ST_PC_VERTEX));
-			// 메모리 카피 종료
-			m_pVB->Unlock();
-		}
+
+
+	{
+		m_nNumLines = vecGridVertex.size() / 2;
+		g_pD3DDevice->CreateVertexBuffer(
+			vecGridVertex.size() * sizeof(ST_PC_VERTEX), 0, ST_PC_VERTEX::FVF, D3DPOOL_MANAGED, &m_pVB, NULL);
+		ST_PC_VERTEX* pV = NULL;
+		// 메모리 카피 시작
+		m_pVB->Lock(0, 0, (LPVOID*)&pV, 0);
+		// 메모리 카피
+		memcpy(pV, &vecGridVertex[0], vecGridVertex.size() * sizeof(ST_PC_VERTEX));
+		// 메모리 카피 종료
+		m_pVB->Unlock();
+	}
+
+	{
+		m_nNumLines = vecGridVertex.size() / 2;
+		g_pD3DDevice->CreateVertexBuffer(
+			vecGridVertex.size() * sizeof(ST_PC_VERTEX),
+			0,
+			ST_PC_VERTEX::FVF,
+			D3DPOOL_MANAGED,
+			&m_pVBforIB,
+			NULL);
+		ST_PC_VERTEX* pV = NULL;
+		// 메모리 카피 시작
+		m_pVBforIB->Lock(0, 0, (LPVOID*)&pV, 0);
+		// 메모리 카피
+		memcpy(pV, &vecGridVertex[0], vecGridVertex.size() * sizeof(ST_PC_VERTEX));
+		// 메모리 카피 종료
+		m_pVBforIB->Unlock();
+	}
+	vector<int> vIndex;
+	for (int i = 0; i < vecGridVertex.size(); i++)
+	{
+		vIndex.push_back(i * 2);
+		vIndex.push_back(i * 2 + 1);
+	}
+
+	{
+		void* piB;
+		g_pD3DDevice->CreateIndexBuffer(sizeof(int) * vIndex.size(), 0,	D3DFMT_INDEX16,	D3DPOOL_MANAGED, &m_pIB, NULL);
+		m_pIB->Lock(0, sizeof(piB), &piB, 0);
+		memcpy(piB, &vIndex, sizeof(int) * vIndex.size());
+		m_pIB->Unlock();
+	}
+
+	
 
 	// Indicator for Z-Axis
 	// m_vecIndVertexZ
@@ -194,6 +227,7 @@ void cGrid::Setup()
 		vecIndVertexX.push_back(IndX);
 		IndX.p = D3DXVECTOR3(0.2, -0.2, 1.0f);
 		vecIndVertexX.push_back(IndX);
+
 		{
 			m_nNumVertices_X = vecIndVertexX.size() / 3;
 			g_pD3DDevice->CreateVertexBuffer(
@@ -211,6 +245,7 @@ void cGrid::Setup()
 			// 메모리 카피 종료
 			m_pVB_Gizmo_X->Unlock();
 		}
+
 	}
 
 	// Indicator for Y-Axis
@@ -284,17 +319,22 @@ void cGrid::DrawGrid()
 {
 	g_pD3DDevice->SetFVF(ST_PC_VERTEX::FVF);
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
-
+	g_pD3DDevice->SetTexture(0, NULL);
 	D3DXMATRIXA16 m_matWorld;
 	D3DXMatrixIdentity(&m_matWorld);
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld);
 	//g_pD3DDevice->DrawPrimitiveUP(D3DPT_LINELIST, m_vecGridVertex.size() / 2, &m_vecGridVertex[0], sizeof(ST_PC_VERTEX));
 	{
 		// 버텍스 버퍼를 이용한 Draw 구문으로 대체
-		g_pD3DDevice->SetStreamSource(0, m_pVB, 0, sizeof(ST_PC_VERTEX));
+		//g_pD3DDevice->SetStreamSource(0, m_pVB, 0, sizeof(ST_PC_VERTEX));
+		//g_pD3DDevice->DrawPrimitive(D3DPT_LINELIST, 0, m_nNumLines);
+	}
+	{
+		// 인덱스 버퍼를 이용한 Draw 구문
+		g_pD3DDevice->SetStreamSource(0, m_pVBforIB, 0, sizeof(ST_PC_VERTEX));
+		g_pD3DDevice->SetIndices(m_pIB);
 		g_pD3DDevice->DrawPrimitive(D3DPT_LINELIST, 0, m_nNumLines);
 	}
-	g_pD3DDevice->SetTexture(0, NULL);
 }
 
 void cGrid::DrawIndicator()

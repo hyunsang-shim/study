@@ -10,7 +10,6 @@ cASELoader_inst::cASELoader_inst()
 {
 }
 
-
 cASELoader_inst::~cASELoader_inst()
 {
 }
@@ -105,7 +104,7 @@ float cASELoader_inst::GetFloat()
 
 bool cASELoader_inst::IsWhite(IN char c)
 {
-	return c < 33;//33은 !의 아스키 코드
+	return c < 33;
 }
 
 bool cASELoader_inst::IsEqual(IN char * str1, IN char * str2)
@@ -365,7 +364,6 @@ void cASELoader_inst::ProcessMESH(OUT cFrame * pFrame)
 	memcpy(pV, &vecVertex[0], vecVertex.size() * sizeof(ST_PNT_VERTEX));
 	(pFrame->m_pVB)->Unlock();
 	pFrame->SetVertex(vecVertex);
-	printf("ProcessMESH - Done\n");
 }
 
 void cASELoader_inst::ProcessMESH_VERTEX_LIST(OUT vector<D3DXVECTOR3>& vecV)
