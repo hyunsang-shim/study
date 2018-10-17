@@ -105,6 +105,7 @@ vector<SubMesh> ObjLoader::ParseObj(string filename)
 			{
 				if (isGroupStart)
 				{
+					tmpSubMesh.nCntTriangles = tmpSubMesh.vPNT_VERTEX.size()/3;
 					ret.push_back(tmpSubMesh);
 					ZeroMemory(&tmpSubMesh, sizeof(tmpSubMesh));
 					ZeroMemory(&tmpPNT, sizeof(tmpPNT));

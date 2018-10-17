@@ -14,7 +14,7 @@ cASE_Char::~cASE_Char()
 void cASE_Char::Setup()
 {
 	string FileName = "./woman/woman_01_all.ASE";
-	ASEOBJ = cASELoader::ParseASE(FileName);
+	//ASEOBJ = cASELoader::ParseASE(FileName);
 
 }
 

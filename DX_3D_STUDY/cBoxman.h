@@ -2,11 +2,17 @@
 
 typedef struct boxman_pt {
 	vector<ST_PT_VERTEX>	HEAD;
+	int						nCntHEADTriangles;
 	vector<ST_PT_VERTEX>	ARM_L;
+	int						nCntARM_LTriangles;
 	vector<ST_PT_VERTEX>	ARM_R;
+	int						nCntARM_RTriangles;
 	vector<ST_PT_VERTEX>	LEG_L;
+	int						nCntLEG_LTriangles;
 	vector<ST_PT_VERTEX>	LEG_R;
+	int						nCntLEG_RTriangles;
 	vector<ST_PT_VERTEX>	BODY;
+	int						nCntBODYTriangles;
 }BOXMAN_PT;
 
 typedef struct objfromfile {
@@ -53,6 +59,7 @@ private:
 	D3DXVECTOR3				m_NextPos;
 	vector<D3DXVECTOR3>		m_waypoints;
 
+
 	bool					m_isMoving;
 	bool					m_isRunning;
 	bool					m_isJumping;
@@ -77,6 +84,13 @@ private:
 	vector<D3DXVECTOR3>		m_vecLEG_L;
 	vector<D3DXVECTOR3>		m_vecLEG_R;
 	vector<D3DXVECTOR3>		m_vecBODY;
+	LPDIRECT3DVERTEXBUFFER9		m_pVB_Boxman_HEAD;
+	LPDIRECT3DVERTEXBUFFER9		m_pVB_Boxman_ARM_L;
+	LPDIRECT3DVERTEXBUFFER9		m_pVB_Boxman_ARM_R;
+	LPDIRECT3DVERTEXBUFFER9		m_pVB_Boxman_LEG_L;
+	LPDIRECT3DVERTEXBUFFER9		m_pVB_Boxman_LEG_R;
+	LPDIRECT3DVERTEXBUFFER9		m_pVB_Boxman_BODY;
+
 
 	// 공용 박스 그리기용 정점 순서 배열
 	vector<int>				vecVerTex_Box_Index;

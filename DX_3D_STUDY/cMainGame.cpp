@@ -22,11 +22,11 @@ cMainGame::cMainGame()
 	, m_pHexagon(NULL)
 	, m_pMap(NULL)
 	, m_pASE_Char(NULL)
-	//	, m_pCubeman(NULL)
-	, m_vEye(3, 5, -5)
+	, m_pBoxman(NULL)
+	, m_vEye(10, 8, -15)
 	, m_vLookAt(0, 0, 0)
 	, m_vUp(0, 1, 0)
-	, m_vBoxPosition(0,0,-1)
+	, m_vBoxPosition(2,0,-1)
 	, m_fCameraDistance(5.0f)
 	, m_isLButtonDown(false)
 	, m_isMButtonDown(false)
@@ -67,22 +67,10 @@ cMainGame::~cMainGame()
 	SAFE_DELETE(m_pMap);
 	//SAFE_DELETE(m_pCubeman);
 
-	if (m_vecBesierBoxman.size() >= 1)
-	{
-		for (int i = 0; i < m_vecBesierBoxman.size(); i++)
-			SAFE_DELETE(m_vecBesierBoxman[i].boxman);
-	}
-
-	if (m_vecNormalBoxman.size() >= 1)
-	{
-		for (int i = 0; i < m_vecNormalBoxman.size(); i++)
-			SAFE_DELETE(m_vecNormalBoxman[i].boxman);
-	}
-
 	// 강사님 ASE 로더
-	m_pRootFrame->Destroy();	
+	/*m_pRootFrame->Destroy();	
 	g_pObjectManager->Destroy();
-	g_pTextureManager->Destroy();
+	g_pTextureManager->Destroy();*/
 
 
 
@@ -108,11 +96,19 @@ void cMainGame::Setup()
 	
 	GetClientRect(g_hWnd, &m_RectTxtArea);
 
+	m_pCubePC = new cCubePC;
+	m_pCubePC->Setup();
+	m_pCubePC->SetBoxPosition(D3DXVECTOR3(1.0f, 0.0f, 1.0f));
+
+	m_pBoxman = new cBoxman;
+	m_pBoxman->Setup(_T("D.VA.png"));
+
+	m_pMap = new cMap;
+	m_pMap->Setup();
 
 	// 강사님 ASE로더
-	cAseLoader_inst loader;
+	cASELoader_inst loader;
 	m_pRootFrame = loader.Load("woman/woman_01_all.ASE");
-
 }
 
 void cMainGame::Update(){
@@ -136,6 +132,124 @@ void cMainGame::Update(){
 			m_pCubePC->SetBoxPosition(m_vvecBoxPosition[i]);
 		}*/
 		m_pCubePC->Update();
+
+		//
+		// Boxman 이동 관련 처리
+		//
+		//박스의 회전
+		if (GetKeyState('A') & 0x8000)
+		{
+			m_isRotating = true;
+			m_fBoxRotY -= 0.1f;
+		}
+		else if (GetKeyState('D') & 0x8000)
+		{
+			m_isRotating = true;
+			m_fBoxRotY += 0.1f;
+		}
+		else
+			m_isRotating = false;
+
+		// 박스의 이동
+		double fMin = m_pGrid->GetGridMinMax().left;
+		double fMax = m_pGrid->GetGridMinMax().right;
+
+		if (GetKeyState('W') & 0x8000)
+		{
+			m_isMoving = true;
+			if (GetKeyState(VK_SHIFT) & 0x8000)
+			{
+				m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * -0.18f);
+				m_isRunning = true;
+			}
+			else
+			{
+				m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * -0.1f);
+				m_isRunning = false;
+
+			}
+
+			// 캐릭터가 그리드 밖으로 못나가도록 범위를 지정한다.
+			if (m_vBoxPosition.x >= fMax)
+				m_vBoxPosition.x = fMax;
+			else if (m_vBoxPosition.x <= fMin)
+				m_vBoxPosition.x = fMin;
+
+			if (m_vBoxPosition.z >= fMax)
+				m_vBoxPosition.z = fMax;
+			else if (m_vBoxPosition.z <= fMin)
+				m_vBoxPosition.z = fMin;
+
+
+		}
+		else if (GetKeyState('S') & 0x8000)
+		{
+			m_isMoving = true;
+			if (GetKeyState(VK_SHIFT) & 0x8000)
+			{
+				m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.18f);
+				m_isRunning = true;
+			}
+			else
+			{
+
+				m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.1f);
+				m_isRunning = false;
+			}
+
+
+			if (m_vBoxPosition.x >= fMax)
+				m_vBoxPosition.x = fMax;
+			else if (m_vBoxPosition.x <= fMin)
+				m_vBoxPosition.x = fMin;
+
+			if (m_vBoxPosition.z >= fMax)
+				m_vBoxPosition.z = fMax;
+			else if (m_vBoxPosition.z <= fMin)
+				m_vBoxPosition.z = fMin;
+		}
+		else
+			m_isMoving = false;
+
+		// 박스의 점프
+
+		if (m_isJumping && !m_isJumping_Top)
+		{
+			if (m_vBoxPosition.y < 1.0 + EPSILON)
+				m_vBoxPosition.y += 0.125f;
+			else
+			{
+				m_isJumping_Top = true;
+			}
+
+		}
+		else if (m_isJumping && m_isJumping_Top)
+		{
+
+			if (m_vBoxPosition.y >= 0.0f + EPSILON)
+				m_vBoxPosition.y -= 0.125f;
+			else
+			{
+				m_vBoxPosition.y = 0.0000000f;
+				m_isJumping = false;
+				m_isJumping_Top = false;
+			}
+
+		}
+
+		// 캐릭터에 이동 상태를 전달한다.		
+		if (m_pBoxman)
+		{
+			m_pBoxman->SetMoveState(m_isMoving | m_isRotating, m_isRunning);
+			m_pBoxman->SetjumpState(m_isJumping, m_isJumping_Top);
+			m_pBoxman->SetRootPosition(m_vBoxPosition);
+			m_pBoxman->SetRootDirection(m_vBoxDirection);
+			m_pBoxman->SetRootRotationY(m_fBoxRotY);
+			m_pBoxman->SetRootScale(m_fBoxScale);
+		}
+
+
+
 	}
 
 	//카메라 업데이트
@@ -145,11 +259,12 @@ void cMainGame::Update(){
 		m_pCamera->Update();
 	}
 
-
 	// map update
 	if (m_pMap)
 		m_pMap->Update();
 
+	if (m_pBoxman)
+		m_pBoxman->Update();
 
 	// 강사님 캐릭터 그리기
 	/*
@@ -160,6 +275,8 @@ void cMainGame::Update(){
 	// 강사님 ASE로더
 	if (m_pRootFrame)
 		m_pRootFrame->Update(m_pRootFrame->GetKeyFrame(), NULL);
+
+	
 }
 
 void cMainGame::Render()
@@ -178,8 +295,8 @@ void cMainGame::Render()
 	if (m_pHexagon)
 		m_pHexagon->Render();	
 
-	if (m_pCubePC)
-		m_pCubePC->Render();
+	if (m_pBoxman)
+		m_pBoxman->Render();
 
 	g_pD3DDevice->SetMaterial(&m_matWhite);
 
@@ -191,18 +308,7 @@ void cMainGame::Render()
 		m_pRootFrame->Render();
 		
 	
-	//베지어 곡선 경로 boxman 그리기
-	for (int i = 0; i < 1; i++)
-	{
-		//m_vecBesierBoxman[i].boxman->Render();
-	}
-
-	// 일반 경로 boxman 그리기
-	for (int i = 0; i <1; i++)
-	{
-		//m_vecNormalBoxman[i].boxman->Render();
-	}
-
+	
 
 	//g_pD3DDevice->SetMaterial(&m_matWhite);  // 파일에서 불러온 매터리얼 확인을 위해 주석처리 함
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
@@ -234,11 +340,7 @@ void cMainGame::Render()
 	}
 	else
 		g_pD3DDevice->LightEnable(0, false);
-
-
-	//m_pBoxman->Render();
-	//m_pCubePC->Render();
-
+	
 	//if (m_pFont)
 	//{
 	//	m_pFont->DrawTextA(NULL, message.c_str(), -1, &m_RectTxtArea, DT_LEFT, D3DCOLOR_XRGB(200, 200, 200));

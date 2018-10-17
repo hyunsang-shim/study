@@ -4,10 +4,10 @@
 
 cFrame::cFrame()
 	: m_pMtlTex(NULL)
+	, m_pVB(NULL)
 {
 	D3DXMatrixIdentity(&m_matLocalTM);
 	D3DXMatrixIdentity(&m_matWorldTM);
-
 }
 
 
@@ -42,11 +42,15 @@ void cFrame::Render()
 {
 	if (m_pMtlTex)
 	{
-		g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorldTM);
+		g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorldTM);		
+		g_pD3DDevice->SetFVF(ST_PNT_VERTEX::FVF);		
 		g_pD3DDevice->SetTexture(0, m_pMtlTex->GetTexture());
 		g_pD3DDevice->SetMaterial(&m_pMtlTex->GetMaterial());
-		g_pD3DDevice->SetFVF(ST_PNT_VERTEX::FVF);
-		g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex.size() / 3, &m_vecVertex[0], sizeof(ST_PNT_VERTEX));
+		//g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex.size() / 3, &m_vecVertex[0], sizeof(ST_PNT_VERTEX));
+		{
+			g_pD3DDevice->SetStreamSource(0, m_pVB, 0, sizeof(ST_PNT_VERTEX));
+			g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, m_nNumTriangles);
+		}
 	}
 
 	for each(auto c in m_vecChild)

@@ -16,9 +16,11 @@ private:
 	SYNTHESIZE_PASS_BY_REF(D3DXMATRIXA16, m_matWorldTM, WorldTM);
 	SYNTHESIZE_PASS_BY_REF(vector<ST_POS_SAMPLE>, m_vecPosTrack, PosTrack);
 	SYNTHESIZE_PASS_BY_REF(vector<ST_ROT_SAMPLE>, m_vecRotTrack, RotTrack);
-	SYNTHESIZE_ADD_REF(cMtlTex*, m_pMtlTex, mtlTex);
+	SYNTHESIZE_ADD_REF(cMtlTex*, m_pMtlTex, MtlTex);
 
 	vector<cFrame*> m_vecChild;
+	LPDIRECT3DVERTEXBUFFER9		m_pVB;
+	int							m_nNumTriangles;
 
 public:
 	void Update(int nKeyFrame, D3DXMATRIXA16* pmatParent);

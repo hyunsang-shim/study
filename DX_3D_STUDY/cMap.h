@@ -7,7 +7,7 @@ public:
 	~cMap();
 
 private:
-	vector<SubMesh>				subMesh;
+	vector<SubMesh>					subMesh;
 
 	string							objFileName;
 	D3DXMATRIXA16					m_matWorld;
@@ -17,10 +17,13 @@ private:
 	D3DXMATRIXA16					m_matScale;
 
 	D3DXVECTOR3						m_vBoxDirection;
-	D3DXVECTOR3						m_vBoxPosition;		// 주로 메인에서 전달받는다.
-	double							m_fBoxScale;			// 주로 메인에서 전달받는다.
-	double							m_fBoxRotX;			// 주로 메인에서 전달받는다.
-	double							m_fBoxRotY;			// 주로 메인에서 전달받는다.
+	D3DXVECTOR3						m_vBoxPosition;		
+	double							m_fBoxScale;		
+	double							m_fBoxRotX;			
+	double							m_fBoxRotY;			
+
+
+	vector<LPDIRECT3DVERTEXBUFFER9>	m_vpVB_SubMesh;
 
 public:
 	void							Setup();

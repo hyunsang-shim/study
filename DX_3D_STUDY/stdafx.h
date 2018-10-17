@@ -122,6 +122,7 @@ struct SubMesh {
 	string						sTextureName;
 	LPDIRECT3DTEXTURE9			tx9Texture;
 	vector<ST_PNT_VERTEX>		vPNT_VERTEX;
+	int							nCntTriangles;
 	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };	
 };
 
@@ -217,7 +218,7 @@ varName=var;\
 #include "ObjLoader.h"
 #include "cMap.h"
 #include "Asciitok.h"
-#include "cASELoader.h"
+//#include "cASELoader.h"
 #include "cASE_Char.h"
 // °­»ç´Ô ASE ·Î´õ
 #include "cObject.h"
