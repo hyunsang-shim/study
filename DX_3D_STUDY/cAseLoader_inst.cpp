@@ -54,13 +54,14 @@ cFrame * cASELoader_inst::Load(IN char * szFullPath)
 
 char * cASELoader_inst::GetToken()
 {
+
 	int nReadCnt = 0;
 	bool isQuote = false;
 
 	while (true)
 	{
 		char c = fgetc(m_fp);
-
+			
 		if (feof(m_fp)) break;
 
 		if (c == '\"')
@@ -82,9 +83,12 @@ char * cASELoader_inst::GetToken()
 	}
 
 	if (nReadCnt == 0)
+	{				
 		return NULL;
+	}
 
 	m_szToken[nReadCnt] = '\0';
+
 
 	return m_szToken;
 }
@@ -106,7 +110,10 @@ bool cASELoader_inst::IsWhite(IN char c)
 
 bool cASELoader_inst::IsEqual(IN char * str1, IN char * str2)
 {
-	return strcmp(str1, str2) == 0;
+	if (str1 == NULL)
+		return FALSE;
+	else 
+		return strcmp(str1, str2) == 0;
 }
 
 void cASELoader_inst::SkipBlock()
@@ -201,6 +208,8 @@ void cASELoader_inst::ProcessMATERIAL(OUT cMtlTex * pMtlTex)
 		{
 			ProcessMAP_DIFFUSE(pMtlTex);
 		}
+
+		
 	} while (nLevel > 0);
 
 	pMtlTex->SetMaterial(stMtl);
@@ -209,6 +218,7 @@ void cASELoader_inst::ProcessMATERIAL(OUT cMtlTex * pMtlTex)
 void cASELoader_inst::ProcessMAP_DIFFUSE(OUT cMtlTex * pMtlTex)
 {
 	int nLevel = 0;
+
 	do
 	{
 		char *szToken = GetToken();
@@ -355,6 +365,7 @@ void cASELoader_inst::ProcessMESH(OUT cFrame * pFrame)
 	memcpy(pV, &vecVertex[0], vecVertex.size() * sizeof(ST_PNT_VERTEX));
 	(pFrame->m_pVB)->Unlock();
 	pFrame->SetVertex(vecVertex);
+	printf("ProcessMESH - Done\n");
 }
 
 void cASELoader_inst::ProcessMESH_VERTEX_LIST(OUT vector<D3DXVECTOR3>& vecV)
