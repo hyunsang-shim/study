@@ -43,7 +43,7 @@ void cBoxman::Setup(TCHAR* filename)
 	m_vecHEAD.push_back(D3DXVECTOR3(0.4f, 0.4f, -0.4f));	m_vecHEAD.push_back(D3DXVECTOR3(0.4f, -0.4f, -0.4f));
 	m_vecHEAD.push_back(D3DXVECTOR3(-0.4f, -0.4f, 0.4f));	m_vecHEAD.push_back(D3DXVECTOR3(-0.4f, 0.4f, 0.4f));
 	m_vecHEAD.push_back(D3DXVECTOR3(0.4f, 0.4f, 0.4f));		m_vecHEAD.push_back(D3DXVECTOR3(0.4f, -0.4f, 0.4f));
-	
+
 	// for Body
 	m_vecBODY.push_back(D3DXVECTOR3(-0.4f, -0.6f, -0.2f));	m_vecBODY.push_back(D3DXVECTOR3(-0.4f, 0.6f, -0.2f));
 	m_vecBODY.push_back(D3DXVECTOR3(0.4f, 0.6f, -0.2f));	m_vecBODY.push_back(D3DXVECTOR3(0.4f, -0.6f, -0.2f));
@@ -74,18 +74,18 @@ void cBoxman::Setup(TCHAR* filename)
 	m_vecLEG_R.push_back(D3DXVECTOR3(0.2f, 0.0f, 0.2f));	m_vecLEG_R.push_back(D3DXVECTOR3(0.2f, -1.2f, 0.2f));
 
 	// common vertex drawing order (triangle)
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(2);
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(2);	vecVerTex_Box_Index.push_back(3);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(5);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(7);	vecVerTex_Box_Index.push_back(6);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(5);	vecVerTex_Box_Index.push_back(1);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(0);
-	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(2);	vecVerTex_Box_Index.push_back(6);
-	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(7);
-	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(5);	vecVerTex_Box_Index.push_back(6);
-	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(2);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(3);
-	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(7);
+	m_vecVerTex_Box_Index.push_back(0);	m_vecVerTex_Box_Index.push_back(1);	m_vecVerTex_Box_Index.push_back(2);
+	m_vecVerTex_Box_Index.push_back(0);	m_vecVerTex_Box_Index.push_back(2);	m_vecVerTex_Box_Index.push_back(3);
+	m_vecVerTex_Box_Index.push_back(4);	m_vecVerTex_Box_Index.push_back(6);	m_vecVerTex_Box_Index.push_back(5);
+	m_vecVerTex_Box_Index.push_back(4);	m_vecVerTex_Box_Index.push_back(7);	m_vecVerTex_Box_Index.push_back(6);
+	m_vecVerTex_Box_Index.push_back(4);	m_vecVerTex_Box_Index.push_back(5);	m_vecVerTex_Box_Index.push_back(1);
+	m_vecVerTex_Box_Index.push_back(4);	m_vecVerTex_Box_Index.push_back(1);	m_vecVerTex_Box_Index.push_back(0);
+	m_vecVerTex_Box_Index.push_back(3);	m_vecVerTex_Box_Index.push_back(2);	m_vecVerTex_Box_Index.push_back(6);
+	m_vecVerTex_Box_Index.push_back(3);	m_vecVerTex_Box_Index.push_back(6);	m_vecVerTex_Box_Index.push_back(7);
+	m_vecVerTex_Box_Index.push_back(1);	m_vecVerTex_Box_Index.push_back(5);	m_vecVerTex_Box_Index.push_back(6);
+	m_vecVerTex_Box_Index.push_back(1);	m_vecVerTex_Box_Index.push_back(6);	m_vecVerTex_Box_Index.push_back(2);
+	m_vecVerTex_Box_Index.push_back(4);	m_vecVerTex_Box_Index.push_back(0);	m_vecVerTex_Box_Index.push_back(3);
+	m_vecVerTex_Box_Index.push_back(4);	m_vecVerTex_Box_Index.push_back(3);	m_vecVerTex_Box_Index.push_back(7);
 
 	// 각 부위별 텍스쳐 UV 좌표 저장
 	SetTextureUV_HEAD();
@@ -98,50 +98,279 @@ void cBoxman::Setup(TCHAR* filename)
 	
 	// 각 부위별 정점+텍스쳐 UV 좌표 세트를 그리기 순서에 맞게 배치
 	// for head
-	for (int i = 0; i < vecVerTex_Box_Index.size(); i++)
+	for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
 	{
-		v.p = m_vecHEAD[vecVerTex_Box_Index[i]];
+		v.p = m_vecHEAD[m_vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_HEAD[i];
 		strBoxman.HEAD.push_back(v);
 	}
 
-	// for Body
-	for (int i = 0; i < vecVerTex_Box_Index.size(); i++)
+	// 인덱스 버퍼 그리기용 버텍스 버퍼 세팅
 	{
-		v.p = m_vecBODY[vecVerTex_Box_Index[i]];
+		m_nNumBoxmanBaseVertices = m_vecHEAD.size();
+		g_pD3DDevice->CreateVertexBuffer(
+			m_vecHEAD.size() * sizeof(ST_PT_VERTEX),
+			0,
+			ST_PT_VERTEX::FVF,
+			D3DPOOL_MANAGED,
+			&m_pVBforIB_Boxman_HEAD,
+			NULL);
+		ST_PT_VERTEX* pV_HEAD_IB = NULL;
+		// 메모리 카피 시작
+		m_pVBforIB_Boxman_HEAD->Lock(0, 0, (void**)&pV_HEAD_IB, 0);
+		// 메모리 카피
+		for (int i = 0; i < m_vecHEAD.size(); i++)
+		{
+			pV_HEAD_IB[i] = strBoxman.HEAD[i];
+		}
+
+		//memcpy(pV_IndZ_IB, &Indicator_VertexZ[0], Indicator_VertexZ.size() * sizeof(ST_PC_VERTEX));
+		// 메모리 카피 종료
+		m_pVBforIB_Boxman_HEAD->Unlock();
+
+		// 인덱스 버퍼 채우기
+		WORD *piB_HEAD;
+		g_pD3DDevice->CreateIndexBuffer(sizeof(WORD) * m_vecVerTex_Box_Index.size(), 0, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB_Boxman_HEAD, NULL);
+		m_pIB_Boxman_HEAD->Lock(0, 0, (void**)&piB_HEAD, 0);
+
+		for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
+		{
+			piB_HEAD[i] = m_vecVerTex_Box_Index[i];
+		}
+		//memcpy(piBZ, &vecIndicatorVertexIndex, sizeof(WORD) * vecIndicatorVertexIndex.size());
+
+		m_pIB_Boxman_HEAD->Unlock();
+
+	}
+
+	// for Body
+	for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
+	{
+		v.p = m_vecBODY[m_vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_BODY[i];
 		strBoxman.BODY.push_back(v);
 	}
 
-	// for Arms
-	for (int i = 0; i < vecVerTex_Box_Index.size(); i++)
+	// 인덱스 버퍼 그리기용 버텍스 버퍼 세팅
 	{
-		v.p = m_vecARM_L[vecVerTex_Box_Index[i]];
+		m_nNumBoxmanBaseVertices = m_vecBODY.size();
+		g_pD3DDevice->CreateVertexBuffer(
+			m_vecBODY.size() * sizeof(ST_PT_VERTEX),
+			0,
+			ST_PT_VERTEX::FVF,
+			D3DPOOL_MANAGED,
+			&m_pVBforIB_Boxman_BODY,
+			NULL);
+		ST_PT_VERTEX* pV_BODY_IB = NULL;
+		// 메모리 카피 시작
+		m_pVBforIB_Boxman_BODY->Lock(0, 0, (void**)&pV_BODY_IB, 0);
+		// 메모리 카피
+		for (int i = 0; i < m_vecBODY.size(); i++)
+		{
+			pV_BODY_IB[i] = strBoxman.BODY[i];
+		}
+
+		//memcpy(pV_IndZ_IB, &Indicator_VertexZ[0], Indicator_VertexZ.size() * sizeof(ST_PC_VERTEX));
+		// 메모리 카피 종료
+		m_pVBforIB_Boxman_BODY->Unlock();
+
+		// 인덱스 버퍼 채우기
+		WORD *piB_BODY;
+		g_pD3DDevice->CreateIndexBuffer(sizeof(WORD) * m_vecVerTex_Box_Index.size(), 0, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB_Boxman_BODY, NULL);
+		m_pIB_Boxman_BODY->Lock(0, 0, (void**)&piB_BODY, 0);
+
+		for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
+		{
+			piB_BODY[i] = m_vecVerTex_Box_Index[i];
+		}
+		//memcpy(piBZ, &vecIndicatorVertexIndex, sizeof(WORD) * vecIndicatorVertexIndex.size());
+
+		m_pIB_Boxman_BODY->Unlock();
+
+	}
+
+	// for Arms
+	for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
+	{
+		v.p = m_vecARM_L[m_vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_ARM_L[i];
 		strBoxman.ARM_L.push_back(v);
 	}
 
-
-	for (int i = 0; i < vecVerTex_Box_Index.size(); i++)
+	// 인덱스 버퍼 그리기용 버텍스 버퍼 세팅
 	{
-		v.p = m_vecARM_R[vecVerTex_Box_Index[i]];
+		m_nNumBoxmanBaseVertices = m_vecARM_L.size();
+		g_pD3DDevice->CreateVertexBuffer(
+			m_vecARM_L.size() * sizeof(ST_PT_VERTEX),
+			0,
+			ST_PT_VERTEX::FVF,
+			D3DPOOL_MANAGED,
+			&m_pVBforIB_Boxman_ARM_L,
+			NULL);
+		ST_PT_VERTEX* pV_ARM_L_IB = NULL;
+		// 메모리 카피 시작
+		m_pVBforIB_Boxman_ARM_L->Lock(0, 0, (void**)&pV_ARM_L_IB, 0);
+		// 메모리 카피
+		for (int i = 0; i < m_vecARM_L.size(); i++)
+		{
+			pV_ARM_L_IB[i] = strBoxman.ARM_L[i];
+		}
+
+		//memcpy(pV_IndZ_IB, &Indicator_VertexZ[0], Indicator_VertexZ.size() * sizeof(ST_PC_VERTEX));
+		// 메모리 카피 종료
+		m_pVBforIB_Boxman_ARM_L->Unlock();
+
+		// 인덱스 버퍼 채우기
+		WORD *piB_ARM_L;
+		g_pD3DDevice->CreateIndexBuffer(sizeof(WORD) * m_vecVerTex_Box_Index.size(), 0, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB_Boxman_ARM_L, NULL);
+		m_pIB_Boxman_ARM_L->Lock(0, 0, (void**)&piB_ARM_L, 0);
+
+		for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
+		{
+			piB_ARM_L[i] = m_vecVerTex_Box_Index[i];
+		}
+		//memcpy(piBZ, &vecIndicatorVertexIndex, sizeof(WORD) * vecIndicatorVertexIndex.size());
+
+		m_pIB_Boxman_ARM_L->Unlock();
+
+	}
+
+
+	for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
+	{
+		v.p = m_vecARM_R[m_vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_ARM_R[i];
 		strBoxman.ARM_R.push_back(v);
 	}
 
-	// for Legs
-	for (int i = 0; i < vecVerTex_Box_Index.size(); i++)
+	// 인덱스 버퍼 그리기용 버텍스 버퍼 세팅
 	{
-		v.p = m_vecLEG_L[vecVerTex_Box_Index[i]];
+		m_nNumBoxmanBaseVertices = m_vecARM_R.size();
+		g_pD3DDevice->CreateVertexBuffer(
+			m_vecARM_R.size() * sizeof(ST_PT_VERTEX),
+			0,
+			ST_PT_VERTEX::FVF,
+			D3DPOOL_MANAGED,
+			&m_pVBforIB_Boxman_ARM_R,
+			NULL);
+		ST_PT_VERTEX* pV_ARM_R_IB = NULL;
+		// 메모리 카피 시작
+		m_pVBforIB_Boxman_ARM_R->Lock(0, 0, (void**)&pV_ARM_R_IB, 0);
+		// 메모리 카피
+		for (int i = 0; i < m_vecARM_R.size(); i++)
+		{
+			pV_ARM_R_IB[i] = strBoxman.ARM_R[i];
+		}
+
+		//memcpy(pV_IndZ_IB, &Indicator_VertexZ[0], Indicator_VertexZ.size() * sizeof(ST_PC_VERTEX));
+		// 메모리 카피 종료
+		m_pVBforIB_Boxman_ARM_R->Unlock();
+
+		// 인덱스 버퍼 채우기
+		WORD *piB_ARM_R;
+		g_pD3DDevice->CreateIndexBuffer(sizeof(WORD) * m_vecVerTex_Box_Index.size(), 0, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB_Boxman_ARM_R, NULL);
+		m_pIB_Boxman_ARM_R->Lock(0, 0, (void**)&piB_ARM_R, 0);
+
+		for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
+		{
+			piB_ARM_R[i] = m_vecVerTex_Box_Index[i];
+		}
+		//memcpy(piBZ, &vecIndicatorVertexIndex, sizeof(WORD) * vecIndicatorVertexIndex.size());
+
+		m_pIB_Boxman_ARM_R->Unlock();
+
+	}
+
+	// for Legs
+	// Left leg
+	for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
+	{
+		v.p = m_vecLEG_L[m_vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_LEG_L[i];
 		strBoxman.LEG_L.push_back(v);
 	}
 
-	for (int i = 0; i < vecVerTex_Box_Index.size(); i++)
+	// 인덱스 버퍼 그리기용 버텍스 버퍼 세팅
 	{
-		v.p = m_vecLEG_R[vecVerTex_Box_Index[i]];
+		m_nNumBoxmanBaseVertices = m_vecLEG_L.size();
+		g_pD3DDevice->CreateVertexBuffer(
+			m_vecLEG_L.size() * sizeof(ST_PT_VERTEX),
+			0,
+			ST_PT_VERTEX::FVF,
+			D3DPOOL_MANAGED,
+			&m_pVBforIB_Boxman_LEG_L,
+			NULL);
+		ST_PT_VERTEX* pV_LEG_L_IB = NULL;
+		// 메모리 카피 시작
+		m_pVBforIB_Boxman_LEG_L->Lock(0, 0, (void**)&pV_LEG_L_IB, 0);
+		// 메모리 카피
+		for (int i = 0; i < m_vecLEG_L.size(); i++)
+		{
+			pV_LEG_L_IB[i] = strBoxman.LEG_L[i];
+		}
+
+		//memcpy(pV_IndZ_IB, &Indicator_VertexZ[0], Indicator_VertexZ.size() * sizeof(ST_PC_VERTEX));
+		// 메모리 카피 종료
+		m_pVBforIB_Boxman_LEG_L->Unlock();
+
+		// 인덱스 버퍼 채우기
+		WORD *piB_LEG_L;
+		g_pD3DDevice->CreateIndexBuffer(sizeof(WORD) * m_vecVerTex_Box_Index.size(), 0, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB_Boxman_LEG_L, NULL);
+		m_pIB_Boxman_LEG_L->Lock(0, 0, (void**)&piB_LEG_L, 0);
+
+		for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
+		{
+			piB_LEG_L[i] = m_vecVerTex_Box_Index[i];
+		}
+		//memcpy(piBZ, &vecIndicatorVertexIndex, sizeof(WORD) * vecIndicatorVertexIndex.size());
+
+		m_pIB_Boxman_LEG_L->Unlock();
+
+	}
+
+	// Left leg
+	for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
+	{
+		v.p = m_vecLEG_R[m_vecVerTex_Box_Index[i]];
 		v.texture1 = m_vTexture_LEG_R[i];
 		strBoxman.LEG_R.push_back(v);
+	}
+
+	// 인덱스 버퍼 그리기용 버텍스 버퍼 세팅
+	{
+		m_nNumBoxmanBaseVertices = m_vecLEG_R.size();
+		g_pD3DDevice->CreateVertexBuffer(
+			m_vecLEG_R.size() * sizeof(ST_PT_VERTEX),
+			0,
+			ST_PT_VERTEX::FVF,
+			D3DPOOL_MANAGED,
+			&m_pVBforIB_Boxman_LEG_R,
+			NULL);
+		ST_PT_VERTEX* pV_LEG_R_IB = NULL;
+		// 메모리 카피 시작
+		m_pVBforIB_Boxman_LEG_R->Lock(0, 0, (void**)&pV_LEG_R_IB, 0);
+		// 메모리 카피
+		for (int i = 0; i < m_vecLEG_R.size(); i++)
+		{
+			pV_LEG_R_IB[i] = strBoxman.LEG_R[i];
+		}
+
+		//memcpy(pV_IndZ_IB, &Indicator_VertexZ[0], Indicator_VertexZ.size() * sizeof(ST_PC_VERTEX));
+		// 메모리 카피 종료
+		m_pVBforIB_Boxman_LEG_R->Unlock();
+
+		// 인덱스 버퍼 채우기
+		WORD *piB_LEG_R;
+		g_pD3DDevice->CreateIndexBuffer(sizeof(WORD) * m_vecVerTex_Box_Index.size(), 0, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB_Boxman_LEG_R, NULL);
+		m_pIB_Boxman_LEG_R->Lock(0, 0, (void**)&piB_LEG_R, 0);
+
+		for (int i = 0; i < m_vecVerTex_Box_Index.size(); i++)
+		{
+			piB_LEG_R[i] = m_vecVerTex_Box_Index[i];
+		}
+
+		m_pIB_Boxman_LEG_R->Unlock();
+
 	}
 
 	{
@@ -400,38 +629,93 @@ void cBoxman::Render()
 	// 머리
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_Head);
 	//g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.HEAD.size() / 3, &strBoxman.HEAD[0], sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_HEAD, 0, sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntHEADTriangles);
+	{
+		// 버텍스 버퍼 그리기
+		// g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_HEAD, 0, sizeof(ST_PT_VERTEX));
+		// g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntHEADTriangles);
+	}
+	{
+		// 인덱스 버퍼 그리기
+		g_pD3DDevice->SetStreamSource(0, m_pVBforIB_Boxman_HEAD, 0, sizeof(ST_PT_VERTEX));
+		g_pD3DDevice->SetIndices(m_pIB_Boxman_HEAD);
+		g_pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nNumBoxmanBaseVertices, 0, m_vecVerTex_Box_Index.size() / 3);
+	}
 
 	////몸
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_Body);
 	////g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.BODY.size() / 3, &strBoxman.BODY[0], sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_BODY, 0, sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntBODYTriangles);
+	{
+		// 버텍스 버퍼 그리기
+		// g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_BODY, 0, sizeof(ST_PT_VERTEX));
+		// g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntBODYTriangles);
+	}
+	{
+		// 인덱스 버퍼 그리기
+		g_pD3DDevice->SetStreamSource(0, m_pVBforIB_Boxman_BODY, 0, sizeof(ST_PT_VERTEX));
+		g_pD3DDevice->SetIndices(m_pIB_Boxman_BODY);
+		g_pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nNumBoxmanBaseVertices, 0, m_vecVerTex_Box_Index.size() / 3);
+	}
 	//
 	//// 왼팔
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_ArmL);
 	//g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.ARM_L.size() / 3, &strBoxman.ARM_L[0], sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_ARM_L, 0, sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntARM_LTriangles);
+	{
+		// 버텍스 버퍼 그리기
+		// g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_ARM_L, 0, sizeof(ST_PT_VERTEX));
+		// g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntARM_LTriangles);
+	}
+	{
+		// 인덱스 버퍼 그리기
+		g_pD3DDevice->SetStreamSource(0, m_pVBforIB_Boxman_ARM_L, 0, sizeof(ST_PT_VERTEX));
+		g_pD3DDevice->SetIndices(m_pIB_Boxman_ARM_L);
+		g_pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nNumBoxmanBaseVertices, 0, m_vecVerTex_Box_Index.size() / 3);
+	}
 	//
 	//// 오른팔
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_ArmR);
 	//g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.ARM_R.size() / 3, &strBoxman.ARM_R[0], sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_ARM_R, 0, sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntARM_RTriangles);
+	{
+		// 버텍스 버퍼 그리기
+		// g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_ARM_R, 0, sizeof(ST_PT_VERTEX));
+		// g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntARM_RTriangles);
+	}
+	{
+		// 인덱스 버퍼 그리기
+		g_pD3DDevice->SetStreamSource(0, m_pVBforIB_Boxman_ARM_R, 0, sizeof(ST_PT_VERTEX));
+		g_pD3DDevice->SetIndices(m_pIB_Boxman_ARM_R);
+		g_pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nNumBoxmanBaseVertices, 0, m_vecVerTex_Box_Index.size() / 3);
+	}
 	//
 	//// 왼다리
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_LegL);
 	//g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.LEG_L.size() / 3, &strBoxman.LEG_L[0], sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_LEG_L, 0, sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntLEG_LTriangles);
+	{
+		// 버텍스 버퍼 그리기
+		// g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_LEG_L, 0, sizeof(ST_PT_VERTEX));
+		// g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntLEG_LTriangles);
+	}
+	{
+		// 인덱스 버퍼 그리기
+		g_pD3DDevice->SetStreamSource(0, m_pVBforIB_Boxman_LEG_L, 0, sizeof(ST_PT_VERTEX));
+		g_pD3DDevice->SetIndices(m_pIB_Boxman_LEG_L);
+		g_pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nNumBoxmanBaseVertices, 0, m_vecVerTex_Box_Index.size() / 3);
+	}
 	//
 	//// 오른다리
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld_LegR);
 	//g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, strBoxman.LEG_R.size() / 3, &strBoxman.LEG_R[0], sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_LEG_R, 0, sizeof(ST_PT_VERTEX));
-	g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntLEG_RTriangles);
+	{
+		// 버텍스 버퍼 그리기
+		// g_pD3DDevice->SetStreamSource(0, m_pVB_Boxman_LEG_R, 0, sizeof(ST_PT_VERTEX));
+		// g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, strBoxman.nCntLEG_RTriangles);
+	}
+	{
+		// 인덱스 버퍼 그리기
+		g_pD3DDevice->SetStreamSource(0, m_pVBforIB_Boxman_LEG_R, 0, sizeof(ST_PT_VERTEX));
+		g_pD3DDevice->SetIndices(m_pIB_Boxman_LEG_R);
+		g_pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nNumBoxmanBaseVertices, 0, m_vecVerTex_Box_Index.size() / 3);
+	}
+
 
 
 	g_pD3DDevice->SetTexture(0, NULL);

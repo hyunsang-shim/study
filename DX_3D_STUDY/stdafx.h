@@ -118,9 +118,12 @@ struct ST_PT_VERTEX
 struct SubMesh {	
 	string						sGroupName;
 	string						sMaterialName;
-	D3DMATERIAL9				mat9Material;
 	string						sTextureName;
+	D3DMATERIAL9				mat9Material;
 	LPDIRECT3DTEXTURE9			tx9Texture;
+	vector<D3DXVECTOR3>			vecVertex;
+	vector<int>					vec_nFaceIndex;
+	vector<int>					vec_nUV_Index;
 	vector<ST_PNT_VERTEX>		vPNT_VERTEX;
 	int							nCntTriangles;
 	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };	

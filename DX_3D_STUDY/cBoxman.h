@@ -91,9 +91,26 @@ private:
 	LPDIRECT3DVERTEXBUFFER9		m_pVB_Boxman_LEG_R;
 	LPDIRECT3DVERTEXBUFFER9		m_pVB_Boxman_BODY;
 
+	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_HEAD;
+	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_ARM_L;
+	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_ARM_R;
+	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_LEG_L;
+	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_LEG_R;
+	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_BODY;
+	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_HEAD;
+	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_ARM_L;
+	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_ARM_R;
+	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_LEG_L;
+	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_LEG_R;
+	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_BODY;
+
+	int							m_nNumBoxmanBaseVertices;
+	int							m_nNumBoxmanTriangles;
+
+
 
 	// 공용 박스 그리기용 정점 순서 배열
-	vector<int>				vecVerTex_Box_Index;
+	vector<int>				m_vecVerTex_Box_Index;
 	
 	// 각 부위별 정점+텍스쳐UV좌표 저장용
 	BOXMAN_PT				strBoxman;

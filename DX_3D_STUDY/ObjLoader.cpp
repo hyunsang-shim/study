@@ -70,6 +70,7 @@ vector<SubMesh> ObjLoader::ParseObj(string filename)
 		}
 		else if (tmp == "f")
 		{
+			
 			int v1 = 0, v2 = 0, v3 = 0;
 			int uv1 = 0, uv2 = 0, uv3 = 0;
 			int vn1 = 0, vn2 = 0, vn3 = 0;
@@ -92,6 +93,14 @@ vector<SubMesh> ObjLoader::ParseObj(string filename)
 			tmpPNT.texture = D3DXVECTOR2(UV[uv3 - 1].x, UV[uv3 - 1].y);
 			tmpSubMesh.vPNT_VERTEX.push_back(tmpPNT);
 
+			tmpSubMesh.vec_nFaceIndex.push_back(v1 - 1);
+			tmpSubMesh.vec_nFaceIndex.push_back(v2 - 1);
+			tmpSubMesh.vec_nFaceIndex.push_back(v3 - 1);
+
+			tmpSubMesh.vec_nUV_Index.push_back(uv1 - 1);
+			tmpSubMesh.vec_nUV_Index.push_back(uv2 - 1);
+			tmpSubMesh.vec_nUV_Index.push_back(uv3 - 1);
+
 		}
 		else if (tmp == "g")
 		{
@@ -106,6 +115,7 @@ vector<SubMesh> ObjLoader::ParseObj(string filename)
 				if (isGroupStart)
 				{
 					tmpSubMesh.nCntTriangles = tmpSubMesh.vPNT_VERTEX.size()/3;
+					tmpSubMesh.vecVertex = vertex;
 					ret.push_back(tmpSubMesh);
 					ZeroMemory(&tmpSubMesh, sizeof(tmpSubMesh));
 					ZeroMemory(&tmpPNT, sizeof(tmpPNT));

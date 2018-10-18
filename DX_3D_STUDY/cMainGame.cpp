@@ -23,6 +23,7 @@ cMainGame::cMainGame()
 	, m_pMap(NULL)
 	, m_pASE_Char(NULL)
 	, m_pBoxman(NULL)
+	, m_pMeshTeapot(NULL)
 	, m_vEye(10, 8, -15)
 	, m_vLookAt(0, 0, 0)
 	, m_vUp(0, 1, 0)
@@ -72,6 +73,7 @@ cMainGame::~cMainGame()
 	g_pObjectManager->Destroy();
 	g_pTextureManager->Destroy();*/
 
+	SAFE_RELEASE(m_pMeshTeapot);
 
 
 	g_pDeviceManager->Destroy();
@@ -84,6 +86,8 @@ void cMainGame::Setup()
 	/*m_pASE_Char = new cASE_Char;
 	m_pASE_Char->Setup();*/
 
+	// 메시 렌더링 예제
+	Mesh_Setup();
 	
 	m_pCamera = new cCamera;
 	m_pCamera->Setup();
@@ -104,11 +108,11 @@ void cMainGame::Setup()
 	m_pBoxman->Setup(_T("D.VA.png"));
 
 	m_pMap = new cMap;
-	m_pMap->Setup();
+	//m_pMap->Setup();
 
 	// 강사님 ASE로더
 	cASELoader_inst loader;
-	m_pRootFrame = loader.Load("woman/woman_01_all.ASE");
+	//m_pRootFrame = loader.Load("woman/woman_01_all.ASE");
 }
 
 void cMainGame::Update(){
@@ -290,7 +294,7 @@ void cMainGame::Render()
 		m_pGrid->Render();
 
 	if (m_pMap)
-		m_pMap->Render();
+		//m_pMap->Render();
 
 	if (m_pHexagon)
 		m_pHexagon->Render();	
@@ -305,9 +309,10 @@ void cMainGame::Render()
 	
 
 	if (m_pRootFrame)
-		m_pRootFrame->Render();
+		//m_pRootFrame->Render();
 		
-	
+	// 메시 렌더링 예제
+	//Mesh_Render();
 	
 
 	//g_pD3DDevice->SetMaterial(&m_matWhite);  // 파일에서 불러온 매터리얼 확인을 위해 주석처리 함
@@ -367,6 +372,33 @@ void cMainGame::Render()
 
 	g_pD3DDevice->EndScene();
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
+
+}
+
+void cMainGame::Mesh_Render()
+{
+	D3DXMATRIXA16 matWorld, matS, matR;
+
+	D3DXMatrixIdentity(&matS);
+	D3DXMatrixIdentity(&matR);
+	D3DXMatrixScaling(&matS, 1.0f, 1.0f, 1.0f);
+	matWorld = matS * matR;
+
+	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+	g_pD3DDevice->SetMaterial(&m_stMrlTeapot);
+	m_pMeshTeapot->DrawSubset(0);
+
+
+}
+
+void cMainGame::Mesh_Setup()
+{
+	D3DXCreateTeapot(g_pD3DDevice, &m_pMeshTeapot, NULL);
+	ZeroMemory(&m_stMrlTeapot, sizeof(D3DMATERIAL9));
+	m_stMrlTeapot.Ambient = D3DXCOLOR(0.0f, 0.7f, 0.7f, 1.0f);
+	m_stMrlTeapot.Diffuse= D3DXCOLOR(0.0f, 0.7f, 0.7f, 1.0f);
+	m_stMrlTeapot.Specular = D3DXCOLOR(0.0f, 0.7f, 0.7f, 1.0f);
+
 
 }
 

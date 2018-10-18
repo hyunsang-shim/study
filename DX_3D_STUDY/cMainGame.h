@@ -70,6 +70,8 @@ public:
 	void						Setup();
 	void						Update();
 	void						Render();
+	void						Mesh_Render();
+	void						Mesh_Setup();
 
 	void						InitMaterial();
 	void						InitLights();
@@ -102,6 +104,10 @@ private:
 	bool						m_isCamFollow;				// 카메라를 따라가게 할 것인지에 대한 플래그 값.
 	cHexagon*					m_pHexagon;
 	vector<D3DXVECTOR3>			m_vWaypoints;
+
+	LPD3DXMESH					m_pMeshTeapot;			 	// 메시 렌더링 예제
+	D3DMATERIAL9				m_stMrlTeapot;				// 메시 렌더링 예제
+
 	
 
 	// 강사님 ASE 로더
