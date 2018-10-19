@@ -40,6 +40,12 @@ public:
 	void SetTextureUV_ARM_R();
 	void SetTextureUV_LEG_L();
 	void SetTextureUV_LEG_R();
+	void SetIB_HEAD();
+	void SetIB_BODY();
+	void SetIB_ARM_L();
+	void SetIB_ARM_R();
+	void SetIB_LEG_L();
+	void SetIB_LEG_R();
 	void SetMoveState(bool move, bool run);
 	void SetjumpState(bool value1, bool value2);
 	void SetCurPos(D3DXVECTOR3 newCurPos);
@@ -90,23 +96,6 @@ private:
 	LPDIRECT3DVERTEXBUFFER9		m_pVB_Boxman_LEG_L;
 	LPDIRECT3DVERTEXBUFFER9		m_pVB_Boxman_LEG_R;
 	LPDIRECT3DVERTEXBUFFER9		m_pVB_Boxman_BODY;
-
-	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_HEAD;
-	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_ARM_L;
-	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_ARM_R;
-	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_LEG_L;
-	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_LEG_R;
-	LPDIRECT3DVERTEXBUFFER9		m_pVBforIB_Boxman_BODY;
-	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_HEAD;
-	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_ARM_L;
-	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_ARM_R;
-	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_LEG_L;
-	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_LEG_R;
-	LPDIRECT3DINDEXBUFFER9		m_pIB_Boxman_BODY;
-
-	int							m_nNumBoxmanBaseVertices;
-	int							m_nNumBoxmanTriangles;
-
 
 
 	// 공용 박스 그리기용 정점 순서 배열

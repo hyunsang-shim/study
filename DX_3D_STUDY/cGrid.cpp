@@ -249,11 +249,6 @@ void cGrid::Setup()
 			m_pVB_Gizmo_ZforIB->Unlock();
 
 
-			for (int i = 0; i < Indicator_VertexZ.size(); i++)
-			{
-				printf("vB [%d] %01.2f %01.2f %01.2f\n", i, Indicator_VertexZ[i].p.x, Indicator_VertexZ[i].p.y, Indicator_VertexZ[i].p.z);
-			}
-
 			// 인덱스 버퍼용 인덱스 세팅
 			vector<int>				vecIndicatorVertexIndex;
 

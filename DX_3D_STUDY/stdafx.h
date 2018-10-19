@@ -122,8 +122,9 @@ struct SubMesh {
 	D3DMATERIAL9				mat9Material;
 	LPDIRECT3DTEXTURE9			tx9Texture;
 	vector<D3DXVECTOR3>			vecVertex;
-	vector<int>					vec_nFaceIndex;
-	vector<int>					vec_nUV_Index;
+	vector<D3DXVECTOR2>			vecUV;
+	vector<WORD>				vec_nFaceIndex;
+	vector<WORD>				vec_nUV_Index;
 	vector<ST_PNT_VERTEX>		vPNT_VERTEX;
 	int							nCntTriangles;
 	enum { FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 };	

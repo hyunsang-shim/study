@@ -22,8 +22,12 @@ private:
 	double							m_fBoxRotX;			
 	double							m_fBoxRotY;			
 
-
+	// 버텍스 버퍼
 	vector<LPDIRECT3DVERTEXBUFFER9>	m_vpVB_SubMesh;
+
+	// 인덱스 버퍼
+	vector<LPDIRECT3DVERTEXBUFFER9 >	m_vpVBforIB_SubMesh;
+	vector<LPDIRECT3DINDEXBUFFER9 >		m_vpIB_SubMesh;
 
 public:
 	void							Setup();

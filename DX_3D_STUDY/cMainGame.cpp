@@ -108,7 +108,7 @@ void cMainGame::Setup()
 	m_pBoxman->Setup(_T("D.VA.png"));
 
 	m_pMap = new cMap;
-	//m_pMap->Setup();
+	m_pMap->Setup();
 
 	// °­»ç´Ô ASE·Î´õ
 	cASELoader_inst loader;
@@ -294,7 +294,7 @@ void cMainGame::Render()
 		m_pGrid->Render();
 
 	if (m_pMap)
-		//m_pMap->Render();
+		m_pMap->Render();
 
 	if (m_pHexagon)
 		m_pHexagon->Render();	
@@ -506,7 +506,7 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_MOUSEWHEEL:
-		m_fCameraDistance -= (GET_WHEEL_DELTA_WPARAM(wParam) / 30.0f);
+		m_fCameraDistance -= (GET_WHEEL_DELTA_WPARAM(wParam) / 90.0f);
 
 		if (m_fCameraDistance < EPSILON)
 			m_fCameraDistance = EPSILON;

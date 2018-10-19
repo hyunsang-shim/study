@@ -29,6 +29,9 @@ vector<SubMesh> ObjLoader::ParseObj(string filename)
 	string						fNameNoExt;
 	size_t						found;
 	size_t						found_dot;
+	int							CntFaces = 0;
+	int							CntUVFaces = 0;
+
 
 	path = filename;
 
@@ -93,14 +96,14 @@ vector<SubMesh> ObjLoader::ParseObj(string filename)
 			tmpPNT.texture = D3DXVECTOR2(UV[uv3 - 1].x, UV[uv3 - 1].y);
 			tmpSubMesh.vPNT_VERTEX.push_back(tmpPNT);
 
-			tmpSubMesh.vec_nFaceIndex.push_back(v1 - 1);
-			tmpSubMesh.vec_nFaceIndex.push_back(v2 - 1);
-			tmpSubMesh.vec_nFaceIndex.push_back(v3 - 1);
-
-			tmpSubMesh.vec_nUV_Index.push_back(uv1 - 1);
-			tmpSubMesh.vec_nUV_Index.push_back(uv2 - 1);
-			tmpSubMesh.vec_nUV_Index.push_back(uv3 - 1);
-
+				tmpSubMesh.vec_nFaceIndex.push_back(v1 - 1);
+				tmpSubMesh.vec_nFaceIndex.push_back(v2 - 1);
+				tmpSubMesh.vec_nFaceIndex.push_back(v3 - 1);
+														
+				tmpSubMesh.vec_nUV_Index.push_back(uv1 - 1);
+				tmpSubMesh.vec_nUV_Index.push_back(uv2 - 1);
+				tmpSubMesh.vec_nUV_Index.push_back(uv3 - 1);
+			
 		}
 		else if (tmp == "g")
 		{
@@ -116,6 +119,10 @@ vector<SubMesh> ObjLoader::ParseObj(string filename)
 				{
 					tmpSubMesh.nCntTriangles = tmpSubMesh.vPNT_VERTEX.size()/3;
 					tmpSubMesh.vecVertex = vertex;
+					tmpSubMesh.vecUV = UV;
+					CntFaces = tmpSubMesh.vecVertex.size();
+					CntUVFaces = tmpSubMesh.vecUV.size();
+
 					ret.push_back(tmpSubMesh);
 					ZeroMemory(&tmpSubMesh, sizeof(tmpSubMesh));
 					ZeroMemory(&tmpPNT, sizeof(tmpPNT));
