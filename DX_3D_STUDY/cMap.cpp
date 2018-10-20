@@ -23,26 +23,26 @@ void cMap::Setup()
 
 	
 	// 버텍스 버퍼 이용
-	for (int i = 0; i < subMesh.size(); i++)
-	{
-		LPDIRECT3DVERTEXBUFFER9 tmpLPVB;
-		g_pD3DDevice->CreateVertexBuffer(subMesh[i].vPNT_VERTEX.size() * sizeof(ST_PNT_VERTEX), 0, ST_PNT_VERTEX::FVF, D3DPOOL_MANAGED, &tmpLPVB, NULL);
-		m_vpVB_SubMesh.push_back(tmpLPVB);
-		
-		ST_PNT_VERTEX* pV_tmpPNT = NULL;	
-		m_vpVB_SubMesh[i]->Lock(0, 0, (LPVOID*)&pV_tmpPNT, 0);
+	//for (int i = 0; i < subMesh.size(); i++)
+	//{
+	//	LPDIRECT3DVERTEXBUFFER9 tmpLPVB;
+	//	g_pD3DDevice->CreateVertexBuffer(subMesh[i].vPNT_VERTEX.size() * sizeof(ST_PNT_VERTEX), 0, ST_PNT_VERTEX::FVF, D3DPOOL_MANAGED, &tmpLPVB, NULL);
+	//	m_vpVB_SubMesh.push_back(tmpLPVB);
+	//	
+	//	ST_PNT_VERTEX* pV_tmpPNT = NULL;	
+	//	m_vpVB_SubMesh[i]->Lock(0, 0, (LPVOID*)&pV_tmpPNT, 0);
 
-		{
-			//for 문으로 변경
-			for (int i = 0; i < subMesh[i].vPNT_VERTEX.size(); i++)
-			{
-				pV_tmpPNT[i] = subMesh[i].vPNT_VERTEX[i];
-			}
-			
-		}
-		
-		m_vpVB_SubMesh[i]->Unlock();
-	}
+	//	{
+	//		//for 문으로 변경
+	//		for (int i = 0; i < subMesh[i].vPNT_VERTEX.size(); i++)
+	//		{
+	//			pV_tmpPNT[i] = subMesh[i].vPNT_VERTEX[i];
+	//		}
+	//		
+	//	}
+	//	
+	//	m_vpVB_SubMesh[i]->Unlock();
+	//}
 
 	// 인덱스 버퍼용 버텍스 버퍼
 	{
@@ -54,12 +54,14 @@ void cMap::Setup()
 			
 			ST_PNT_VERTEX* pV_tmpPNT = NULL;
 			m_vpVBforIB_SubMesh[i]->Lock(0, 0, (LPVOID*)&pV_tmpPNT, 0);
-			for (int j = 0; j < subMesh[i].vPNT_VERTEX.size(); j++)
+			for (int j = 0; j < subMesh[i].vecVertex.size(); j++)
 			{
-				pV_tmpPNT[j].p = subMesh[i].vecVertex[ subMesh[i].vec_nFaceIndex[j] ];
+				pV_tmpPNT[j].p = subMesh[i].vecVertex[j];
 				pV_tmpPNT[j].normal = subMesh[i].vecVertex[ subMesh[i].vec_nFaceIndex[j] ];
 				pV_tmpPNT[j].texture = subMesh[i].vecUV[subMesh[i].vec_nUV_Index[j] ];
 			}
+
+			m_nVB_SubMesh.push_back(subMesh[i].vecVertex.size());
 			m_vpVBforIB_SubMesh[i]->Unlock();
 		}
 
@@ -79,11 +81,11 @@ void cMap::Setup()
 			for (int j = 0; j < subMesh[i].vec_nFaceIndex.size(); j++)
 			{
 				piB[j] = subMesh[i].vec_nFaceIndex[j];				
-			}
-
+			}	
+			m_nIB_SubMesh.push_back(subMesh[i].vec_nFaceIndex.size());
 			m_vpIB_SubMesh[i]->Unlock();
 		}
-
+		
 	}
 }
 
@@ -112,26 +114,26 @@ void cMap::Render()
 	}
 
 	// 버텍스 버퍼 이용 (텍스쳐, 매터리얼은 기존 버퍼 이용)
-	for (int i = 0; i < m_vpVB_SubMesh.size(); i++)
+	//for (int i = 0; i < m_vpVB_SubMesh.size(); i++)
 	{
-		 g_pD3DDevice->SetMaterial(&subMesh[i].mat9Material);
-		 g_pD3DDevice->SetTexture(0, subMesh[i].tx9Texture);
-		 g_pD3DDevice->SetStreamSource(0, m_vpVB_SubMesh[i], 0, sizeof(ST_PNT_VERTEX));
-		 g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, subMesh[i].nCntTriangles);
+		// g_pD3DDevice->SetMaterial(&subMesh[i].mat9Material);
+		// g_pD3DDevice->SetTexture(0, subMesh[i].tx9Texture);
+		// g_pD3DDevice->SetStreamSource(0, m_vpVB_SubMesh[i], 0, sizeof(ST_PNT_VERTEX));
+		// g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, subMesh[i].nCntTriangles);
 	}
 
 	// 인덱스 버퍼 이용
-	{
-		for (int i = 0; i < subMesh[i].vec_nFaceIndex.size(); i++)
+	{	
+		for (int i = 0; i < m_nVB_SubMesh.size(); i++)
 		{
 			g_pD3DDevice->SetMaterial(&subMesh[i].mat9Material);
 			g_pD3DDevice->SetTexture(0, subMesh[i].tx9Texture);
 			g_pD3DDevice->SetIndices(m_vpIB_SubMesh[i]);
-			g_pD3DDevice->SetStreamSource(0, m_vpVB_SubMesh[i], 0, sizeof(ST_PNT_VERTEX));
-			g_pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, subMesh[i].vecVertex.size(), 0, subMesh[i].vec_nFaceIndex.size());
+			g_pD3DDevice->SetStreamSource(0, m_vpVBforIB_SubMesh[i], 0, sizeof(ST_PNT_VERTEX));
+			g_pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nVB_SubMesh[i], 0, subMesh[i].vec_nFaceIndex.size());
 		}
+		
 	}
-
 	g_pD3DDevice->SetTexture(0, NULL);
 	
 }

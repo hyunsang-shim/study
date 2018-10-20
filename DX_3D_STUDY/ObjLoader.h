@@ -22,4 +22,5 @@ public:
 	static D3DMATERIAL9 GetMaterial(string filename, string MatName, SubMesh *Dest);
 	
 private:	
+
 };

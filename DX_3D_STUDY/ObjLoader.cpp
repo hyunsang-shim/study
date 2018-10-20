@@ -31,6 +31,9 @@ vector<SubMesh> ObjLoader::ParseObj(string filename)
 	size_t						found_dot;
 	int							CntFaces = 0;
 	int							CntUVFaces = 0;
+	int							CntVertex = 0;
+	int							CntNormal = 0;
+	int							CntUV = 0;
 
 
 	path = filename;
@@ -81,6 +84,18 @@ vector<SubMesh> ObjLoader::ParseObj(string filename)
 			sscanf(newline.c_str(),
 				"%*s %d/%d/%d %d/%d/%d %d/%d/%d", &v1, &uv1, &vn1, &v2, &uv2, &vn2, &v3, &uv3, &vn3);
 
+			v1 -= CntVertex;
+			v2 -= CntVertex;
+			v3 -= CntVertex;
+
+			uv1 -= CntUV;
+			uv2 -= CntUV;
+			uv3 -= CntUV;
+
+			vn1 -= CntNormal;
+			vn2 -= CntNormal;
+			vn3 -= CntNormal;
+
 			tmpPNT.p = D3DXVECTOR3(vertex[v1 - 1].x, vertex[v1 - 1].y, vertex[v1 - 1].z);			
 			tmpPNT.normal = D3DXVECTOR3(normal[vn1 - 1].x, normal[vn1 - 1].y, normal[vn1 - 1].z);
 			tmpPNT.texture = D3DXVECTOR2(UV[uv1 - 1].x, UV[uv1 - 1].y);
@@ -126,7 +141,12 @@ vector<SubMesh> ObjLoader::ParseObj(string filename)
 					ret.push_back(tmpSubMesh);
 					ZeroMemory(&tmpSubMesh, sizeof(tmpSubMesh));
 					ZeroMemory(&tmpPNT, sizeof(tmpPNT));
-					//printf("added Object [ %s ] with Material [ %s ]\n", ret[ret.size()-1].sGroupName.c_str(), ret[ret.size()-1].sTextureName.c_str());					::ZeroMemory(&tmpPNT, sizeof(tmpPNT));
+					CntVertex += vertex.size();
+					ZeroMemory(&vertex, sizeof(vertex));
+					CntNormal += normal.size();
+					ZeroMemory(&normal, sizeof(normal));
+					CntUV += UV.size();
+					ZeroMemory(&UV, sizeof(UV));					
 				}
 				else
 					isGroupStart = !isGroupStart;

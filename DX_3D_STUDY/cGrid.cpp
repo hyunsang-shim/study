@@ -200,7 +200,6 @@ void cGrid::Setup()
 			{
 				pV_IndZ[i] = vecIndVertexZ[i];
 			}
-			//memcpy(pV_IndZ, &vecIndVertexZ[0], vecIndVertexZ.size() * sizeof(ST_PC_VERTEX));
 			// 메모리 카피 종료
 			m_pVB_Gizmo_Z->Unlock();
 		}
@@ -243,8 +242,6 @@ void cGrid::Setup()
 			{
 				pV_IndZ_IB[i] = Indicator_VertexZ[i];
 			}
-			
-			//memcpy(pV_IndZ_IB, &Indicator_VertexZ[0], Indicator_VertexZ.size() * sizeof(ST_PC_VERTEX));
 			// 메모리 카피 종료
 			m_pVB_Gizmo_ZforIB->Unlock();
 
@@ -350,7 +347,10 @@ void cGrid::Setup()
 			// 메모리 카피 시작
 			m_pVB_Gizmo_X->Lock(0, 0, (LPVOID*)&pV_IndX, 0);
 			// 메모리 카피
-			memcpy(pV_IndX, &vecIndVertexX[0], vecIndVertexX.size() * sizeof(ST_PC_VERTEX));
+			for (int i = 0; i < vecIndVertexX.size(); i++)
+			{
+				pV_IndX[i] = vecIndVertexX[i];
+			}
 			// 메모리 카피 종료
 			m_pVB_Gizmo_X->Unlock();
 		}
@@ -394,7 +394,6 @@ void cGrid::Setup()
 				pV_IndX_IB[i] = Indicator_VertexX[i];
 			}
 
-			//memcpy(pV_IndZ_IB, &Indicator_VertexZ[0], Indicator_VertexZ.size() * sizeof(ST_PC_VERTEX));
 			// 메모리 카피 종료
 			m_pVB_Gizmo_XforIB->Unlock();
 
@@ -434,7 +433,6 @@ void cGrid::Setup()
 			{
 				piBX[i] = vecIndicatorVertexIndex[i];
 			}
-			//memcpy(piBZ, &vecIndicatorVertexIndex, sizeof(WORD) * vecIndicatorVertexIndex.size());
 
 			m_pIB_Gizmo_X_IB->Unlock();
 
@@ -499,7 +497,11 @@ void cGrid::Setup()
 			// 메모리 카피 시작
 			m_pVB_Gizmo_Y->Lock(0, 0, (LPVOID*)&pV_IndY, 0);
 			// 메모리 카피
-			memcpy(pV_IndY, &vecIndVertexY[0], vecIndVertexY.size() * sizeof(ST_PC_VERTEX));
+			for (int i = 0; i < vecIndVertexY.size(); i++)
+			{
+				pV_IndY[i] = vecIndVertexY[i];
+			}
+
 			// 메모리 카피 종료
 			m_pVB_Gizmo_Y->Unlock();
 		}
@@ -642,6 +644,7 @@ void cGrid::DrawIndicator()
 		g_pD3DDevice->SetStreamSource(0, m_pVB_Gizmo_ZforIB, 0, sizeof(ST_PC_VERTEX));
 		g_pD3DDevice->SetIndices(m_pIB_Gizmo_Z_IB);
 		g_pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nNumVertices_Z, 0, m_nNumIndex_Z);
+
 	}
 
 	//// Draw X-Axis Indicator

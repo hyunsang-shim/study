@@ -28,6 +28,8 @@ private:
 	// 인덱스 버퍼
 	vector<LPDIRECT3DVERTEXBUFFER9 >	m_vpVBforIB_SubMesh;
 	vector<LPDIRECT3DINDEXBUFFER9 >		m_vpIB_SubMesh;
+	vector<WORD>						m_nIB_SubMesh;
+	vector<int>						m_nVB_SubMesh;
 
 public:
 	void							Setup();
