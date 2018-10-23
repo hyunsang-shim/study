@@ -7,6 +7,7 @@ class cGrid;
 class cCubeman;
 class cMap;
 class cASE_Char;
+class cHeightMap;
 
 // 강사님 ASE 로더
 class cFrame;
@@ -98,6 +99,7 @@ private:
 	vector<ST_PT_VERTEX>		m_vecVertex;
 	cGrid*						m_pGrid;
 	cASE_Char*					m_pASE_Char;
+	cHeightMap*					m_pHeightmap;
 	vector<BESIER_BOXMAN>		m_vecNormalBoxman;			// 일반 경로를 따라 가는 캐릭터 구조체 저장소
 	vector<BESIER_BOXMAN>		m_vecBesierBoxman;			// 베지어 곡선 경로를 따라 가는 캐릭터 구조체 저장소
 	vector<D3DXVECTOR3>			m_vecOriginalBox;
@@ -107,6 +109,10 @@ private:
 
 	LPD3DXMESH					m_pMeshTeapot;			 	// 메시 렌더링 예제
 	D3DMATERIAL9				m_stMrlTeapot;				// 메시 렌더링 예제
+
+	
+	IDirect3DTexture9*			m_pTextures;
+
 
 	
 

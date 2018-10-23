@@ -24,6 +24,7 @@ cMainGame::cMainGame()
 	, m_pASE_Char(NULL)
 	, m_pBoxman(NULL)
 	, m_pMeshTeapot(NULL)
+	, m_pHeightmap(NULL)
 	, m_vEye(10, 8, -15)
 	, m_vLookAt(0, 0, 0)
 	, m_vUp(0, 1, 0)
@@ -106,12 +107,15 @@ void cMainGame::Setup()
 
 	m_pBoxman = new cBoxman;
 	m_pBoxman->Setup(_T("D.VA.png"));
+		
+	//m_pMap = new cMap;
+	//m_pMap->Setup();
 
-	m_pMap = new cMap;
-	m_pMap->Setup();
+	m_pHeightmap = new cHeightMap;
+	m_pHeightmap->Setup("HeightMap/HeightMap.raw");
 
 	// 강사님 ASE로더
-	cASELoader_inst loader;
+	//cASELoader_inst loader;
 	//m_pRootFrame = loader.Load("woman/woman_01_all.ASE");
 }
 
@@ -287,34 +291,7 @@ void cMainGame::Render()
 {	
 	g_pD3DDevice->Clear(NULL, NULL, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(64,64,64), 1.0f, 0);
 	g_pD3DDevice->BeginScene();
-
-
-	// Draw Something
-	if (m_pGrid)
-		m_pGrid->Render();
-
-	if (m_pMap)
-		m_pMap->Render();
-
-	if (m_pHexagon)
-		m_pHexagon->Render();	
-
-	if (m_pBoxman)
-		m_pBoxman->Render();
-
-	g_pD3DDevice->SetMaterial(&m_matWhite);
-
-	if (m_pASE_Char)
-		m_pASE_Char->Render();
 	
-
-	if (m_pRootFrame)
-		//m_pRootFrame->Render();
-		
-	// 메시 렌더링 예제
-	//Mesh_Render();
-	
-
 	//g_pD3DDevice->SetMaterial(&m_matWhite);  // 파일에서 불러온 매터리얼 확인을 위해 주석처리 함
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
 	g_pD3DDevice->SetLight(0, &SpotLight);
@@ -370,6 +347,42 @@ void cMainGame::Render()
 	}
 	*/
 
+
+
+
+	// Draw Something
+	if (m_pGrid)
+		m_pGrid->Render();
+
+	/*if (m_pCubePC)
+		m_pCubePC->Render();*/
+
+	if (m_pMap)
+		m_pMap->Render();
+
+	if (m_pHexagon)
+		m_pHexagon->Render();
+
+	if (m_pBoxman)
+		m_pBoxman->Render();
+
+	g_pD3DDevice->SetMaterial(&m_matWhite);
+
+	if (m_pASE_Char)
+		m_pASE_Char->Render();
+
+
+	if (m_pRootFrame)
+		m_pRootFrame->Render();
+
+	// 메시 렌더링 예제
+	//Mesh_Render();
+
+	if (m_pHeightmap)
+		m_pHeightmap->Render();
+
+
+
 	g_pD3DDevice->EndScene();
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
 
@@ -396,10 +409,9 @@ void cMainGame::Mesh_Setup()
 	D3DXCreateTeapot(g_pD3DDevice, &m_pMeshTeapot, NULL);
 	ZeroMemory(&m_stMrlTeapot, sizeof(D3DMATERIAL9));
 	m_stMrlTeapot.Ambient = D3DXCOLOR(0.0f, 0.7f, 0.7f, 1.0f);
-	m_stMrlTeapot.Diffuse= D3DXCOLOR(0.0f, 0.7f, 0.7f, 1.0f);
+	m_stMrlTeapot.Diffuse = D3DXCOLOR(0.0f, 0.7f, 0.7f, 1.0f);
 	m_stMrlTeapot.Specular = D3DXCOLOR(0.0f, 0.7f, 0.7f, 1.0f);
-
-
+		
 }
 
 void cMainGame::InitMaterial()
@@ -430,14 +442,14 @@ void cMainGame::InitLights()
 	SpotLight.Diffuse = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
 	SpotLight.Ambient = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
 	SpotLight.Specular = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-	SpotLight.Position = D3DXVECTOR3(2.0f, 25.0f, 2.0f);
+	SpotLight.Position = D3DXVECTOR3(2.0f, 10.0f, 2.0f);
 	SpotLight.Direction = D3DXVECTOR3(0, -1.0f, 0);
 	SpotLight.Range = 25.0f;
 	SpotLight.Falloff = 1.0f;
 	SpotLight.Attenuation0 = 0.001f;
 	SpotLight.Attenuation1 = 0.001f;
 	SpotLight.Attenuation2 = 0.001f;
-	SpotLight.Theta = D3DX_PI / 4;
+	SpotLight.Theta = D3DX_PI / 6;
 	SpotLight.Phi = D3DX_PI / 2;
 
 
@@ -445,8 +457,8 @@ void cMainGame::InitLights()
 	PointLight.Diffuse = D3DXCOLOR(0.75f, 0.0f, 0.75f, 1.0f);
 	PointLight.Ambient = D3DXCOLOR(0.75f, 0.0f, 0.75f, 1.0f);
 	PointLight.Specular = D3DXCOLOR(0.75f, 0.0f, 0.75f, 1.0f);
-	PointLight.Position = D3DXVECTOR3(0.0f, 5.0f, -5.0f);
-	PointLight.Range = 15.0f;
+	PointLight.Position = D3DXVECTOR3(0.0f, 7.0f, -5.0f);
+	PointLight.Range = 20.0f;
 	PointLight.Attenuation0 = 0.001f;
 	PointLight.Attenuation1 = 0.001f;
 	PointLight.Attenuation2 = 0.001f;

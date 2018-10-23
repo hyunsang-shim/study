@@ -401,7 +401,7 @@ void cBoxman::Render()
 {
 	g_pD3DDevice->SetFVF(ST_PT_VERTEX::FVF);
 	g_pD3DDevice->SetTexture(0, m_pTexture);
-	
+	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
 	// root position. initially 0,0,0
 	// root Scale -> local Scale * Rotate * Transformation -> root Rotation * root Transformation
 

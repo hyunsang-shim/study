@@ -96,6 +96,12 @@
     <ClInclude Include="cTextureManager_inst.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="cRawLoader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="cHeightMap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -159,6 +165,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="cTextureManager_inst.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="cRawLoader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="cHeightMap.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

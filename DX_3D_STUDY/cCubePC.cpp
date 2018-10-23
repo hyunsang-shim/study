@@ -21,32 +21,36 @@ cCubePC::~cCubePC()
 void cCubePC::Setup()
 {
 	ST_PC_VERTEX	v;
-	//vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, -1.0f));
-	//vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, 1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, -1.0f, -1.0f));
+	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, -1.0f));
+	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, 1.0f, -1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, -1.0f, -1.0f));
 
-	//vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, 1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
-	//vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, 1.0f, 1.0f));		vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, -1.0f, 1.0f));
+	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, -1.0f, 1.0f));	vecVerTex_Box.push_back(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+	vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, 1.0f, 1.0f));		vecVerTex_Box.push_back(D3DXVECTOR3(1.0f, -1.0f, 1.0f));
 
-	vecVerTex_Box.push_back(D3DXVECTOR3(0.29f, 0.28f, -0.25f));	vecVerTex_Box.push_back(D3DXVECTOR3(0.46f, 0.28f, -0.25f));
-	vecVerTex_Box.push_back(D3DXVECTOR3(0.41f, 0.28f, -0.14f));	vecVerTex_Box.push_back(D3DXVECTOR3(0.29f, 0.28f, -0.09f));
+	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(2);
+	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(2);	vecVerTex_Box_Index.push_back(3);
 
-	vecVerTex_Box.push_back(D3DXVECTOR3(0.18f, 0.28f, -0.14f));	vecVerTex_Box.push_back(D3DXVECTOR3(0.13f, 0.28f, 0.25f));
-	vecVerTex_Box.push_back(D3DXVECTOR3(0.18f, 0.28f, -0.37f));	vecVerTex_Box.push_back(D3DXVECTOR3(0.29f, 0.28f, -0.42f));
-	vecVerTex_Box.push_back(D3DXVECTOR3(0.41f, 0.28f, -0.37f));
+	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(5);
+	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(7);	vecVerTex_Box_Index.push_back(6);
 
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(2);	vecVerTex_Box_Index.push_back(1);
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(2);
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(3);
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(5);	vecVerTex_Box_Index.push_back(4);
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(5);
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(7);	vecVerTex_Box_Index.push_back(6);
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(8);	vecVerTex_Box_Index.push_back(7);
-	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(8);
+	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(5);	vecVerTex_Box_Index.push_back(1);
+	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(0);
+
+	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(2);	vecVerTex_Box_Index.push_back(6);
+	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(7);
+
+	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(5);	vecVerTex_Box_Index.push_back(6);
+	vecVerTex_Box_Index.push_back(1);	vecVerTex_Box_Index.push_back(6);	vecVerTex_Box_Index.push_back(2);
+
+	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(0);	vecVerTex_Box_Index.push_back(3);
+	vecVerTex_Box_Index.push_back(4);	vecVerTex_Box_Index.push_back(3);	vecVerTex_Box_Index.push_back(7);
+
 
 	for (int i = 0; i < vecVerTex_Box_Index.size(); i++)
 	{
 		v.p = vecVerTex_Box[vecVerTex_Box_Index[i]];
-		//if (i % 6 == 0)
+
+		if (i % 6 == 0)
 			v.color = D3DCOLOR_XRGB(rand() % 256, rand() % 256, rand() % 256);
 
 		m_vecVertex.push_back(v);
@@ -70,7 +74,7 @@ void cCubePC::Render()
 	g_pD3DDevice->SetTexture(0, m_pTexture);	// 텍스쳐 사용 선언
 	g_pD3DDevice->SetMaterial(&m_material);
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &m_matWorld);
-	g_pD3DDevice->SetFVF(ST_PNT_VERTEX::FVF);
+	g_pD3DDevice->SetFVF(ST_PC_VERTEX::FVF);
 	for (int i = 0; i < m_vecVertex.size(); i++)
 		g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex.size() / 3, &m_vecVertex[0], sizeof(ST_PC_VERTEX));
 

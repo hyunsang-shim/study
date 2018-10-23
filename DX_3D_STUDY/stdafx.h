@@ -231,6 +231,8 @@ varName=var;\
 #include "cFrame.h"
 #include "cAseLoader_inst.h"
 #include "cDeviceManager.h"
+#include "cRawLoader.h"
+#include "cHeightMap.h"
 
 
 //#include "cCubeman.h"
