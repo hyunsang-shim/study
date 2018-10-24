@@ -91,6 +91,8 @@ void cHeightMap::Setup(string Filename)
 
 	m_pMesh->UnlockAttributeBuffer();
 
+
+	printf("Number of Faces [ %4d ]\t x3 = [ %d ] \n", m_pMesh->GetNumFaces(), m_pMesh->GetNumFaces()*3);
 	vector<DWORD> adjacencyBuffer(m_pMesh->GetNumFaces() * 3);
 	m_pMesh->GenerateAdjacency(0.0f, &adjacencyBuffer[0]);
 
@@ -119,5 +121,7 @@ void cHeightMap::Render()
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
 	g_pD3DDevice->SetMaterial(&m_DefaultMaterial);
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
+	g_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	m_pMesh->DrawSubset(0);
+	g_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "cMainGame.h"
+#include "cSkinnedMesh.h"
 
 class cCubePC;
 class cBoxman;
@@ -25,6 +26,7 @@ cMainGame::cMainGame()
 	, m_pBoxman(NULL)
 	, m_pMeshTeapot(NULL)
 	, m_pHeightmap(NULL)
+	, m_pLoadFromX(NULL)			// x 파일 불러오기
 	, m_vEye(10, 8, -15)
 	, m_vLookAt(0, 0, 0)
 	, m_vUp(0, 1, 0)
@@ -46,6 +48,7 @@ cMainGame::cMainGame()
 	, m_isJumping_Top(false)
 	, m_isCamFollow(false)
 	, m_pRootFrame(NULL)		// 강사님 ASE 로더
+	, m_pSkinnedMesh(NULL)
 {
 	g_pDeviceManager;
 
@@ -74,11 +77,15 @@ cMainGame::~cMainGame()
 	g_pObjectManager->Destroy();
 	g_pTextureManager->Destroy();*/
 
+	SAFE_DELETE(m_pSkinnedMesh);
+
 	SAFE_RELEASE(m_pMeshTeapot);
+	SAFE_DELETE(m_pLoadFromX);
 
 
 	g_pDeviceManager->Destroy();
 }
+
 
 void cMainGame::Setup() 
 {
@@ -105,18 +112,30 @@ void cMainGame::Setup()
 	m_pCubePC->Setup();
 	m_pCubePC->SetBoxPosition(D3DXVECTOR3(1.0f, 0.0f, 1.0f));
 
-	m_pBoxman = new cBoxman;
-	m_pBoxman->Setup(_T("D.VA.png"));
+	//m_pBoxman = new cBoxman;
+	//m_pBoxman->Setup(_T("D.VA.png"));
 		
 	//m_pMap = new cMap;
 	//m_pMap->Setup();
 
-	m_pHeightmap = new cHeightMap;
-	m_pHeightmap->Setup("HeightMap/HeightMap.raw");
+	//m_pHeightmap = new cHeightMap;
+	//m_pHeightmap->Setup("HeightMap/HeightMap.raw");
 
 	// 강사님 ASE로더
 	//cASELoader_inst loader;
 	//m_pRootFrame = loader.Load("woman/woman_01_all.ASE");
+
+	{
+		m_pLoadFromX = new cLoadXFile;
+		m_pLoadFromX->Setup("Xfile/bigship1.x");
+	}
+
+	// Skinned Mesh Setup
+	{
+	//	m_pSkinnedMesh = new cSkinnedMesh;
+	//	m_pSkinnedMesh->Setup("Xfile", "zealot.X");
+	}
+
 }
 
 void cMainGame::Update(){
@@ -284,7 +303,9 @@ void cMainGame::Update(){
 	if (m_pRootFrame)
 		m_pRootFrame->Update(m_pRootFrame->GetKeyFrame(), NULL);
 
-	
+	if (m_pSkinnedMesh)
+		m_pSkinnedMesh->Update();
+
 }
 
 void cMainGame::Render()
@@ -292,37 +313,51 @@ void cMainGame::Render()
 	g_pD3DDevice->Clear(NULL, NULL, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(64,64,64), 1.0f, 0);
 	g_pD3DDevice->BeginScene();
 	
-	//g_pD3DDevice->SetMaterial(&m_matWhite);  // 파일에서 불러온 매터리얼 확인을 위해 주석처리 함
-	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
-	g_pD3DDevice->SetLight(0, &SpotLight);
-	g_pD3DDevice->SetLight(1, &PointLight);
-
-	if (m_swDirLight)
-		g_pD3DDevice->SetLight(2, &DirLight);
-	else
-		g_pD3DDevice->SetLight(3, &DirLight_Default);
-
-	g_pD3DDevice->LightEnable(0, true);
-	g_pD3DDevice->LightEnable(1, true);
-
-	if (m_swDirLight)
-	{
-		g_pD3DDevice->LightEnable(2, true);
-		g_pD3DDevice->LightEnable(3, false);
-	}
-	else
-	{
-		g_pD3DDevice->LightEnable(2, false);
-		g_pD3DDevice->LightEnable(3, true);
-	}
-
-	if (m_swSpotLight)
-	{
-		g_pD3DDevice->LightEnable(0, true);
-	}
-	else
-		g_pD3DDevice->LightEnable(0, false);
 	
+	// Draw and Set Lights
+	{
+		//g_pD3DDevice->SetMaterial(&m_matWhite);  // 파일에서 불러온 매터리얼 확인을 위해 주석처리 함
+		g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
+		g_pD3DDevice->SetLight(0, &SpotLight);
+		g_pD3DDevice->SetLight(1, &PointLight);
+
+
+		if (m_swDirLight)
+			g_pD3DDevice->SetLight(2, &DirLight);
+		else
+			g_pD3DDevice->SetLight(3, &DirLight_Default);
+
+		g_pD3DDevice->LightEnable(0, true);
+		g_pD3DDevice->LightEnable(1, true);
+
+		if (m_swDirLight)
+		{
+			g_pD3DDevice->LightEnable(2, true);
+			g_pD3DDevice->LightEnable(3, false);
+		}
+		else
+		{
+			g_pD3DDevice->LightEnable(2, false);
+			g_pD3DDevice->LightEnable(3, true);
+		}
+
+		if (m_swSpotLight)
+		{
+			g_pD3DDevice->LightEnable(0, true);
+		}
+		else
+			g_pD3DDevice->LightEnable(0, false);
+
+	}
+
+
+	D3DXMATRIXA16 matWorld;
+	D3DXMatrixIdentity(&matWorld);
+	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+	g_pTimeManager->Update();
+	if (m_pSkinnedMesh)
+		m_pSkinnedMesh->Render(NULL);
 	//if (m_pFont)
 	//{
 	//	m_pFont->DrawTextA(NULL, message.c_str(), -1, &m_RectTxtArea, DT_LEFT, D3DCOLOR_XRGB(200, 200, 200));
@@ -378,10 +413,11 @@ void cMainGame::Render()
 	// 메시 렌더링 예제
 	//Mesh_Render();
 
-	if (m_pHeightmap)
-		m_pHeightmap->Render();
+	//if (m_pHeightmap)
+	//	m_pHeightmap->Render();
 
-
+	if (m_pLoadFromX)
+		m_pLoadFromX->Render();
 
 	g_pD3DDevice->EndScene();
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);

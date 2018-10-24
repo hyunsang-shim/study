@@ -13,7 +13,7 @@
 
 #define	SAFE_RELEASE(p) { if(p) p->Release(); p = NULL;}
 #define SAFE_DELETE(p)  { if(p) delete p; p = NULL;} 
-
+#define SAFE_DELETE_ARRAY(p) {if(p) delete[] p; p = NULL;}
 
 // ΩÃ±€≈Ê ∏≈≈©∑Œ º≥¡§
 #define SINGLETONE(class_name) \
@@ -233,6 +233,7 @@ varName=var;\
 #include "cDeviceManager.h"
 #include "cRawLoader.h"
 #include "cHeightMap.h"
-
+#include "cLoadXFile.h"
+#include "cTimerManager.h"
 
 //#include "cCubeman.h"

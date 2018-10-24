@@ -8,10 +8,12 @@ class cCubeman;
 class cMap;
 class cASE_Char;
 class cHeightMap;
+class cLoadXFile;
 
-// 강사님 ASE 로더
+
+// 강사님st
 class cFrame;
-
+class cSkinnedMesh;
 
 
 
@@ -105,11 +107,12 @@ private:
 	vector<D3DXVECTOR3>			m_vecOriginalBox;
 	bool						m_isCamFollow;				// 카메라를 따라가게 할 것인지에 대한 플래그 값.
 	cHexagon*					m_pHexagon;
+	cLoadXFile*					m_pLoadFromX;
 	vector<D3DXVECTOR3>			m_vWaypoints;
 
 	LPD3DXMESH					m_pMeshTeapot;			 	// 메시 렌더링 예제
 	D3DMATERIAL9				m_stMrlTeapot;				// 메시 렌더링 예제
-
+	cSkinnedMesh*				m_pSkinnedMesh;
 	
 	IDirect3DTexture9*			m_pTextures;
 

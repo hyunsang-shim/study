@@ -16,6 +16,12 @@
     <Filter Include="CubeMan">
       <UniqueIdentifier>{14612513-d2c4-4e87-983f-4f73c20aca12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="XFile">
+      <UniqueIdentifier>{46b70bf6-1e7e-4329-b6e8-87f917c82f2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASE_LOADER">
+      <UniqueIdentifier>{018207ef-aba6-4ecb-8acb-58fa1a922182}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -72,12 +78,6 @@
     <ClInclude Include="Asciitok.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="cASELoader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="cASE_Char.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="cObject.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -90,9 +90,6 @@
     <ClInclude Include="cFrame.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="cAseLoader_inst.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="cTextureManager_inst.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -101,6 +98,27 @@
     </ClInclude>
     <ClInclude Include="cHeightMap.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="cAllocateHierarchy.h">
+      <Filter>XFile</Filter>
+    </ClInclude>
+    <ClInclude Include="cSkinnedMesh.h">
+      <Filter>XFile</Filter>
+    </ClInclude>
+    <ClInclude Include="cTimerManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="cASE_Char.h">
+      <Filter>ASE_LOADER</Filter>
+    </ClInclude>
+    <ClInclude Include="cASELoader.h">
+      <Filter>ASE_LOADER</Filter>
+    </ClInclude>
+    <ClInclude Include="cAseLoader_inst.h">
+      <Filter>ASE_LOADER</Filter>
+    </ClInclude>
+    <ClInclude Include="cLoadXFile.h">
+      <Filter>XFile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,12 +161,6 @@
     <ClCompile Include="cCubeObj.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="cASELoader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="cASE_Char.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="cObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -161,9 +173,6 @@
     <ClCompile Include="cFrame.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="cAseLoader_inst.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="cTextureManager_inst.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -172,6 +181,27 @@
     </ClCompile>
     <ClCompile Include="cHeightMap.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="cSkinnedMesh.cpp">
+      <Filter>XFile</Filter>
+    </ClCompile>
+    <ClCompile Include="cAllocateHierarchy.cpp">
+      <Filter>XFile</Filter>
+    </ClCompile>
+    <ClCompile Include="cTimerManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="cAseLoader_inst.cpp">
+      <Filter>ASE_LOADER</Filter>
+    </ClCompile>
+    <ClCompile Include="cASELoader.cpp">
+      <Filter>ASE_LOADER</Filter>
+    </ClCompile>
+    <ClCompile Include="cASE_Char.cpp">
+      <Filter>ASE_LOADER</Filter>
+    </ClCompile>
+    <ClCompile Include="cLoadXFile.cpp">
+      <Filter>XFile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
