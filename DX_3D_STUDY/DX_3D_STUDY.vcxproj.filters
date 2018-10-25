@@ -22,6 +22,9 @@
     <Filter Include="ASE_LOADER">
       <UniqueIdentifier>{018207ef-aba6-4ecb-8acb-58fa1a922182}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FrustumCulling">
+      <UniqueIdentifier>{62fb6297-db19-4632-9052-7d5a4a3c036d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -120,6 +123,9 @@
     <ClInclude Include="cLoadXFile.h">
       <Filter>XFile</Filter>
     </ClInclude>
+    <ClInclude Include="cFrustumCulling.h">
+      <Filter>FrustumCulling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -202,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="cLoadXFile.cpp">
       <Filter>XFile</Filter>
+    </ClCompile>
+    <ClCompile Include="cFrustumCulling.cpp">
+      <Filter>FrustumCulling</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

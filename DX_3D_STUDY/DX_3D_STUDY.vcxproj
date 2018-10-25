@@ -158,6 +158,7 @@
     <ClInclude Include="cCubePC.h" />
     <ClInclude Include="cDeviceManager.h" />
     <ClInclude Include="cFrame.h" />
+    <ClInclude Include="cFrustumCulling.h" />
     <ClInclude Include="cGrid.h" />
     <ClInclude Include="cHeightMap.h" />
     <ClInclude Include="cHexagon.h" />
@@ -189,6 +190,7 @@
     <ClCompile Include="cCubePC.cpp" />
     <ClCompile Include="cDeviceManager.cpp" />
     <ClCompile Include="cFrame.cpp" />
+    <ClCompile Include="cFrustumCulling.cpp" />
     <ClCompile Include="cGrid.cpp" />
     <ClCompile Include="cHeightMap.cpp" />
     <ClCompile Include="cHexagon.cpp" />

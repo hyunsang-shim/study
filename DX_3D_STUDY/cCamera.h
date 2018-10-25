@@ -20,17 +20,20 @@ private:
 	D3DXVECTOR3		m_vBoxPosition;			// 메인에서 넘겨 받는다.
 	D3DXVECTOR3		m_vBoxDirection;		// 캐릭터가 향하는 방향. 메인에서 넘겨 받는다.
 	bool			m_isFollow;				// 카메라가 캐릭터를 따라 다닐 것인가?
-	
+	D3DXMATRIXA16	matProj;
+
+
 
 public:
 	void			Setup();
 	void			Update();
 	void			SetCameraDistance(double value);
 	void			SetCameraRotationAngle(D3DXVECTOR3 Angle);
-	D3DXVECTOR3		GetCamPosY();
+	D3DXVECTOR3		GetCamPos();
 	void			SetCameraPosY(double posY);
 	void			SetBoxPosition(D3DXVECTOR3 position);	
 	void			ChangeCameraMode(bool value);
+	D3DXVECTOR3		GetCamEye();
 
 };
 

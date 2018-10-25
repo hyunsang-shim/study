@@ -26,7 +26,6 @@ void cCamera::Setup()
 	RECT rc;
 	GetClientRect(g_hWnd, &rc);
 
-	D3DXMATRIXA16		matProj;
 	D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4.0f, rc.right / (float)rc.bottom, 1.0f, 1000.0f);
 
 	g_pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
@@ -34,6 +33,7 @@ void cCamera::Setup()
 
 void cCamera::Update()
 {
+
 	RECT rc;
 	GetClientRect(g_hWnd, &rc);
 	/*
@@ -48,8 +48,6 @@ void cCamera::Update()
 	// 휠 움직임에 따른 카메라 거리값 갱신
 	m_vEye = D3DXVECTOR3(0, m_fCameraDistance, -m_fCameraDistance);
 
-	
-	
 	// 카메라 모드에 따른 따라가기 기능 설정
 	if (m_isFollow)
 	{		
@@ -62,10 +60,6 @@ void cCamera::Update()
 		m_vEye_FIXED = m_vEye_FOLLOW = m_vEye;
 		m_vLookAt_FIXED = m_vLookAt_FOLLOW = m_vLookAt;
 	}
-
-
-
-	
 
 
 	D3DXMATRIXA16 matView;
@@ -89,7 +83,7 @@ void cCamera::SetCameraRotationAngle(D3DXVECTOR3 Angle)
 	m_vCamRotAngle.y = Angle.y;
 }
 
-D3DXVECTOR3 cCamera::GetCamPosY()
+D3DXVECTOR3 cCamera::GetCamPos()
 {
 	return m_vEye;
 }
@@ -117,4 +111,10 @@ void cCamera::ChangeCameraMode(bool value)
 		m_isFollow = false;
 	}
 
+}
+
+
+D3DXVECTOR3 cCamera::GetCamEye()
+{
+	return D3DXVECTOR3(0, m_fCameraDistance, -m_fCameraDistance);;
 }

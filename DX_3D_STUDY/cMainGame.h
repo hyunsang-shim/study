@@ -9,6 +9,7 @@ class cMap;
 class cASE_Char;
 class cHeightMap;
 class cLoadXFile;
+class cFrustumCulling;
 
 
 // 강사님st
@@ -109,13 +110,13 @@ private:
 	cHexagon*					m_pHexagon;
 	cLoadXFile*					m_pLoadFromX;
 	vector<D3DXVECTOR3>			m_vWaypoints;
+	cFrustumCulling*			m_pFrustum;
 
 	LPD3DXMESH					m_pMeshTeapot;			 	// 메시 렌더링 예제
 	D3DMATERIAL9				m_stMrlTeapot;				// 메시 렌더링 예제
 	cSkinnedMesh*				m_pSkinnedMesh;
 	
 	IDirect3DTexture9*			m_pTextures;
-
 
 	
 

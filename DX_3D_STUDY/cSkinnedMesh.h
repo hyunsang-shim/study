@@ -1,4 +1,6 @@
 #pragma once
+#define BLENDING_START_RATE 0.85f
+
 class cSkinnedMesh
 {
 public:
@@ -23,9 +25,16 @@ public:
 	void UpdateSkinnedMesh(LPD3DXFRAME pFrame);
 
 	void SetAnimationIndex(int nIndex);
-	void SetAnimationIndexBlend(int nIndex);
+	int SetAnimationIndexBlend(int nIndex);
 
+	float GetCurAnimPosRate();
 
+private:
+	LPD3DXANIMATIONSET	m_pPrevAnimSet;
+	LPD3DXANIMATIONSET	m_pNextAnimSet;
+	float				m_fCurAnimPosRate;
+
+		
 
 
 };

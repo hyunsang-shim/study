@@ -27,6 +27,7 @@ cMainGame::cMainGame()
 	, m_pMeshTeapot(NULL)
 	, m_pHeightmap(NULL)
 	, m_pLoadFromX(NULL)			// x 파일 불러오기
+	, m_pFrustum(NULL)
 	, m_vEye(10, 8, -15)
 	, m_vLookAt(0, 0, 0)
 	, m_vUp(0, 1, 0)
@@ -81,7 +82,7 @@ cMainGame::~cMainGame()
 
 	SAFE_RELEASE(m_pMeshTeapot);
 	SAFE_DELETE(m_pLoadFromX);
-
+	SAFE_DELETE(m_pFrustum);
 
 	g_pDeviceManager->Destroy();
 }
@@ -132,8 +133,13 @@ void cMainGame::Setup()
 
 	// Skinned Mesh Setup
 	{
-	//	m_pSkinnedMesh = new cSkinnedMesh;
-	//	m_pSkinnedMesh->Setup("Xfile", "zealot.X");
+		m_pSkinnedMesh = new cSkinnedMesh;
+		m_pSkinnedMesh->Setup("Xfile", "zealot.X");
+	}
+
+	{
+		m_pFrustum = new cFrustumCulling;
+		m_pFrustum->Setup();
 	}
 
 }
@@ -312,11 +318,52 @@ void cMainGame::Render()
 {	
 	g_pD3DDevice->Clear(NULL, NULL, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(64,64,64), 1.0f, 0);
 	g_pD3DDevice->BeginScene();
+		
+
+	D3DXMATRIXA16 matWorld;
+	D3DXMatrixIdentity(&matWorld);
+	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+
+
+	// Draw Something
+	if (m_pGrid)
+		m_pGrid->Render();
+
+
+	g_pTimeManager->Update();
+	if (m_pSkinnedMesh)
+		m_pSkinnedMesh->Render(NULL);
+	//if (m_pFont)
+	//{
+	//	m_pFont->DrawTextA(NULL, message.c_str(), -1, &m_RectTxtArea, DT_LEFT, D3DCOLOR_XRGB(200, 200, 200));
+	//}
+
+
+	if (m_pFrustum)
+		m_pFrustum->Render();
+
+	// 강사님 추상화 클래스 방식
+	/* 
+	if (m_pCubeman)
+		m_pCubeman->Render();
 	
-	
+	// sample code
+	{
+		g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
+		D3DXMATRIXA16	matWorld;
+		D3DXMatrixIdentity(&matWorld);
+		g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+		g_pD3DDevice->SetTexture(0, m_pTexture);	// 텍스쳐 사용 선언
+		g_pD3DDevice->SetFVF(ST_PT_VERTEX::FVF);
+		g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex.size() / 3, &m_vecVertex[0], sizeof(ST_PT_VERTEX));
+
+		g_pD3DDevice->SetTexture(0, NULL);	// 텍스쳐 사용 하지 않음 선언
+	}
+	*/
 	// Draw and Set Lights
 	{
-		//g_pD3DDevice->SetMaterial(&m_matWhite);  // 파일에서 불러온 매터리얼 확인을 위해 주석처리 함
+		g_pD3DDevice->SetMaterial(&m_matWhite);  // 파일에서 불러온 매터리얼 확인을 위해 주석처리 함
 		g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
 		g_pD3DDevice->SetLight(0, &SpotLight);
 		g_pD3DDevice->SetLight(1, &PointLight);
@@ -351,43 +398,8 @@ void cMainGame::Render()
 	}
 
 
-	D3DXMATRIXA16 matWorld;
-	D3DXMatrixIdentity(&matWorld);
-	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
-
-	g_pTimeManager->Update();
-	if (m_pSkinnedMesh)
-		m_pSkinnedMesh->Render(NULL);
-	//if (m_pFont)
-	//{
-	//	m_pFont->DrawTextA(NULL, message.c_str(), -1, &m_RectTxtArea, DT_LEFT, D3DCOLOR_XRGB(200, 200, 200));
-	//}
-
-	// 강사님 추상화 클래스 방식
-	/* 
-	if (m_pCubeman)
-		m_pCubeman->Render();
-	
-	// sample code
-	{
-		g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
-		D3DXMATRIXA16	matWorld;
-		D3DXMatrixIdentity(&matWorld);
-		g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
-		g_pD3DDevice->SetTexture(0, m_pTexture);	// 텍스쳐 사용 선언
-		g_pD3DDevice->SetFVF(ST_PT_VERTEX::FVF);
-		g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex.size() / 3, &m_vecVertex[0], sizeof(ST_PT_VERTEX));
-
-		g_pD3DDevice->SetTexture(0, NULL);	// 텍스쳐 사용 하지 않음 선언
-	}
-	*/
 
 
-
-
-	// Draw Something
-	if (m_pGrid)
-		m_pGrid->Render();
 
 	/*if (m_pCubePC)
 		m_pCubePC->Render();*/
@@ -418,6 +430,7 @@ void cMainGame::Render()
 
 	if (m_pLoadFromX)
 		m_pLoadFromX->Render();
+
 
 	g_pD3DDevice->EndScene();
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
@@ -508,6 +521,7 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		m_ptPrevMouse.x = LOWORD(lParam);
 		m_ptPrevMouse.y = HIWORD(lParam);
 		m_isLButtonDown = true;
+		m_pSkinnedMesh->SetAnimationIndex(0);
 		break;
 	case WM_LBUTTONUP:
 		m_isLButtonDown = false;
@@ -545,7 +559,7 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			double fDeltaY = (double)ptCurMouse.y - m_ptPrevMouse.y;
 
 			// y축 이동량에 기반하여 카메라를 위 또는 아래로 이동시킨다.
-			m_fCamTransY += m_pCamera->GetCamPosY().y + fDeltaY / 100.0f ;
+			m_fCamTransY += m_pCamera->GetCamPos().y + fDeltaY / 100.0f ;
 			
 			m_ptPrevMouse = ptCurMouse;
 
@@ -553,11 +567,38 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		}
 		break;
+	case WM_RBUTTONDOWN:
+	{
+
+		m_pFrustum->Update(m_pCamera->GetCamPos());
+		static int aidx = 1;
+		static float checker = 0.0f;
+		checker = m_pSkinnedMesh->GetCurAnimPosRate();
+		printf("%.2f ", checker);
+		if (checker > BLENDING_START_RATE)
+		{
+			switch (m_pSkinnedMesh->SetAnimationIndexBlend(aidx))
+			{
+			case 1:				
+				if (++aidx >= 5)
+					aidx = 0;
+
+				printf(" new aidx : #%d\n", aidx);
+				checker = 0.0f;
+				break;
+			case 99:
+				aidx--;
+				break;
+			}
+		}
+		
+	}
+		break;
 	case WM_MOUSEWHEEL:
 		m_fCameraDistance -= (GET_WHEEL_DELTA_WPARAM(wParam) / 90.0f);
-
+/*
 		if (m_fCameraDistance < EPSILON)
-			m_fCameraDistance = EPSILON;
+			m_fCameraDistance = EPSILON;*/
 
 		// 카메라 클래스에 카메라 거리값을 넘겨준다.
 		m_pCamera->SetCameraDistance(m_fCameraDistance);
@@ -566,26 +607,25 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_KEYDOWN:
 			switch (wParam)
 			{
-				/*
-								case VK_SPACE:
-									if (m_isJumping)
-										break;
-									else
-									{
-										m_isJumping = true;
-										m_isJumping_Top = false;
-										m_pBoxman->SetjumpState(true, false);
-									}
-									break;
-								case 'C':
-									if (m_isCamFollow)
-									m_isCamFollow = false;
-									else
-									m_isCamFollow = true;
+				
+				case VK_SPACE:
+					if (m_isJumping)
+						break;
+					else
+					{
+						m_isJumping = true;
+						m_isJumping_Top = false;
+						m_pBoxman->SetjumpState(true, false);
+					}
+					break;
+				case 'C':
+					if (m_isCamFollow)
+					m_isCamFollow = false;
+					else
+					m_isCamFollow = true;
 
-									m_pCamera->ChangeCameraMode(m_isCamFollow);
-									break;
-				*/
+					m_pCamera->ChangeCameraMode(m_isCamFollow);
+					break;				
 			case 'L':
 				if (m_swDirLight)
 					m_swDirLight = false;

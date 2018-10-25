@@ -235,5 +235,6 @@ varName=var;\
 #include "cHeightMap.h"
 #include "cLoadXFile.h"
 #include "cTimerManager.h"
+#include "cFrustumCulling.h"
 
 //#include "cCubeman.h"
