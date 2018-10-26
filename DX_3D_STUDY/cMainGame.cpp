@@ -425,8 +425,8 @@ void cMainGame::Render()
 
 
 
-	/*if (m_pCubePC)
-		m_pCubePC->Render();*/
+	if (m_pCubePC)
+		m_pCubePC->Render();
 
 	if (m_pMap)
 		m_pMap->Render();

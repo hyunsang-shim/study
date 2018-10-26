@@ -166,6 +166,8 @@ void cSkinnedMesh::Render(LPD3DXFRAME pFrame)
 	{
 		Render(pFrame->pFrameSibling);
 	}
+	g_pD3DDevice->SetTexture(0, NULL);
+
 }
 
 void cSkinnedMesh::SetupBoneMatrixPtrs(LPD3DXFRAME pFrame)
@@ -362,7 +364,7 @@ void cSkinnedMesh::Update(ST_BONE * pCurrent, D3DXMATRIXA16 * pmatParent)
 
 	if (pmatParent)
 	{
-		pCurrent->CombineTransformationMatrix *= (*pmatParent);
+		pCurrent->CombineTransformationMatrix = pCurrent->CombineTransformationMatrix * (*pmatParent);
 	}
 
 	if (pCurrent->pFrameSibling)
