@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "cMainGame.h"
 #include "cSkinnedMesh.h"
+#include "cZealot.h"
+#include "cOBB.h"
 
 class cCubePC;
 class cBoxman;
@@ -27,7 +29,9 @@ cMainGame::cMainGame()
 	, m_pMeshTeapot(NULL)
 	, m_pHeightmap(NULL)
 	, m_pLoadFromX(NULL)			// x 파일 불러오기
-	, m_pFrustum(NULL)
+//	, m_pFrustum(NULL)
+	, m_pHoldZealot(NULL)
+	, m_pMoveZealot(NULL)
 	, m_vEye(10, 8, -15)
 	, m_vLookAt(0, 0, 0)
 	, m_vUp(0, 1, 0)
@@ -82,9 +86,14 @@ cMainGame::~cMainGame()
 
 	SAFE_RELEASE(m_pMeshTeapot);
 	SAFE_DELETE(m_pLoadFromX);
-	SAFE_DELETE(m_pFrustum);
+	//SAFE_DELETE(m_pFrustum);
+
+	
+	SAFE_DELETE(m_pHoldZealot);
+	SAFE_DELETE(m_pMoveZealot);
 
 	g_pDeviceManager->Destroy();
+	g_pSkinnedMeshManager->Destroy();
 }
 
 
@@ -133,13 +142,26 @@ void cMainGame::Setup()
 
 	// Skinned Mesh Setup
 	{
-		m_pSkinnedMesh = new cSkinnedMesh;
-		m_pSkinnedMesh->Setup("Xfile", "zealot.X");
+		//m_pSkinnedMesh = new cSkinnedMesh;
+		//m_pSkinnedMesh->Setup("Zealot", "zealot.X");
 	}
 
 	{
-		m_pFrustum = new cFrustumCulling;
-		m_pFrustum->Setup();
+//		m_pFrustum = new cFrustumCulling;
+//		m_pFrustum->Setup();
+	}
+
+	// OBB 충돌 판정 예제
+	{
+		m_pHoldZealot = new cZealot;
+		m_pHoldZealot->Setup();
+		
+
+		m_pMoveZealot = new cZealot;
+		m_pMoveZealot->Setup();
+		cCharacter* pCharacter = new cCharacter;
+		m_pMoveZealot->SetCharacterController(pCharacter);
+		SAFE_RELEASE(pCharacter);
 	}
 
 }
@@ -173,12 +195,10 @@ void cMainGame::Update(){
 		if (GetKeyState('A') & 0x8000)
 		{
 			m_isRotating = true;
-			m_fBoxRotY -= 0.1f;
 		}
 		else if (GetKeyState('D') & 0x8000)
 		{
 			m_isRotating = true;
-			m_fBoxRotY += 0.1f;
 		}
 		else
 			m_isRotating = false;
@@ -275,14 +295,11 @@ void cMainGame::Update(){
 		{
 			m_pBoxman->SetMoveState(m_isMoving | m_isRotating, m_isRunning);
 			m_pBoxman->SetjumpState(m_isJumping, m_isJumping_Top);
-			m_pBoxman->SetRootPosition(m_vBoxPosition);
-			m_pBoxman->SetRootDirection(m_vBoxDirection);
-			m_pBoxman->SetRootRotationY(m_fBoxRotY);
+			//m_pBoxman->SetRootPosition(m_vBoxPosition);
+			//m_pBoxman->SetRootDirection(m_vBoxDirection);
+			//m_pBoxman->SetRootRotationY(m_fBoxRotY);
 			m_pBoxman->SetRootScale(m_fBoxScale);
 		}
-
-
-
 	}
 
 	//카메라 업데이트
@@ -309,8 +326,17 @@ void cMainGame::Update(){
 	if (m_pRootFrame)
 		m_pRootFrame->Update(m_pRootFrame->GetKeyFrame(), NULL);
 
-	if (m_pSkinnedMesh)
-		m_pSkinnedMesh->Update();
+//	if (m_pSkinnedMesh)
+//		m_pSkinnedMesh->Update();
+
+	// OBB 충돌 판정 예제
+	{
+		if (m_pHoldZealot)
+			m_pHoldZealot->Update();
+
+		if (m_pMoveZealot)
+			m_pMoveZealot->Update();
+	}
 
 }
 
@@ -332,16 +358,16 @@ void cMainGame::Render()
 
 
 	g_pTimeManager->Update();
-	if (m_pSkinnedMesh)
-		m_pSkinnedMesh->Render(NULL);
+	//if (m_pSkinnedMesh)
+	//	m_pSkinnedMesh->Render(NULL);
 	//if (m_pFont)
 	//{
 	//	m_pFont->DrawTextA(NULL, message.c_str(), -1, &m_RectTxtArea, DT_LEFT, D3DCOLOR_XRGB(200, 200, 200));
 	//}
 
 
-	if (m_pFrustum)
-		m_pFrustum->Render();
+	//if (m_pFrustum)
+//		m_pFrustum->Render();
 
 	// 강사님 추상화 클래스 방식
 	/* 
@@ -399,8 +425,6 @@ void cMainGame::Render()
 
 
 
-
-
 	/*if (m_pCubePC)
 		m_pCubePC->Render();*/
 
@@ -430,6 +454,19 @@ void cMainGame::Render()
 
 	if (m_pLoadFromX)
 		m_pLoadFromX->Render();
+
+	// OBB 충돌 판정 예제
+	{
+		D3DCOLOR c = cOBB::IsCollision(m_pHoldZealot->GetOBB(),	m_pMoveZealot->GetOBB()) ? D3DCOLOR_XRGB(200, 0, 0) : D3DCOLOR_XRGB(128, 128, 128);
+
+		if (m_pHoldZealot)
+			m_pHoldZealot->Render(c);
+
+		if (m_pMoveZealot)
+			m_pMoveZealot->Render(c);
+
+	}
+
 
 
 	g_pD3DDevice->EndScene();
@@ -521,7 +558,6 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		m_ptPrevMouse.x = LOWORD(lParam);
 		m_ptPrevMouse.y = HIWORD(lParam);
 		m_isLButtonDown = true;
-		m_pSkinnedMesh->SetAnimationIndex(0);
 		break;
 	case WM_LBUTTONUP:
 		m_isLButtonDown = false;
@@ -569,26 +605,30 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_RBUTTONDOWN:
 	{
-
-		m_pFrustum->Update(m_pCamera->GetCamPos());
-		static int aidx = 1;
-		static float checker = 0.0f;
-		checker = m_pSkinnedMesh->GetCurAnimPosRate();
-		printf("%.2f ", checker);
-		if (checker > BLENDING_START_RATE)
+//		if (m_pFrustum)
+//			m_pFrustum->Update(m_pCamera->GetCamPos());
+		
+		if (m_pSkinnedMesh)
 		{
-			switch (m_pSkinnedMesh->SetAnimationIndexBlend(aidx))
+			static int aidx = 1;
+			static float checker = 0.0f;
+			checker = m_pSkinnedMesh->GetCurAnimPosRate();
+			printf("%.2f ", checker);
+			if (checker > BLENDING_START_PLAY_RATE)
 			{
-			case 1:				
-				if (++aidx >= 5)
-					aidx = 0;
+				switch (m_pSkinnedMesh->SetAnimationIndexBlend(aidx))
+				{
+				case 1:
+					if (++aidx >= 5)
+						aidx = 0;
 
-				printf(" new aidx : #%d\n", aidx);
-				checker = 0.0f;
-				break;
-			case 99:
-				aidx--;
-				break;
+					printf(" new aidx : #%d\n", aidx);
+					checker = 0.0f;
+					break;
+				case 99:
+					aidx--;
+					break;
+				}
 			}
 		}
 		
@@ -609,14 +649,19 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				
 				case VK_SPACE:
-					if (m_isJumping)
-						break;
-					else
+				{
+					if (m_pBoxman)
 					{
-						m_isJumping = true;
-						m_isJumping_Top = false;
-						m_pBoxman->SetjumpState(true, false);
+						if (m_isJumping)
+							break;
+						else
+						{
+							m_isJumping = true;
+							m_isJumping_Top = false;
+							m_pBoxman->SetjumpState(true, false);
+						}
 					}
+				}
 					break;
 				case 'C':
 					if (m_isCamFollow)

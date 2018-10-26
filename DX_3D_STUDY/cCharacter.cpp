@@ -24,6 +24,7 @@ void cCharacter::Update()
 {
 	if (GetKeyState('W' & 0x8000))
 	{
+		printf("w ");
 		m_vPosition = m_vPosition + (m_vDirection * 0.1f);
 	}
 	if (GetKeyState('S' & 0x8000))
@@ -53,7 +54,17 @@ void cCharacter::Render()
 {
 }
 
+void cCharacter::SetPos(D3DXVECTOR3 pos)
+{
+	m_vPosition = pos;
+}
+
 D3DXVECTOR3 & cCharacter::GetPosition()
 {
 	return m_vPosition;
+}
+
+D3DXMATRIXA16 * cCharacter::GetTransform()
+{
+	return &m_matWorld;
 }

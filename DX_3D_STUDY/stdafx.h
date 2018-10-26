@@ -236,5 +236,6 @@ varName=var;\
 #include "cLoadXFile.h"
 #include "cTimerManager.h"
 #include "cFrustumCulling.h"
+#include "cSkinnedMeshManager.h"
 
 //#include "cCubeman.h"

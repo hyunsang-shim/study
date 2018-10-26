@@ -3,6 +3,8 @@
 
 
 cAllocateHierarchy::cAllocateHierarchy()
+	: m_vMin(0, 0, 0)
+	, m_vMax(0, 0, 0)
 {
 }
 
@@ -51,8 +53,6 @@ STDMETHODIMP cAllocateHierarchy::CreateMeshContainer(
 		string sFullPath = m_sFolder;
 		sFullPath = sFullPath + string("/") + string(pMaterials[i].pTextureFilename);
 		pBoneMesh->vecTexture.push_back(g_pTextureManager->GetTexture(sFullPath));
-
-
 	}
 
 	pSkinInfo->AddRef();
@@ -60,6 +60,30 @@ STDMETHODIMP cAllocateHierarchy::CreateMeshContainer(
 	
 	pMeshData->pMesh->AddRef();
 	pBoneMesh->MeshData.pMesh = pMeshData->pMesh;
+	
+	// 2018-10-26 추가
+	// OBB 충돌 처리를 위한 기능 추가 
+	// 강사님 소스 제공
+	{
+		if (pMeshData && pMeshData->pMesh)
+		{
+			D3DXVECTOR3 vMin(0, 0, 0), vMax(0, 0, 0);
+
+			LPVOID pV = NULL;
+
+			pMeshData->pMesh->LockVertexBuffer(0, &pV);
+
+			D3DXComputeBoundingBox((D3DXVECTOR3*)pV, pMeshData->pMesh->GetNumVertices(), D3DXGetFVFVertexSize(pMeshData->pMesh->GetFVF()), &vMin, &vMax);
+
+			D3DXVec3Minimize(&m_vMin, &m_vMin, &vMin);
+			D3DXVec3Maximize(&m_vMax, &m_vMax, &vMax);
+
+			pMeshData->pMesh->UnlockVertexBuffer();
+
+		}
+	}
+
+
 	pMeshData->pMesh->CloneMeshFVF(pMeshData->pMesh->GetOptions(), pMeshData->pMesh->GetFVF(), g_pD3DDevice, &pBoneMesh->pOrigMesh);
 
 

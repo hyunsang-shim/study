@@ -28,7 +28,7 @@ public :
 	void Destroy()
 	{
 		m_setObject.clear();
-		//assert(m_setObject.empty());	// 없어도 OK
+		assert(m_setObject.empty());	// 없어도 OK
 	}
 };
 

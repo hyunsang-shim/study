@@ -15,7 +15,7 @@ class cFrustumCulling;
 // °­»ç´Ôst
 class cFrame;
 class cSkinnedMesh;
-
+class cZealot;
 
 
 
@@ -117,6 +117,10 @@ private:
 	cSkinnedMesh*				m_pSkinnedMesh;
 	
 	IDirect3DTexture9*			m_pTextures;
+
+
+	cZealot*					m_pHoldZealot;
+	cZealot*					m_pMoveZealot;
 
 	
 

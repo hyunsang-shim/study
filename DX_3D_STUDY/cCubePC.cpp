@@ -66,6 +66,48 @@ void cCubePC::Update()
 	D3DXMatrixRotationY(&m_matRotY, m_fBoxRotY);	
 	D3DXMatrixTranslation(&m_matTrans, m_vBoxPosition.x, m_vBoxPosition.y, m_vBoxPosition.z);
 	m_matWorld = m_matScale * m_matRotX * m_matRotY * m_matTrans;
+
+
+
+	if (GetKeyState('A') & 0x8000)
+	{
+		m_fBoxRotY -= 0.1f;
+	}
+	else if (GetKeyState('D') & 0x8000)
+	{
+		m_fBoxRotY += 0.1f;
+	}
+
+
+
+	// 박스의 이동
+
+	if (GetKeyState('W') & 0x8000)
+	{
+		
+		if (GetKeyState(VK_SHIFT) & 0x8000)
+		{
+			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * -0.18f);		
+		}
+		else
+		{
+			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * -0.1f);		
+		}
+
+	}
+	else if (GetKeyState('S') & 0x8000)
+	{		
+		if (GetKeyState(VK_SHIFT) & 0x8000)
+		{
+			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.18f);	
+		}
+		else
+		{
+
+			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.1f);			
+		}
+	}
+
 }
 
 void cCubePC::Render()

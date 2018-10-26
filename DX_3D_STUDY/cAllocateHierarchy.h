@@ -23,6 +23,8 @@ public:
 	~cAllocateHierarchy();
 protected:
 	SYNTHESIZE(string, m_sFolder, Folder);
+	SYNTHESIZE(D3DXVECTOR3, m_vMin, Min);
+	SYNTHESIZE(D3DXVECTOR3, m_vMax, Max);
 public:
 	STDMETHOD(CreateFrame)(THIS_ LPCSTR Name,
 		LPD3DXFRAME* ppNewFrame) override;

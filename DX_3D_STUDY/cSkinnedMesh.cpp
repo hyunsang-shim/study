@@ -2,6 +2,7 @@
 #include "cSkinnedMesh.h"
 
 #include "cAllocateHierarchy.h"
+#include "cSkinnedMeshManager.h" // OBB 충돌 처리를 위한 추가 2018-10-26
 
 
 cSkinnedMesh::cSkinnedMesh()
@@ -12,14 +13,39 @@ cSkinnedMesh::cSkinnedMesh()
 	, m_isAnimBlend(false)
 	, m_pPrevAnimSet(NULL)
 	, m_pNextAnimSet(NULL)
+	, m_vMax(0, 0, 0)					// OBB 충돌 처리를 위한 추가 2018-10-26
+	, m_vMin(0, 0, 0)					// OBB 충돌 처리를 위한 추가 2018-10-26
 {	
+	D3DXMatrixIdentity(&m_matWorldTM);	// OBB 충돌 처리를 위한 추가 2018-10-26
 }
 
+cSkinnedMesh::cSkinnedMesh(char * szFolder, char * szFilename)	
+	: m_pAnimController(NULL)
+	, m_fBlendTime(0.3f)
+	, m_fPassedBlendTime(0.0f)
+	, m_isAnimBlend(false)
+	, m_pPrevAnimSet(NULL)
+	, m_pNextAnimSet(NULL)
+	, m_vMax(0, 0, 0)				// OBB 충돌 처리를 위한 추가 2018-10-26
+	, m_vMin(0, 0, 0)				// OBB 충돌 처리를 위한 추가 2018-10-26
+{
+	D3DXMatrixIdentity(&m_matWorldTM);			// OBB 충돌 처리를 위한 추가 2018-10-26
+	cSkinnedMesh* pSkinnedMesh = g_pSkinnedMeshManager->GetSkinnedMesh(szFolder, szFilename);	// OBB 충돌 처리를 위한 추가 2018-10-26
+	m_pRoot = pSkinnedMesh->m_pRoot;
+
+	m_vMin = pSkinnedMesh->m_vMin;
+	m_vMax = pSkinnedMesh->m_vMax;
+
+	pSkinnedMesh->m_pAnimController->CloneAnimationController(
+		pSkinnedMesh->m_pAnimController->GetMaxNumAnimationOutputs(),
+		pSkinnedMesh->m_pAnimController->GetMaxNumAnimationSets(),
+		pSkinnedMesh->m_pAnimController->GetMaxNumTracks(),
+		pSkinnedMesh->m_pAnimController->GetMaxNumEvents(),
+		&m_pAnimController);
+}
 
 cSkinnedMesh::~cSkinnedMesh()
-{
-	cAllocateHierarchy	ah;
-	D3DXFrameDestroy(m_pRoot, &ah);
+{	
 	SAFE_RELEASE(m_pAnimController);
 	SAFE_RELEASE(m_pPrevAnimSet);
 	SAFE_RELEASE(m_pNextAnimSet);
@@ -41,6 +67,13 @@ void cSkinnedMesh::Setup(char * szFolder, char * szFile)
 		NULL,
 		&m_pRoot,
 		&m_pAnimController);
+
+
+	// OBB 충돌 처리를 위한 추가 2018-10-26
+	{
+		m_vMin = ah.GetMin();
+		m_vMax = ah.GetMax();
+	}
 
 	SetupBoneMatrixPtrs(m_pRoot);
 }
@@ -226,7 +259,7 @@ int cSkinnedMesh::SetAnimationIndexBlend(int nIndex)
 	printf("Cur Ani :%s\n", m_pPrevAnimSet->GetName());
 	//printf("%f\n", fAnimPosRate);
 	const char* isConvertable = strstr(m_pPrevAnimSet->GetName(), "Attack");
-	if (isConvertable == NULL || (isConvertable && m_fCurAnimPosRate > BLENDING_START_RATE))				// 공격 애니가 진행 중이면 바꾸지 않고 넘어간다.
+	if (isConvertable == NULL || (isConvertable && m_fCurAnimPosRate > BLENDING_START_PLAY_RATE))				// 공격 애니가 진행 중이면 바꾸지 않고 넘어간다.
 	{
 		printf("Ani idx #%d [ %s(%.3f%% elapsed) -> %s\n", nIndex, m_pPrevAnimSet->GetName(), m_fCurAnimPosRate, m_pNextAnimSet->GetName());
 		m_pAnimController->SetTrackAnimationSet(1, m_pPrevAnimSet);		// 1번 트랙에 애니를 세팅
@@ -273,4 +306,82 @@ float cSkinnedMesh::GetCurAnimPosRate()
 	m_pAnimController->GetTrackDesc(0, &stTrackDesc);
 
 	return pAnimSet->GetPeriodicPosition(stTrackDesc.Position) / pAnimSet->GetPeriod();
+}
+
+void cSkinnedMesh::Load(char * szFolder, char * szFilename)
+{
+	cAllocateHierarchy ah;
+	ah.SetFolder(szFolder);
+
+	string sFullPath(szFolder);
+	sFullPath += (string("/") + string(szFilename));
+
+	HRESULT hr = D3DXLoadMeshHierarchyFromX(sFullPath.c_str(),
+		D3DXMESH_MANAGED,
+		g_pD3DDevice,
+		&ah,
+		NULL,
+		(LPD3DXFRAME*)&m_pRoot,
+		&m_pAnimController);
+
+//	printf("%s", hr == S_OK ? "Zealot if successfully loaded" : "Failed to Load zealot");
+
+
+	m_vMin = ah.GetMin();
+	m_vMax = ah.GetMax();
+
+	if (m_pRoot) SetupBoneMatrixPtrs(m_pRoot);
+}
+
+void cSkinnedMesh::Destroy()
+{
+	cAllocateHierarchy ah;
+	D3DXFrameDestroy(m_pRoot, &ah);
+	//SAFE_RELEASE(m_pAnimController);
+}
+
+void cSkinnedMesh::UpdateAndRender()
+{
+	if (m_pAnimController)
+	{
+		m_pAnimController->AdvanceTime(g_pTimeManager->GetElapsedTime(), NULL);
+	}
+	if (m_pRoot)
+	{
+		Update((ST_BONE*)m_pRoot, &m_matWorldTM);
+		Render(m_pRoot);
+	}
+}
+
+void cSkinnedMesh::Update(ST_BONE * pCurrent, D3DXMATRIXA16 * pmatParent)
+{
+	if (pCurrent == NULL)
+		pCurrent = (ST_BONE*)m_pRoot;
+
+	pCurrent->CombineTransformationMatrix = pCurrent->TransformationMatrix;
+
+	if (pmatParent)
+	{
+		pCurrent->CombineTransformationMatrix *= (*pmatParent);
+	}
+
+	if (pCurrent->pFrameSibling)
+	{
+		Update((ST_BONE*)pCurrent->pFrameSibling, pmatParent);
+	}
+	if (pCurrent->pFrameFirstChild)
+	{
+		Update((ST_BONE*)pCurrent->pFrameFirstChild, &(pCurrent->CombineTransformationMatrix));
+	}
+}
+
+void cSkinnedMesh::SetRandomTrackPosition()
+{
+
+	m_pAnimController->SetTrackPosition(0, (rand() % 100) / 10.0f);
+}
+
+void cSkinnedMesh::SetTransform(D3DXMATRIXA16 * pmat)
+{
+	m_matWorldTM = *pmat;
 }

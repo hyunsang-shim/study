@@ -269,7 +269,7 @@ vector<ASE_Obj> cASELoader::ParseASE(string FileName)
 							if (tmp == ID_TIMEVALUE)
 							{
 								unsigned short timevalue;
-								sscanf_s(newline.c_str(), "%*s, %d", &timevalue);
+								sscanf_s(newline.c_str(), "%*s, %hd", &timevalue);
 								tmpRet.Timevalue = timevalue;
 							}
 							else if (tmp == ID_MESH_VERTEX_LIST)
@@ -330,7 +330,7 @@ vector<ASE_Obj> cASELoader::ParseASE(string FileName)
 								// Read and Load UV vertex list
 								while (tmp != "}")
 								{		
-									float u, v, z;
+									float u, v;
 									sscanf_s(newline.c_str(), "%*s %*d %f %f", &u, &v);
 									v_vecUVs.push_back(D3DXVECTOR2(u, 1.0f - v));
 
