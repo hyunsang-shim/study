@@ -25,6 +25,9 @@
     <Filter Include="FrustumCulling">
       <UniqueIdentifier>{62fb6297-db19-4632-9052-7d5a4a3c036d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chracter">
+      <UniqueIdentifier>{19f3114e-4d1c-426e-94ee-54e183a2470b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -58,9 +61,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="cBoxman.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="cCharacter.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="cHexagon.h">
@@ -125,6 +125,9 @@
     </ClInclude>
     <ClInclude Include="cFrustumCulling.h">
       <Filter>FrustumCulling</Filter>
+    </ClInclude>
+    <ClInclude Include="cCharacter.h">
+      <Filter>Chracter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +214,9 @@
     </ClCompile>
     <ClCompile Include="cFrustumCulling.cpp">
       <Filter>FrustumCulling</Filter>
+    </ClCompile>
+    <ClCompile Include="cCharacter.cpp">
+      <Filter>Chracter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

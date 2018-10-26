@@ -28,9 +28,10 @@ void cFrustumCulling::Setup()
 
 				D3DXCreateSphere(g_pD3DDevice, 0.5f, 5, 5, &tmp.Sphere, NULL);
 				ZeroMemory(&tmp.Material, sizeof(D3DMATERIAL9));
-				tmp.Material.Ambient = D3DXCOLOR(0.7f, 0.7f, 0.7f, 1.0f);
-				tmp.Material.Diffuse = D3DXCOLOR(0.7f, 0.7f, 0.7f, 1.0f);
-				tmp.Material.Specular = D3DXCOLOR(0.7f, 0.7f, 0.7f, 1.0f);
+				tmp.Material.Ambient = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				tmp.Material.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				tmp.Material.Specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				tmp.Material.Emissive = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 				tmp.Material.Power = 8.0f;
 				tmp.Pos = D3DXVECTOR3(i, j, k);
 
@@ -41,7 +42,7 @@ void cFrustumCulling::Setup()
 				D3DXMatrixScaling(&matS, 1.0f, 1.0f, 1.0f);
 				D3DXMatrixTranslation(&matT, tmp.Pos.x + 0.5f, tmp.Pos.y + 0.5f, tmp.Pos.z + 0.5f);
 				tmp.matWorld = matS* matR* matT;
-
+								
 				m_vBalls.push_back(tmp);
 			}
 		}
@@ -82,7 +83,7 @@ void cFrustumCulling::Update(D3DXVECTOR3 eye)
 void cFrustumCulling::Render()
 {	
 	//g_pD3DDevice->SetLight(0, &m_Light);
-	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);	
+	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
 
 	for (int i = 0; i < m_vBalls.size(); i++)
 	{

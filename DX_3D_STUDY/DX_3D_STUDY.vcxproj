@@ -186,6 +186,7 @@
     <ClCompile Include="cASE_Char.cpp" />
     <ClCompile Include="cBoxman.cpp" />
     <ClCompile Include="cCamera.cpp" />
+    <ClCompile Include="cCharacter.cpp" />
     <ClCompile Include="cCubeObj.cpp" />
     <ClCompile Include="cCubePC.cpp" />
     <ClCompile Include="cDeviceManager.cpp" />

@@ -1,6 +1,6 @@
 ﻿  cFrustumCulling.cpp
-k:\work\git\dx_3d_study\cfrustumculling.cpp(35): warning C4244: '인수': 'int'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-k:\work\git\dx_3d_study\cfrustumculling.cpp(66): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+k:\work\git\dx_3d_study\cfrustumculling.cpp(36): warning C4244: '인수': 'int'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cfrustumculling.cpp(67): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
 k:\work\git\dx_3d_study\cfrustumculling.cpp(88): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
   DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.exe
   DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.pdb (Full PDB)

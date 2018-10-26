@@ -17,14 +17,27 @@ cCharacter::~cCharacter()
 
 void cCharacter::Setup()
 {
-
+		
 }
 
 void cCharacter::Update()
 {
-	RECT rc;
-
-	GetClientRect(g_hWnd, &rc);
+	if (GetKeyState('W' & 0x8000))
+	{
+		m_vPosition = m_vPosition + (m_vDirection * 0.1f);
+	}
+	if (GetKeyState('S' & 0x8000))
+	{
+		m_vPosition = m_vPosition - (m_vDirection *0.1f);
+	}
+	if (GetKeyState('A' & 0x8000))
+	{
+		m_fRotY -= 0.1f;
+	}
+	if (GetKeyState('D' & 0x8000))
+	{
+		m_fRotY += 0.1f;
+	}
 
 	D3DXMATRIXA16			matR, matT;
 	D3DXMatrixRotationY(&matR, m_fRotY);
@@ -33,6 +46,7 @@ void cCharacter::Update()
 	D3DXMatrixTranslation(&matT, m_vPosition.x, m_vPosition.y, m_vPosition.z);
 
 	m_matWorld = matR * matT;
+
 }
 
 void cCharacter::Render()

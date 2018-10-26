@@ -1,6 +1,5 @@
 #pragma once
 class cCharacter
-	:public cCubeNode
 {
 public:
 	cCharacter();
