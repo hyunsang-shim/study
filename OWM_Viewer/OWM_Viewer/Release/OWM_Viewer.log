@@ -1,0 +1,126 @@
+﻿  stdafx.cpp
+  cReadOwmdl.cpp
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(8): error C3646: 'pos': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(8): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(9): error C3646: 'vecScale': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(9): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(10): error C3646: 'quat': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(10): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(15): error C3646: 'pos': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(15): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(16): error C3646: 'quat': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(16): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(22): error C3646: 'pos': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(22): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(23): error C3646: 'vecScale': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(23): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(24): error C3646: 'quat': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(24): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(53): error C3646: 'unknownPos1': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(53): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(54): error C3646: 'unknownQuat1': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(54): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(55): error C3646: 'unknownPos2': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(55): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(56): error C3646: 'unknownQuat2': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(56): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(57): error C3646: 'unknownPos3': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(57): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(58): error C3646: 'unknownQuat3': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(58): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+cReadOwmdl.cpp(34): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+cReadOwmdl.cpp(92): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(93): error C2039: 'unknownPos1': 'OWMAP'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(39): note: 'OWMAP' 선언을 참조하십시오.
+cReadOwmdl.cpp(93): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(95): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(96): error C2039: 'unknownQuat1': 'OWMAP'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(39): note: 'OWMAP' 선언을 참조하십시오.
+cReadOwmdl.cpp(96): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(99): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(100): error C2039: 'unknownPos2': 'OWMAP'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(39): note: 'OWMAP' 선언을 참조하십시오.
+cReadOwmdl.cpp(100): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(102): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(103): error C2039: 'unknownQuat2': 'OWMAP'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(39): note: 'OWMAP' 선언을 참조하십시오.
+cReadOwmdl.cpp(103): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(105): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(106): error C2039: 'unknownPos3': 'OWMAP'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(39): note: 'OWMAP' 선언을 참조하십시오.
+cReadOwmdl.cpp(106): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(108): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(109): error C2039: 'unknownQuat3': 'OWMAP'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(39): note: 'OWMAP' 선언을 참조하십시오.
+cReadOwmdl.cpp(109): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(144): warning C4477: 'scanf_s' : 서식 문자열 '%d'에 'int *' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'int'입니다.
+cReadOwmdl.cpp(163): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+cReadOwmdl.cpp(208): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+cReadOwmdl.cpp(231): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(232): error C2039: 'pos': 'detail'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(5): note: 'detail' 선언을 참조하십시오.
+cReadOwmdl.cpp(232): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(234): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(235): error C2039: 'vecScale': 'detail'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(5): note: 'detail' 선언을 참조하십시오.
+cReadOwmdl.cpp(235): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(237): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(238): error C2039: 'quat': 'detail'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(5): note: 'detail' 선언을 참조하십시오.
+cReadOwmdl.cpp(238): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(266): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+cReadOwmdl.cpp(271): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(272): error C2039: 'pos': 'light'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(13): note: 'light' 선언을 참조하십시오.
+cReadOwmdl.cpp(272): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(274): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(275): error C2039: 'quat': 'light'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(13): note: 'light' 선언을 참조하십시오.
+cReadOwmdl.cpp(275): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(309): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+cReadOwmdl.cpp(349): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+cReadOwmdl.cpp(354): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(355): error C2039: 'pos': 'record'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(21): note: 'record' 선언을 참조하십시오.
+cReadOwmdl.cpp(355): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(357): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(358): error C2039: 'vecScale': 'record'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(21): note: 'record' 선언을 참조하십시오.
+cReadOwmdl.cpp(358): error C2065: 'D3DXVECTOR3': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(360): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(361): error C2039: 'quat': 'record'의 멤버가 아닙니다.
+  d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(21): note: 'record' 선언을 참조하십시오.
+cReadOwmdl.cpp(361): error C2065: 'D3DXQUATERNION': 선언되지 않은 식별자입니다.
+cReadOwmdl.cpp(407): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.
+  D:\Windows Kits\10\Include\10.0.10240.0\ucrt\stdlib.h(1316): note: 'itoa' 선언을 참조하십시오.
+cReadOwmdl.cpp(410): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.
+  D:\Windows Kits\10\Include\10.0.10240.0\ucrt\stdlib.h(1316): note: 'itoa' 선언을 참조하십시오.
+  OWM_Viewer.cpp
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(8): error C3646: 'pos': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(8): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(9): error C3646: 'vecScale': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(9): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(10): error C3646: 'quat': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(10): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(15): error C3646: 'pos': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(15): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(16): error C3646: 'quat': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(16): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(22): error C3646: 'pos': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(22): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(23): error C3646: 'vecScale': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(23): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(24): error C3646: 'quat': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(24): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(53): error C3646: 'unknownPos1': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(53): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(54): error C3646: 'unknownQuat1': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(54): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(55): error C3646: 'unknownPos2': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(55): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(56): error C3646: 'unknownQuat2': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(56): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(57): error C3646: 'unknownPos3': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(57): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(58): error C3646: 'unknownQuat3': 알 수 없는 재정의 지정자입니다.
+d:\work\programming\owm_viewer\owm_viewer\cReadOwmdl.h(58): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.

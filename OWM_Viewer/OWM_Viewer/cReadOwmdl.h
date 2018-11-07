@@ -1,5 +1,6 @@
 #pragma once
 
+
 struct detail {
 	std::string			model_file;
 	std::string			material_file;

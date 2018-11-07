@@ -35,24 +35,25 @@ OWMAP cReadOwmdl::ReadFile(std::string Filename)
 		{
 			char read[1024];
 			file.read(read, sizeof(unsigned int));
-			ret.major = atoi(read);
+			ret.major = reinterpret_cast<unsigned int>(read);
 			//memcpy(&ret.major, read, sizeof(unsigned int));
 			ZeroMemory(read, 1024);
-
 			
 			file.read(read, sizeof(unsigned int));
-			ret.minor = atoi(read);
+			ret.minor = reinterpret_cast<unsigned int>(read);
 			//memcpy(&ret.minor, read, sizeof(unsigned int));
 			ZeroMemory(read, 1024);
 
-			char tmp_str;
+			vector<char> tmp_str;
+			char* tmpStr;
+			int len = 0;
 			do {
-				file.read(&tmp_str, 1);
-				if (tmp_str != NULL)
+				file.read(read, 1);
+				if (tmp_str[len++] != '\0')
 				{
-					(ret.name).append(1, tmp_str);
+					tmp_str.push_back(tmp_str[len-1]);
 				}
-			} while (tmp_str != NULL);
+			} while (tmp_str[len-1] != NULL);
 
 			file.read(read, sizeof(unsigned int));
 			memcpy(&ret.object_count, read, sizeof(unsigned int));
@@ -418,7 +419,7 @@ void cReadOwmdl::PrintData(string outputFileName)
 	{
 		printf("Couldn't open File. Program will be quit.");
 		int a;
-		scanf_s("%d", a);
+		scanf_s("%d", &a);
 		PostQuitMessage(0);
 	}
 	
