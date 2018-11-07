@@ -4,7 +4,19 @@
 #include "cSkinnedMesh.h"
 #include "cZealot.h"
 #include "cOBB.h"
+#include "cFontManager.h" // 폰트매니져
+// ui 관련
+#include "cUIImageView.h"
+#include "cUIButton.h"
+#include "cUITextView.h"
 
+enum
+{
+	E_BUTTON_OK = 11,
+	E_BUTTON_CANCEL,
+	E_BUTTON_EXIT,
+	E_TEXT_VIEW,
+};
 class cCubePC;
 class cBoxman;
 class cCamera;
@@ -54,6 +66,16 @@ cMainGame::cMainGame()
 	, m_isCamFollow(false)
 	, m_pRootFrame(NULL)		// 강사님 ASE 로더
 	, m_pSkinnedMesh(NULL)
+	, m_pFont_a(NULL)		// 강사님 폰트 예제
+	, m_p3DText (NULL)		// 강사님 폰트 예제
+	, m_pSprite(NULL)
+	, m_pTextureUI(NULL)
+	, m_pUIRoot(NULL)
+	, m_pTex0(NULL)
+	, m_pTex1(NULL)
+	, m_pTex2(NULL)
+
+
 {
 	g_pDeviceManager;
 
@@ -64,6 +86,10 @@ cMainGame::cMainGame()
 
 cMainGame::~cMainGame()
 {
+
+	if (m_pUIRoot) m_pUIRoot->Destroy();
+	SAFE_RELEASE(m_pFont_a);
+	SAFE_RELEASE(m_p3DText);
 	SAFE_DELETE(m_pCubePC);
 	SAFE_DELETE(m_pTexture);
 
@@ -94,6 +120,12 @@ cMainGame::~cMainGame()
 
 	g_pDeviceManager->Destroy();
 	g_pSkinnedMeshManager->Destroy();
+	g_pFontManager->Destroy();
+	SAFE_RELEASE(m_pSprite);
+	SAFE_RELEASE(m_pTextureUI);
+
+	SAFE_RELEASE(m_pTex0);
+	SAFE_RELEASE(m_pTex1);
 }
 
 
@@ -101,6 +133,7 @@ void cMainGame::Setup()
 {
 	srand(time(NULL));
 
+	Create_Font();
 	/*m_pASE_Char = new cASE_Char;
 	m_pASE_Char->Setup();*/
 
@@ -122,8 +155,8 @@ void cMainGame::Setup()
 	m_pCubePC->Setup();
 	m_pCubePC->SetBoxPosition(D3DXVECTOR3(1.0f, 0.0f, 1.0f));
 
-	//m_pBoxman = new cBoxman;
-	//m_pBoxman->Setup(_T("D.VA.png"));
+	m_pBoxman = new cBoxman;
+	m_pBoxman->Setup(_T("D.VA.png"));
 		
 	//m_pMap = new cMap;
 	//m_pMap->Setup();
@@ -131,14 +164,16 @@ void cMainGame::Setup()
 	//m_pHeightmap = new cHeightMap;
 	//m_pHeightmap->Setup("HeightMap/HeightMap.raw");
 
-	// 강사님 ASE로더
+	//// 강사님 ASE로더
 	//cASELoader_inst loader;
 	//m_pRootFrame = loader.Load("woman/woman_01_all.ASE");
+	////m_pRootFrame = loader.Load("ASE/gun.ASE");
 
-	{
-		m_pLoadFromX = new cLoadXFile;
-		m_pLoadFromX->Setup("Xfile/bigship1.x");
-	}
+
+	//{
+	//	m_pLoadFromX = new cLoadXFile;
+	//	m_pLoadFromX->Setup("Xfile/bigship1.x");
+	//}
 
 	// Skinned Mesh Setup
 	{
@@ -164,6 +199,11 @@ void cMainGame::Setup()
 		SAFE_RELEASE(pCharacter);
 	}
 
+	// 강사님 UI 예제
+	Setup_UI();
+
+	Setup_Multitexture();
+
 }
 
 void cMainGame::Update(){
@@ -173,19 +213,8 @@ void cMainGame::Update(){
 	// 캐릭터(Boxmax)의 루트 역할을 하는 박스.	
 	if (m_pCubePC)
 	{
-		D3DXMATRIXA16 matRotY;
-		D3DXMatrixIdentity(&matRotY);
-		D3DXMatrixRotationY(&matRotY, m_fBoxRotY);
-		m_vBoxDirection = D3DXVECTOR3(0, 0, 1.0f);
-		D3DXVec3TransformNormal(&m_vBoxDirection, &m_vBoxDirection, &matRotY);		
+
 		m_pCubePC->SetBoxScale(1.0f);
-		m_pCubePC->SetBoxRotationY(m_fBoxRotY);
-		//printf("cMainGame : %f\t", m_fBoxRotY);
-		m_pCubePC->SetBoxPosition(m_vBoxPosition);		
-		/*for (int i = 0; i < m_vvecBoxPosition.size(); i++)
-		{
-			m_pCubePC->SetBoxPosition(m_vvecBoxPosition[i]);
-		}*/
 		m_pCubePC->Update();
 
 		//
@@ -310,8 +339,8 @@ void cMainGame::Update(){
 	}
 
 	// map update
-	if (m_pMap)
-		m_pMap->Update();
+	/*if (m_pMap)
+		m_pMap->Update();*/
 
 	if (m_pBoxman)
 		m_pBoxman->Update();
@@ -323,8 +352,8 @@ void cMainGame::Update(){
 	*/
 
 	// 강사님 ASE로더
-	if (m_pRootFrame)
-		m_pRootFrame->Update(m_pRootFrame->GetKeyFrame(), NULL);
+	/*if (m_pRootFrame)
+		m_pRootFrame->Update(m_pRootFrame->GetKeyFrame(), NULL);*/
 
 //	if (m_pSkinnedMesh)
 //		m_pSkinnedMesh->Update();
@@ -338,17 +367,53 @@ void cMainGame::Update(){
 			m_pMoveZealot->Update();
 	}
 
+	// 강사님 UI 관련
+	if (m_pUIRoot)
+		m_pUIRoot->Update();
+
 }
 
 void cMainGame::Render()
 {	
 	g_pD3DDevice->Clear(NULL, NULL, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(64,64,64), 1.0f, 0);
 	g_pD3DDevice->BeginScene();
-		
 
 	D3DXMATRIXA16 matWorld;
 	D3DXMatrixIdentity(&matWorld);
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+	// Draw and Set Lights	
+	g_pD3DDevice->SetMaterial(&m_matWhite);  // 파일에서 불러온 매터리얼 확인을 위해 주석처리 함
+	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
+	g_pD3DDevice->SetLight(0, &SpotLight);
+	g_pD3DDevice->SetLight(1, &PointLight);
+
+
+	if (m_swDirLight)
+		g_pD3DDevice->SetLight(2, &DirLight);
+	else
+		g_pD3DDevice->SetLight(3, &DirLight_Default);
+
+	g_pD3DDevice->LightEnable(0, true);
+	g_pD3DDevice->LightEnable(1, true);
+
+	if (m_swDirLight)
+	{
+		g_pD3DDevice->LightEnable(2, true);
+		g_pD3DDevice->LightEnable(3, false);
+	}
+	else
+	{
+		g_pD3DDevice->LightEnable(2, false);
+		g_pD3DDevice->LightEnable(3, true);
+	}
+
+	if (m_swSpotLight)
+	{
+		g_pD3DDevice->LightEnable(0, true);
+	}
+	else
+		g_pD3DDevice->LightEnable(0, false);
 
 
 
@@ -387,42 +452,7 @@ void cMainGame::Render()
 		g_pD3DDevice->SetTexture(0, NULL);	// 텍스쳐 사용 하지 않음 선언
 	}
 	*/
-	// Draw and Set Lights
-	{
-		g_pD3DDevice->SetMaterial(&m_matWhite);  // 파일에서 불러온 매터리얼 확인을 위해 주석처리 함
-		g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
-		g_pD3DDevice->SetLight(0, &SpotLight);
-		g_pD3DDevice->SetLight(1, &PointLight);
-
-
-		if (m_swDirLight)
-			g_pD3DDevice->SetLight(2, &DirLight);
-		else
-			g_pD3DDevice->SetLight(3, &DirLight_Default);
-
-		g_pD3DDevice->LightEnable(0, true);
-		g_pD3DDevice->LightEnable(1, true);
-
-		if (m_swDirLight)
-		{
-			g_pD3DDevice->LightEnable(2, true);
-			g_pD3DDevice->LightEnable(3, false);
-		}
-		else
-		{
-			g_pD3DDevice->LightEnable(2, false);
-			g_pD3DDevice->LightEnable(3, true);
-		}
-
-		if (m_swSpotLight)
-		{
-			g_pD3DDevice->LightEnable(0, true);
-		}
-		else
-			g_pD3DDevice->LightEnable(0, false);
-
-	}
-
+	
 
 
 	if (m_pCubePC)
@@ -437,7 +467,6 @@ void cMainGame::Render()
 	if (m_pBoxman)
 		m_pBoxman->Render();
 
-	g_pD3DDevice->SetMaterial(&m_matWhite);
 
 	if (m_pASE_Char)
 		m_pASE_Char->Render();
@@ -452,11 +481,11 @@ void cMainGame::Render()
 	//if (m_pHeightmap)
 	//	m_pHeightmap->Render();
 
-	if (m_pLoadFromX)
-		m_pLoadFromX->Render();
+	/*if (m_pLoadFromX)
+		m_pLoadFromX->Render();*/
 
 	// OBB 충돌 판정 예제
-	{
+	/*{
 		D3DCOLOR c = cOBB::IsCollision(m_pHoldZealot->GetOBB(),	m_pMoveZealot->GetOBB()) ? D3DCOLOR_XRGB(200, 0, 0) : D3DCOLOR_XRGB(128, 128, 128);
 
 		if (m_pHoldZealot)
@@ -465,12 +494,19 @@ void cMainGame::Render()
 		if (m_pMoveZealot)
 			m_pMoveZealot->Render(c);
 
-	}
+	}*/
 
 
+
+	// 강사님 UI 렌더 예제
+	Render_UI();
+	Render_Text();
+	Render_Multitexture();
 
 	g_pD3DDevice->EndScene();
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
+
+
 
 }
 
@@ -686,4 +722,260 @@ void cMainGame::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			
 	}
+}
+
+void cMainGame::Create_Font()
+{
+	{
+		D3DXFONT_DESC fd;
+		ZeroMemory(&fd, sizeof(D3DXFONT_DESC));
+		fd.Height = 50;
+		fd.Width = 25;
+		fd.Weight = FW_MEDIUM;
+		fd.Italic = false;
+		fd.CharSet = DEFAULT_CHARSET;
+		fd.OutputPrecision = OUT_DEFAULT_PRECIS;
+		fd.PitchAndFamily = FF_DONTCARE;
+		
+		// 시스템 폰트를 사용 할 경우
+		//strcpy_s(fd.FaceName, "굴림체");
+
+		AddFontResource("font/umberto.ttf");
+		strcpy_s(fd.FaceName, "umberto.ttf");
+
+		D3DXCreateFontIndirect(g_pD3DDevice, &fd, &m_pFont_a);
+	}
+
+	{
+		//3D 폰트
+		HDC hdc = CreateCompatibleDC(0);
+		LOGFONT lf;
+		ZeroMemory(&lf, sizeof(LOGFONT));
+		lf.lfHeight = 25;
+		lf.lfWidth = 12;
+		lf.lfWeight = 500;
+		lf.lfItalic = false;
+		lf.lfUnderline = false;
+		lf.lfStrikeOut = false;
+		strcpy(lf.lfFaceName, "굴림체");
+
+		HFONT hFont;
+		HFONT hFontOld;
+		hFont = CreateFontIndirect(&lf);
+		hFontOld = (HFONT)SelectObject(hdc, hFont);
+		D3DXCreateText(g_pD3DDevice, hdc, _T("DX9 한글"), 0.001f, 0.01f, &m_p3DText, 0, 0);
+
+		SelectObject(hdc, hFontOld);
+		DeleteObject(hFont);
+		DeleteDC(hdc);
+	}
+
+
+}
+
+void cMainGame::Render_Text()
+{
+	string sText("Sample Text");
+	RECT rc;
+	SetRect(&rc, 100, 100, 101, 101);
+	m_pFont_a->DrawTextA(NULL, sText.c_str(), sText.length(), &rc, DT_LEFT | DT_TOP | DT_NOCLIP, D3DCOLOR_XRGB(255, 255, 0));
+
+	{
+		//3D 텍스트
+		D3DXMATRIXA16 matWorld, matS, matR, matT;
+		D3DXMatrixIdentity(&matS);
+		D3DXMatrixIdentity(&matR);
+		D3DXMatrixIdentity(&matT);
+
+		D3DXMatrixScaling(&matS, 1.0f, 1.0f, 15.0f);
+		D3DXMatrixRotationX(&matR, -D3DX_PI / 4.0f);
+		D3DXMatrixTranslation(&matT, -2.0f, 2.0f, 0.0f);
+		matWorld = matS * matR * matT;
+		g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+		m_p3DText->DrawSubset(0);
+	}
+
+	LPD3DXFONT pFont = g_pFontManager->GetFont(cFontManager::E_QUEST);	
+
+	RECT rc2;
+	string string2("퀘스트");
+
+	SetRect(&rc2, 100, 200, 101, 101);
+	pFont->DrawTextW(NULL, (LPCWSTR)string2.c_str(), lstrlen(string2.c_str()), &rc2, DT_LEFT, D3DCOLOR_XRGB(255, 0, 255));
+
+}
+
+void cMainGame::Setup_UI()
+{
+	D3DXCreateSprite(g_pD3DDevice, &m_pSprite);
+	// m_pTextureUI = g_pTextureManager->GetTexture("UI/김태희.jpg");
+	// D3DXCreateTextureFromFileEx(g_pD3DDevice, "UI/김태희.jpg", D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_NONE, D3DX_DEFAULT, D3DCOLOR_XRGB(128,128,128), &m_stImage_info, NULL, &m_pTextureUI);
+
+	{
+		cUIImageView* pImageView = new cUIImageView;
+		pImageView->SetPosition(0, 0, 0);
+		pImageView->SetTexture("./UI/panel-info.png");
+		m_pUIRoot = pImageView;
+
+		cUITextView* pTextView = new cUITextView;
+		pTextView->SetText("샘플 텍스트!!!");
+		pTextView->Setsize(ST_SIZE_N(380, 300));
+		pTextView->SetPosition(70, 80);
+		pTextView->SetDrawTextFormat(DT_CENTER | DT_VCENTER | DT_WORDBREAK);
+		pTextView->SetTextColor(D3DCOLOR_XRGB(255, 255, 0));
+		pTextView->SetTag(E_TEXT_VIEW);
+		m_pUIRoot->AddChild(pTextView);
+
+		cUIButton* pButtonOK = new cUIButton;
+		pButtonOK->SetTexture("./UI/btn-med-up.png", "./UI/btn-med-over.png", "./UI/btn-med-down.png", "OK");
+		pButtonOK->SetPosition(100,275);
+		pButtonOK->SetDelegate(this);
+		pButtonOK->SetTag(E_BUTTON_OK);
+		m_pUIRoot->AddChild(pButtonOK);
+
+		/*cUIButton* pButtonCancel = new cUIButton;
+		pButtonCancel->SetTexture("./UI/btn-med-up.png", "./UI/btn-med-over.png", "./UI/btn-med-down.png", "Cancel");
+		pButtonCancel->SetPosition(150, 200);
+		pButtonCancel->SetDelegate(this);
+		pButtonCancel->SetTag(E_BUTTON_CANCEL);
+		m_pUIRoot->AddChild(pButtonCancel);
+
+		cUIButton* pButtonExit= new cUIButton;
+		pButtonExit->SetTexture("./UI/btn-main-menu.png","./UI/btn-main-menu.png", "./UI/btn-main-menu.png");
+		pButtonExit->SetPosition(200, 0);
+		pButtonExit->SetDelegate(this);
+		pButtonExit->SetTag(E_BUTTON_EXIT);
+		m_pUIRoot->AddChild(pButtonExit);*/
+
+	}
+
+}
+
+void cMainGame::Render_UI()
+{
+	/*
+	m_pSprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_TEXTURE);
+	D3DXMATRIXA16 matT, matR, matS, matWorld;
+	D3DXMatrixTranslation(&matT, m_stImage_info.Width / 2, m_stImage_info.Height / 2, 0);
+	static float fAngle = 0.0f;
+	fAngle += 0.01f;
+	D3DXMatrixRotationZ(&matR, fAngle);
+	matWorld = matR * matT;
+	
+	m_pSprite->SetTransform(&matWorld);
+
+	RECT rc;
+	SetRect(&rc, 0, 0, m_stImage_info.Width, m_stImage_info.Height);
+	m_pSprite->Draw(m_pTextureUI, &rc, &D3DXVECTOR3(m_stImage_info.Width/2, m_stImage_info.Height/2, 0), &D3DXVECTOR3(0, 0, 0), D3DCOLOR_ARGB(247, 246, 251, 255));
+	m_pSprite->End();
+	*/
+
+	if (m_pUIRoot)
+		m_pUIRoot->Render(m_pSprite);
+}
+
+void cMainGame::OnClick(cUIButton * pSender)
+{
+	cUITextView* pTextView = (cUITextView*)m_pUIRoot->FindChildByTag(E_TEXT_VIEW);
+
+	switch (pSender->GetTag())
+	{
+	case E_BUTTON_OK:
+		pTextView->SetText("OK버튼 눌렸음!");
+		break;
+	case E_BUTTON_CANCEL:
+		pTextView->SetText("꽝! 다음 기회에......");
+		break;
+	case E_BUTTON_EXIT:
+		m_pUIRoot->m_isHidden = true;
+		break;
+	}
+}
+
+void cMainGame::Setup_Multitexture()
+{
+	D3DXCreateTextureFromFile(g_pD3DDevice,	"./MultiTextures/Albedo00.jpg", &m_pTex0);
+	D3DXCreateTextureFromFile(g_pD3DDevice,	"./MultiTextures/FieldStone_DM.TGA", &m_pTex1);
+	D3DXCreateTextureFromFile(g_pD3DDevice, "./MultiTextures/alpha_tex.tga", &m_pTex2);
+	ST_PT_VERTEX v;
+	
+	v.p = D3DXVECTOR3(-1.0f, -1.0f, -1.0f);
+	v.texture1 = D3DXVECTOR2(0, 0);
+	m_vecTexMulti.push_back(v);
+	v.p = D3DXVECTOR3(-1.0f, 1.0f, -1.0f);
+	v.texture1 = D3DXVECTOR2(0, 1);
+	m_vecTexMulti.push_back(v);
+	v.p = D3DXVECTOR3(1.0f, 1.0f, -1.0f);
+	v.texture1 = D3DXVECTOR2(1, 1);
+	m_vecTexMulti.push_back(v);
+
+	v.p = D3DXVECTOR3(-1.0f, -1.0f, -1.0f);
+	v.texture1 = D3DXVECTOR2(0, 0);
+	m_vecTexMulti.push_back(v);
+	v.p = D3DXVECTOR3(1.0f, 1.0f, -1.0f);
+	v.texture1 = D3DXVECTOR2(1, 1);
+	m_vecTexMulti.push_back(v);
+	v.p = D3DXVECTOR3(1.0f, -1.0f, -1.0f);
+	v.texture1 = D3DXVECTOR2(0, 1);
+	m_vecTexMulti.push_back(v);
+
+}		    
+
+void cMainGame::Render_Multitexture()
+{
+	D3DXMATRIXA16 matWorld;
+	D3DXMatrixIdentity(&matWorld);
+	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+	g_pD3DDevice->SetTexture(0, m_pTex0);
+	g_pD3DDevice->SetTexture(1, m_pTex1);
+
+	g_pD3DDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0);
+	g_pD3DDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 0);
+
+	g_pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+	g_pD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);	
+	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+
+	g_pD3DDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	g_pD3DDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	g_pD3DDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	g_pD3DDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+	g_pD3DDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	g_pD3DDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+
+
+	g_pD3DDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
+	g_pD3DDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+
+
+	g_pD3DDevice->SetTexture(0, NULL);
+
+	g_pD3DDevice->SetTexture(1, NULL);
+	{
+		g_pD3DDevice->SetTexture(0, m_pTex2);
+
+		D3DXMATRIXA16		matS;
+		D3DXMatrixIdentity(&matS);
+		D3DXMatrixScaling(&matS, 0.5f, 1.0f, 1.0f);
+
+		matWorld *= matS;
+
+		g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+		g_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+		g_pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, true);
+
+		g_pD3DDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+		g_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		g_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR);
+
+	}
+
+
+	g_pD3DDevice->SetFVF(ST_PC_VERTEX::FVF);
+	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecTexMulti.size() / 3, &m_vecTexMulti[0], sizeof(ST_PT_VERTEX));
+
+	g_pD3DDevice->SetTexture(2, NULL);
+
+
 }

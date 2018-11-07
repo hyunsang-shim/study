@@ -1,0 +1,157 @@
+# Blender MTL File: 'None'
+# Material Count: 14
+
+newmtl 0A8BA3037B07F913
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\000000004F14.tif
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\000000004F16.tif
+
+newmtl 25213D3EA5ADD924
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\00000000057B.tif
+
+newmtl 2C824519B53F3917
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\000000004996.tif
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\0000000049A2.tif
+
+newmtl 3009D7B6099FBF3F
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\000000004996.tif
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\000000004A1A.tif
+
+newmtl 42699B4466109A34
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\00000000499C.tif
+
+newmtl 49E135702C5DE596
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\0000000027EC.tif
+
+newmtl 4B6A2CE8D1378CC8
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\00000000057B.tif
+
+newmtl 7364965154C493D7
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\0000000049A0.tif
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\00000000499E.tif
+
+newmtl 9B1BA777E6482AD8
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\00000000057B.tif
+
+newmtl B12CB08370120561
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\00000000464F.tif
+
+newmtl C110ED70F1F9C8A5
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\0000000027ED.tif
+
+newmtl C2E055C4D26CF6F0
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\000000003A6C.tif
+map_Kd I:\\Sample_Reources\\Overwatch\\Heroes\\D.Va\\Skin\\overwatch\\Common\\base\\Models\\0000000011CE.00C\\Textures\\00000001714C.tif
+
+newmtl Material
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl None
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "cUIButton.h"
+
 class cCubePC;
 class cBoxman;
 class cCamera;
@@ -30,7 +32,7 @@ typedef struct besiertrail_boxman {
 
 
 
-class cMainGame
+class cMainGame : public iButtonDelegate
 {
 public:
 	cMainGame();
@@ -127,6 +129,39 @@ private:
 	// 강사님 ASE 로더
 	cFrame*						m_pRootFrame;
 
+	// 강사님 폰트 관련
+private:
+		LPD3DXFONT		m_pFont_a;
+		ID3DXMesh*		m_p3DText;
+public:
+	void Create_Font();
+	void Render_Text();
+
+
+	// 강사님 UI 관련
+	private:
+		LPD3DXSPRITE			m_pSprite;
+		LPDIRECT3DTEXTURE9		m_pTextureUI;
+		D3DXIMAGE_INFO			m_stImage_info;
+		cUIObject*				m_pUIRoot;
+	public:
+			void Setup_UI();
+			void Render_UI();
+			
+			virtual void	OnClick(cUIButton* pSender) override;
+
+
+
+private:
+	LPDIRECT3DTEXTURE9		m_pTex0;
+	LPDIRECT3DTEXTURE9		m_pTex1;
+	LPDIRECT3DTEXTURE9		m_pTex2;
+
+	vector<ST_PT_VERTEX>	m_vecTexMulti;
+
+public :
+	void Setup_Multitexture();
+	void Render_Multitexture();
 
 };
 

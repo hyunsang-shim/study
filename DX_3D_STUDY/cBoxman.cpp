@@ -301,10 +301,76 @@ void cBoxman::Setup(TCHAR* filename)
 
 void cBoxman::Update()
 {
+
+
+	if (GetKeyState('A') & 0x8000)
+	{
+		m_fRootRotationY -= 0.1f;
+	}
+	else if (GetKeyState('D') & 0x8000)
+	{
+		m_fRootRotationY += 0.1f;
+	}	
+
+	// 박스의 이동
+
+	if (GetKeyState('W') & 0x8000)
+	{
+
+		if (GetKeyState(VK_SHIFT) & 0x8000)
+		{
+			m_vecRootPosition = m_vecRootPosition + (m_vRootDirection * -0.18f);
+		}
+		else
+		{
+			m_vecRootPosition = m_vecRootPosition + (m_vRootDirection * -0.1f);
+		}
+
+	}
+	else if (GetKeyState('S') & 0x8000)
+	{
+		if (GetKeyState(VK_SHIFT) & 0x8000)
+		{
+			m_vecRootPosition = m_vecRootPosition + (m_vRootDirection * 0.18f);
+		}
+		else
+		{
+
+			m_vecRootPosition = m_vecRootPosition + (m_vRootDirection * 0.1f);
+		}
+	}
+
+	if (m_isJumping && !m_isJumping_Top)
+	{
+		if (m_vRootDirection.y < 1.0 + EPSILON)
+			m_vRootDirection.y += 0.125f;
+		else
+		{
+			m_isJumping_Top = true;
+		}
+
+	}
+	else if (m_isJumping && m_isJumping_Top)
+	{
+
+		if (m_vRootDirection.y >= 0.0f + EPSILON)
+			m_vRootDirection.y -= 0.125f;
+		else
+		{
+			m_vRootDirection.y = 0.0000000f;
+			m_isJumping = false;
+			m_isJumping_Top = false;
+		}
+
+	}
+
 	static int DirFactor = 1;
 	//루트의 S, R, T를 세팅은 MainGame에서 업데이트 해 준다.
 	D3DXMatrixScaling(&m_matRootS, m_vRootScale.x, m_vRootScale.y, m_vRootScale.z);
 	D3DXMatrixRotationY(&m_matRootR, m_fRootRotationY);
+	m_vRootDirection = D3DXVECTOR3(0, 0, 1.0f);
+	D3DXMatrixRotationY(&m_matRootR, m_fRootRotationY);
+	D3DXVec3TransformNormal(&m_vRootDirection, &m_vRootDirection, &m_matRootR);
 	D3DXMatrixTranslation(&m_matRootT, m_vecRootPosition.x, m_vecRootPosition.y, m_vecRootPosition.z);
 	/*m_CurPos = m_NextPos * 0.1f;
 	D3DXMatrixTranslation(&m_matRootT, m_CurPos.x, m_CurPos.y, m_CurPos.z);*/

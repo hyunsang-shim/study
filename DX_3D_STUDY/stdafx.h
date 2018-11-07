@@ -187,7 +187,13 @@ struct ST_ROT_SAMPLE
 	}
 };
 
-
+struct ST_SIZE_N
+{
+	int nWidth;
+	int nHeight;
+	ST_SIZE_N(): nWidth(0), nHeight(0) {}
+	ST_SIZE_N(int _w, int _h): nWidth(_w), nHeight(_h) {}
+};
 
 
 // 강사님 스타일
@@ -237,5 +243,6 @@ varName=var;\
 #include "cTimerManager.h"
 #include "cFrustumCulling.h"
 #include "cSkinnedMeshManager.h"
+#include "cFontManager.h"
 
 //#include "cCubeman.h"

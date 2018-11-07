@@ -1,0 +1,36 @@
+# Blender MTL File: 'None'
+# Material Count: 3
+
+newmtl Submesh_1
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd I:/Sample_Reources/Overwatch/Heroes/D.Va/Skin/overwatch/Common/base/Models/0000000011CE.00C/Textures/00000000057B.tif
+
+newmtl Submesh_2
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd I:/Sample_Reources/Overwatch/Heroes/D.Va/Skin/overwatch/Common/base/Models/0000000011CE.00C/Textures/00000000057B.tif
+
+newmtl Submesh_0
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump I:/Sample_Reources/Overwatch/Heroes/D.Va/Skin/overwatch/Common/base/Models/0000000011CE.00C/Textures/000000003A6C.tif
+map_Kd I:/Sample_Reources/Overwatch/Heroes/D.Va/Skin/overwatch/Common/base/Models/0000000011CE.00C/Textures/00000001714C.tif

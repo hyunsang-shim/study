@@ -1,3 +1,23 @@
-﻿  cCharacter.cpp
+﻿  cMainGame.cpp
+k:\work\git\dx_3d_study\cmaingame.cpp(134): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(143): warning C4316: 'cCamera': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+k:\work\git\dx_3d_study\cmaingame.cpp(154): warning C4316: 'cCubePC': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+k:\work\git\dx_3d_study\cmaingame.cpp(158): warning C4316: 'cBoxman': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+k:\work\git\dx_3d_study\cmaingame.cpp(197): warning C4316: 'cCharacter': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+k:\work\git\dx_3d_study\cmaingame.cpp(256): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(258): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(261): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(263): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(284): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(286): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(289): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(291): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(619): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(620): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+k:\work\git\dx_3d_study\cmaingame.cpp(760): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\string.h(119): note: 'strcpy' 선언을 참조하십시오.
+k:\work\git\dx_3d_study\cmaingame.cpp(815): warning C4316: 'cUIImageView': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+k:\work\git\dx_3d_study\cmaingame.cpp(820): warning C4316: 'cUITextView': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+k:\work\git\dx_3d_study\cmaingame.cpp(829): warning C4316: 'cUIButton': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
   DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.exe
   DX_3D_STUDY.vcxproj -> K:\WORK\git\DX_3D_STUDY\Debug\DX_3D_STUDY.pdb (Full PDB)

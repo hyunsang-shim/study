@@ -60,15 +60,6 @@ void cCubePC::Setup()
 
 void cCubePC::Update()
 {
-	D3DXMatrixIdentity(&m_matScale);
-	D3DXMatrixScaling(&m_matScale, m_fBoxScale, m_fBoxScale, m_fBoxScale);
-	D3DXMatrixRotationX(&m_matRotX, m_fBoxRotX);
-	D3DXMatrixRotationY(&m_matRotY, m_fBoxRotY);	
-	D3DXMatrixTranslation(&m_matTrans, m_vBoxPosition.x, m_vBoxPosition.y, m_vBoxPosition.z);
-	m_matWorld = m_matScale * m_matRotX * m_matRotY * m_matTrans;
-
-
-
 	if (GetKeyState('A') & 0x8000)
 	{
 		m_fBoxRotY -= 0.1f;
@@ -107,6 +98,14 @@ void cCubePC::Update()
 			m_vBoxPosition = m_vBoxPosition + (m_vBoxDirection * 0.1f);			
 		}
 	}
+	D3DXMatrixIdentity(&m_matScale);
+	D3DXMatrixScaling(&m_matScale, m_fBoxScale, m_fBoxScale, m_fBoxScale);
+	D3DXMatrixRotationX(&m_matRotX, m_fBoxRotX);
+	D3DXMatrixRotationY(&m_matRotY, m_fBoxRotY);
+	m_vBoxDirection = D3DXVECTOR3(0, 0, 1.0f);
+	D3DXVec3TransformNormal(&m_vBoxDirection, &m_vBoxDirection, &m_matRotY);
+	D3DXMatrixTranslation(&m_matTrans, m_vBoxPosition.x, m_vBoxPosition.y, m_vBoxPosition.z);
+	m_matWorld = m_matScale * m_matRotX * m_matRotY * m_matTrans;
 
 }
 
