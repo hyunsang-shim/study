@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 # 이 .gitignore 파일은 Microsoft(R) Visual Studio에서 자동으로 만들어졌습니다.
 ################################################################################
 
@@ -19,3 +19,7 @@
 /study/algorithm/algorithm/Debug/algorithm.obj
 /study/algorithm/algorithm/Debug/algorithm.log
 /study/algorithm/.vs/algorithm/v15/Browse.VC.opendb
+*.tlog
+stdafx.obj
+/Debug/*.*
+*.exe
