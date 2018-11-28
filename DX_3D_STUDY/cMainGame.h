@@ -159,9 +159,17 @@ private:
 
 	vector<ST_PT_VERTEX>	m_vecTexMulti;
 
+	vector<ST_PC_VERTEX>		m_vecVertexParticle;
+
+
 public :
 	void Setup_Multitexture();
 	void Render_Multitexture();
+
+	void Setup_Particle();
+	void Update_Particle();
+	void Render_Particle();
+
 
 };
 

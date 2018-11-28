@@ -31,6 +31,13 @@
 
 
 //  메시지 구조체
+// int MsgType;
+// int ThisTurn;
+// int NewStoneX;
+// int NewStoneY;
+// short StoneColor;
+// int NextTurn;
+// int GameState;
 typedef struct omok_message {
 	int MsgType;
 	int ThisTurn;

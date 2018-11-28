@@ -19,3 +19,7 @@
 /study/algorithm/algorithm/Debug/algorithm.obj
 /study/algorithm/algorithm/Debug/algorithm.log
 /study/algorithm/.vs/algorithm/v15/Browse.VC.opendb
+*.tlog
+stdafx.obj
+/Debug/*.*
+*.exe

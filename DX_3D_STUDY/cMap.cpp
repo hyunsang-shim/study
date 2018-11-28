@@ -19,7 +19,7 @@ cMap::~cMap()
 
 void cMap::Setup()
 {	
-	subMesh = ObjLoader::ParseObj("./obj/map.obj");
+	subMesh = ObjLoader::ParseObj("./obj/rialto_small.obj");
 	
 	// 버텍스 버퍼 이용
 	//for (int i = 0; i < subMesh.size(); i++)

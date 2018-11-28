@@ -60,7 +60,6 @@ public: \
 #include <map>
 #include <set>
 #include <list>
-#include <map>
 
 #include <assert.h>
 

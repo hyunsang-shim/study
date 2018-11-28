@@ -17,6 +17,13 @@ enum
 	E_BUTTON_EXIT,
 	E_TEXT_VIEW,
 };
+
+DWORD FtoDW(float f)
+{
+	return *((DWORD*)&f);
+}
+
+
 class cCubePC;
 class cBoxman;
 class cCamera;
@@ -158,8 +165,8 @@ void cMainGame::Setup()
 	m_pBoxman = new cBoxman;
 	m_pBoxman->Setup(_T("D.VA.png"));
 		
-	//m_pMap = new cMap;
-	//m_pMap->Setup();
+	m_pMap = new cMap;
+	m_pMap->Setup();
 
 	//m_pHeightmap = new cHeightMap;
 	//m_pHeightmap->Setup("HeightMap/HeightMap.raw");
@@ -177,8 +184,8 @@ void cMainGame::Setup()
 
 	// Skinned Mesh Setup
 	{
-		//m_pSkinnedMesh = new cSkinnedMesh;
-		//m_pSkinnedMesh->Setup("Zealot", "zealot.X");
+		m_pSkinnedMesh = new cSkinnedMesh;
+		m_pSkinnedMesh->Setup("Xfile", "Soldier76_with_gun.X");
 	}
 
 	{
@@ -188,27 +195,29 @@ void cMainGame::Setup()
 
 	// OBB 충돌 판정 예제
 	{
-		m_pHoldZealot = new cZealot;
-		m_pHoldZealot->Setup();
+		//m_pHoldZealot = new cZealot;
+	//	m_pHoldZealot->Setup();
 		
 
-		m_pMoveZealot = new cZealot;
-		m_pMoveZealot->Setup();
-		cCharacter* pCharacter = new cCharacter;
-		m_pMoveZealot->SetCharacterController(pCharacter);
-		SAFE_RELEASE(pCharacter);
+		//m_pMoveZealot = new cZealot;
+		//m_pMoveZealot->Setup();
+	//	cCharacter* pCharacter = new cCharacter;
+	//	m_pMoveZealot->SetCharacterController(pCharacter);
+	//	SAFE_RELEASE(pCharacter);
 	}
 
 	// 강사님 UI 예제
 	Setup_UI();
 
-	Setup_Multitexture();
+	//Setup_Multitexture();
+	Setup_Particle();
 
 }
 
 void cMainGame::Update(){
 	
 
+	Update_Particle();
 
 	// 캐릭터(Boxmax)의 루트 역할을 하는 박스.	
 	if (m_pCubePC)
@@ -339,8 +348,8 @@ void cMainGame::Update(){
 	}
 
 	// map update
-	/*if (m_pMap)
-		m_pMap->Update();*/
+	if (m_pMap)
+		m_pMap->Update();
 
 	if (m_pBoxman)
 		m_pBoxman->Update();
@@ -370,6 +379,7 @@ void cMainGame::Update(){
 	// 강사님 UI 관련
 	if (m_pUIRoot)
 		m_pUIRoot->Update();
+
 
 }
 
@@ -503,6 +513,7 @@ void cMainGame::Render()
 	Render_Text();
 	Render_Multitexture();
 
+	Render_Particle();
 	g_pD3DDevice->EndScene();
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
 
@@ -973,9 +984,128 @@ void cMainGame::Render_Multitexture()
 
 
 	g_pD3DDevice->SetFVF(ST_PC_VERTEX::FVF);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecTexMulti.size() / 3, &m_vecTexMulti[0], sizeof(ST_PT_VERTEX));
+	// g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecTexMulti.size() / 3, &m_vecTexMulti[0], sizeof(ST_PT_VERTEX));
 
 	g_pD3DDevice->SetTexture(2, NULL);
 
 
+}
+
+void cMainGame::Setup_Particle()
+{
+	m_vecVertexParticle.resize(1000);
+	for (int i = 0; i < m_vecVertexParticle.size(); i++)
+	{
+		//float fRadius = rand() % 1000 / 10.0f;
+		//m_vecVertexParticle[i].p = D3DXVECTOR3(0, 0, fRadius);
+		m_vecVertexParticle[i].p = D3DXVECTOR3(0, 0, 0);
+
+		//D3DXVECTOR3 vAngle = D3DXVECTOR3(D3DXToRadian(rand() % 3600 / 10.0f), D3DXToRadian(rand() % 3600 / 10.0f), D3DXToRadian(rand() % 3600 / 10.0f));
+		/*D3DXVECTOR3 vAngle = D3DXVECTOR3(D3DXToRadian(rand() % 3600 / 10.0f), D3DXToRadian(0.0f), D3DXToRadian(rand() % 3600 / 10.0f));
+
+		D3DXMATRIX matRX, matRY, matRZ, matWorld;
+
+		D3DXMatrixRotationX(&matRX, vAngle.x);
+		D3DXMatrixRotationY(&matRY, vAngle.y);
+		D3DXMatrixRotationZ(&matRZ, vAngle.z);
+
+		matWorld = matRX * matRY * matRZ;*/
+		D3DXMATRIXA16 matWorld;
+		D3DXMatrixIdentity(&matWorld);
+		D3DXVec3TransformCoord(&m_vecVertexParticle[i].p, &m_vecVertexParticle[i].p, &matWorld);
+
+		m_vecVertexParticle[i].color = D3DCOLOR_ARGB(255, 180, 70, 20);
+	}
+
+	g_pD3DDevice->SetRenderState(D3DRS_POINTSCALEENABLE, true);
+	g_pD3DDevice->SetRenderState(D3DRS_POINTSIZE, FtoDW(5.0f));
+
+	g_pD3DDevice->SetRenderState(D3DRS_POINTSCALE_A, FtoDW(0.0f));
+	g_pD3DDevice->SetRenderState(D3DRS_POINTSCALE_B, FtoDW(0.0f));
+	g_pD3DDevice->SetRenderState(D3DRS_POINTSCALE_C, FtoDW(1.0f));
+
+	g_pD3DDevice->SetRenderState(D3DRS_POINTSPRITEENABLE, true);
+	g_pD3DDevice->SetRenderState(D3DRS_POINTSIZE_MIN, FtoDW(0.0f));
+	g_pD3DDevice->SetRenderState(D3DRS_POINTSIZE_MAX, FtoDW(100.0f));
+
+	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+
+	g_pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+	g_pD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
+
+	g_pD3DDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	g_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	g_pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+}
+
+void cMainGame::Update_Particle()
+{
+	static int nAlpha = 0;
+	static int nDelta = 4;
+	static float fDist = 0.0f;
+	static float fDistMax = 12.0f;
+	nAlpha += nDelta;
+	fDist += abs(nDelta);
+
+	if (nAlpha > 255)
+	{
+		nAlpha = 255;
+		nDelta *= -1;		
+	}
+
+	if (nAlpha < 0)
+	{
+		nAlpha = 0;
+		nDelta *= -1;		
+	}
+
+	if (fDistMax - fDist < D3DX_16F_EPSILON)
+	{
+		fDist = 0.0f;
+	}
+
+
+
+	
+
+	for (int i = 0; i < m_vecVertexParticle.size(); i++)
+	{
+		if (i % 2 == 0) continue;
+		m_vecVertexParticle[i].color = D3DCOLOR_ARGB(nAlpha, 180, 70, 20);
+		
+		D3DXMATRIX matRX, matRY, matRZ, matWorld;
+		
+
+		D3DXVECTOR3 vAngle = D3DXVECTOR3(D3DXToRadian(rand() % (i*100) / 10.0f), D3DXToRadian(0.0f), D3DXToRadian(rand() % (i * 100) / 10.0f));
+
+		D3DXMatrixRotationX(&matRX, vAngle.x);
+		D3DXMatrixRotationY(&matRY, vAngle.y);
+		D3DXMatrixRotationZ(&matRZ, vAngle.z);		
+		matWorld = matRX * matRY * matRZ;
+		D3DXVec3TransformCoord(&m_vecVertexParticle[i].p, &m_vecVertexParticle[i].p, &matWorld);
+		
+
+	}
+}
+
+void cMainGame::Render_Particle()
+{
+	D3DXMATRIXA16		matWorld;
+	D3DXMatrixIdentity(&matWorld);
+	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
+	g_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+	g_pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, false);
+
+	g_pD3DDevice->SetFVF(ST_PC_VERTEX::FVF);
+	g_pD3DDevice->SetTexture(0, g_pTextureManager->GetTexture("MultiTextures/alpha_tex.tga"));
+	g_pD3DDevice->DrawPrimitiveUP(D3DPT_POINTLIST, m_vecVertexParticle.size(), &m_vecVertexParticle[0], sizeof(ST_PC_VERTEX));
+	
+	
+	g_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+	g_pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, true);
+	g_pD3DDevice->SetTexture(0, NULL);
 }

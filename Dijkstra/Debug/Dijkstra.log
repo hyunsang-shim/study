@@ -1,6 +1,0 @@
-﻿  Dijkstra.cpp
-k:\work\git\dijkstra\dijkstra.cpp(61): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dijkstra\dijkstra.cpp(172): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dijkstra\dijkstra.cpp(186): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-k:\work\git\dijkstra\dijkstra.cpp(207): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-  Dijkstra.vcxproj -> K:\WORK\git\Dijkstra\Debug\Dijkstra.exe

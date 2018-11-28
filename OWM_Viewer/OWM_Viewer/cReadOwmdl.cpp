@@ -31,108 +31,12 @@ OWMAP cReadOwmdl::ReadFile(std::string Filename)
 
 	if (file.is_open())
 	{
-		while (cnt++ < filesize)
-		{
-			char read[1024];
-			file.read(read, sizeof(unsigned int));
-			ret.major = atoi(read);
-			//memcpy(&ret.major, read, sizeof(unsigned int));
-			ZeroMemory(read, 1024);
-
-			
-			file.read(read, sizeof(unsigned int));
-			ret.minor = atoi(read);
-			//memcpy(&ret.minor, read, sizeof(unsigned int));
-			ZeroMemory(read, 1024);
-
-			char tmp_str;
-			do {
-				file.read(&tmp_str, 1);
-				if (tmp_str != NULL)
-				{
-					(ret.name).append(1, tmp_str);
-				}
-			} while (tmp_str != NULL);
-
-			file.read(read, sizeof(unsigned int));
-			memcpy(&ret.object_count, read, sizeof(unsigned int));
-
-			file.read(read, sizeof(unsigned int));
-			memcpy(&ret.detail_count, read, sizeof(unsigned int));
-
-			file.read(read, sizeof(unsigned int));
-			memcpy(&ret.light_count, read, sizeof(unsigned int));
-
-			ret.objects = GetObjects(&file, ret.object_count);
-			ret.details = GetDetails(&file, ret.detail_count);
-			ret.lights = GetLights(&file, ret.light_count);
-
-
-			file.read(read, sizeof(unsigned int));
-			memcpy(&ret.unknown1[0], read, sizeof(unsigned int));
-			file.read(read, sizeof(unsigned int));
-			memcpy(&ret.unknown1[1], read, sizeof(unsigned int));
-
-			file.read(read, sizeof(byte));
-			memcpy(&ret.unknown2[0], read, sizeof(byte));
-			file.read(read, sizeof(byte));
-			memcpy(&ret.unknown2[1], read, sizeof(byte));
-			file.read(read, sizeof(byte));
-			memcpy(&ret.unknown2[2], read, sizeof(byte));
-			file.read(read, sizeof(byte));
-			memcpy(&ret.unknown2[3], read, sizeof(byte));
-
-
-
-			file.read(read, sizeof(unsigned int));
-			memcpy(&ret.unknown3[0], read, sizeof(unsigned int));
-			file.read(read, sizeof(unsigned int));
-			memcpy(&ret.unknown3[1], read, sizeof(unsigned int));
-
-			file.read(read, sizeof(D3DXVECTOR3));
-			memcpy(&ret.unknownPos1, read, sizeof(D3DXVECTOR3));
-
-			file.read(read, sizeof(D3DXQUATERNION));
-			memcpy(&ret.unknownQuat1, read, sizeof(D3DXQUATERNION));
-
-
-			file.read(read, sizeof(D3DXVECTOR3));
-			memcpy(&ret.unknownPos2, read, sizeof(D3DXVECTOR3));
-
-			file.read(read, sizeof(D3DXQUATERNION));
-			memcpy(&ret.unknownQuat2, read, sizeof(D3DXQUATERNION));
-
-			file.read(read, sizeof(D3DXVECTOR3));
-			memcpy(&ret.unknownPos3, read, sizeof(D3DXVECTOR3));
-
-			file.read(read, sizeof(D3DXQUATERNION));
-			memcpy(&ret.unknownQuat3, read, sizeof(D3DXQUATERNION));
-
-			file.read(read, sizeof(float));
-			memcpy(&ret.unknown4[0], read, sizeof(float));
-			file.read(read, sizeof(float));
-			memcpy(&ret.unknown4[1], read, sizeof(float));
-			file.read(read, sizeof(float));
-			memcpy(&ret.unknown4[2], read, sizeof(float));
-			file.read(read, sizeof(float));
-			memcpy(&ret.unknown4[3], read, sizeof(float));
-
-
-			file.read(read, sizeof(unsigned int));
-			memcpy(&ret.unknown5, read, sizeof(unsigned int));
-
-
-			file.read(read, sizeof(short));
-			memcpy(&ret.unknown6[0], read, sizeof(short));
-			file.read(read, sizeof(short));
-			memcpy(&ret.unknown6[1], read, sizeof(short));
-
-			file.read(read, sizeof(unsigned int));
-			memcpy(&ret.unknown7[0], read, sizeof(unsigned int));
-			file.read(read, sizeof(unsigned int));
-			memcpy(&ret.unknown7[1], read, sizeof(unsigned int));
-		}
-
+		unsigned short major;
+		char tmp[64];
+		file.read(tmp, sizeof(unsigned short));
+		tmp[sizeof(unsigned short)] = '\0';
+		ret.major = (unsigned short)tmp;
+		cout << ret.major << endl;
 		file.close();
 
 		return ret;
@@ -349,15 +253,16 @@ vector<record> cReadOwmdl::GetRecords(ifstream * fp, unsigned int size)
 	while (cnt++ < size)
 	{
 		char tmp_str;
-		char read[1024];
+		unsigned char read[1024];
 
-		fp->read(read, sizeof(D3DXVECTOR3));
+		fp->read((char*)read, sizeof(D3DXVECTOR3));
 		memcpy(&tmp.pos, read, sizeof(D3DXVECTOR3));
+		printf("tmp.pos = %f %f %f\n", tmp.pos.x, tmp.pos.y, tmp.pos.z);
 
-		fp->read(read, sizeof(D3DXVECTOR3));
+		fp->read((char*)read, sizeof(D3DXVECTOR3));
 		memcpy(&tmp.vecScale, read, sizeof(D3DXVECTOR3));
 
-		fp->read(read, sizeof(D3DXQUATERNION));
+		fp->read((char*)read, sizeof(D3DXQUATERNION));
 		memcpy(&tmp.quat, read, sizeof(D3DXQUATERNION));
 
 		ret.push_back(tmp);
