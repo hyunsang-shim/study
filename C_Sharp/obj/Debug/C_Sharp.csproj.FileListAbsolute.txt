@@ -1,0 +1,6 @@
+K:\WORK\git\C_Sharp\bin\Debug\C_Sharp.exe.config
+K:\WORK\git\C_Sharp\bin\Debug\C_Sharp.exe
+K:\WORK\git\C_Sharp\bin\Debug\C_Sharp.pdb
+K:\WORK\git\C_Sharp\obj\Debug\C_Sharp.csprojResolveAssemblyReference.cache
+K:\WORK\git\C_Sharp\obj\Debug\C_Sharp.exe
+K:\WORK\git\C_Sharp\obj\Debug\C_Sharp.pdb

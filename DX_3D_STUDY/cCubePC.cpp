@@ -126,7 +126,6 @@ void cCubePC::Render()
 
 void cCubePC::SetBoxPosition(D3DXVECTOR3 boxPos)
 {
-	// TODO: 여기에 반환 구문을 삽입합니다.
 
 	 m_vBoxPosition = boxPos;
 }
