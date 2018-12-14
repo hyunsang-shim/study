@@ -1,0 +1,5 @@
+K:\WORK\git\C_Sharp\echoServer\echoserver_mainapp\bin\Debug\echoserver_mainapp.exe.config
+K:\WORK\git\C_Sharp\echoServer\echoserver_mainapp\bin\Debug\echoserver_mainapp.exe
+K:\WORK\git\C_Sharp\echoServer\echoserver_mainapp\bin\Debug\echoserver_mainapp.pdb
+K:\WORK\git\C_Sharp\echoServer\echoserver_mainapp\obj\Debug\echoserver_mainapp.exe
+K:\WORK\git\C_Sharp\echoServer\echoserver_mainapp\obj\Debug\echoserver_mainapp.pdb

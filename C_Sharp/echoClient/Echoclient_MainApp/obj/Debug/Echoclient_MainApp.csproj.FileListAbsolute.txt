@@ -1,0 +1,6 @@
+K:\WORK\git\C_Sharp\echoClient\Echoclient_MainApp\bin\Debug\Echoclient_MainApp.exe.config
+K:\WORK\git\C_Sharp\echoClient\Echoclient_MainApp\bin\Debug\Echoclient_MainApp.exe
+K:\WORK\git\C_Sharp\echoClient\Echoclient_MainApp\bin\Debug\Echoclient_MainApp.pdb
+K:\WORK\git\C_Sharp\echoClient\Echoclient_MainApp\obj\Debug\Echoclient_MainApp.csprojResolveAssemblyReference.cache
+K:\WORK\git\C_Sharp\echoClient\Echoclient_MainApp\obj\Debug\Echoclient_MainApp.exe
+K:\WORK\git\C_Sharp\echoClient\Echoclient_MainApp\obj\Debug\Echoclient_MainApp.pdb
