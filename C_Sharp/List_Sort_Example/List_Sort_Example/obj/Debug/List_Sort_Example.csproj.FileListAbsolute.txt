@@ -1,0 +1,7 @@
+K:\WORK\git\C_Sharp\List_Sort_Example\List_Sort_Example\bin\Debug\List_Sort_Example.exe.config
+K:\WORK\git\C_Sharp\List_Sort_Example\List_Sort_Example\bin\Debug\List_Sort_Example.exe
+K:\WORK\git\C_Sharp\List_Sort_Example\List_Sort_Example\bin\Debug\List_Sort_Example.pdb
+K:\WORK\git\C_Sharp\List_Sort_Example\List_Sort_Example\obj\Debug\List_Sort_Example.csprojAssemblyReference.cache
+K:\WORK\git\C_Sharp\List_Sort_Example\List_Sort_Example\obj\Debug\List_Sort_Example.csproj.CoreCompileInputs.cache
+K:\WORK\git\C_Sharp\List_Sort_Example\List_Sort_Example\obj\Debug\List_Sort_Example.exe
+K:\WORK\git\C_Sharp\List_Sort_Example\List_Sort_Example\obj\Debug\List_Sort_Example.pdb
